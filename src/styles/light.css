@@ -1,0 +1,38 @@
+:root.light {
+    color-scheme: light;
+    /* Surface Colors */
+    --bg-app: #f3f4f6;
+    /* gray-100 */
+    --bg-panel: rgba(255, 255, 255, 0.6);
+    --bg-panel-hover: rgba(0, 0, 0, 0.05);
+
+    /* Text Colors */
+    --text-primary: #111827;
+    /* gray-900 */
+    --text-secondary: #4b5563;
+    /* gray-600 */
+
+    /* Borders */
+    --border-primary: rgba(0, 0, 0, 0.1);
+    --border-secondary: rgba(0, 0, 0, 0.05);
+
+    /* Shadows */
+    --shadow-panel: 0 25px 50px -12px rgba(0, 0, 0, 0.15);
+
+    /* Component Specific */
+    --bg-header: rgba(243, 244, 246, 0.95);
+    /* gray-100 almost opaque */
+    --bg-header-transparent: rgba(255, 255, 255, 0.5);
+    --bg-content: rgba(255, 255, 255, 0.85);
+
+    --bg-dock: rgba(255, 255, 255, 0.16);
+    --border-dock: rgba(255, 255, 255, 0.16);
+
+    --bg-icon: rgba(255, 255, 255, 0.6);
+    --text-icon: #1f2937;
+
+    --bg-tooltip: rgba(255, 255, 255, 0.95);
+    --text-tooltip: #1f2937;
+
+    --bg-input: rgba(0, 0, 0, 0.05);
+}

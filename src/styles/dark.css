@@ -1,0 +1,40 @@
+:root.dark {
+    color-scheme: dark;
+    /* Surface Colors */
+    --bg-app: #000000;
+    /* Deep black background for depth */
+    --bg-panel: rgba(30, 30, 30, 0.4);
+    /* Lighter, more translucent base */
+    --bg-panel-hover: rgba(255, 255, 255, 0.08);
+
+    /* Text Colors */
+    --text-primary: rgba(255, 255, 255, 0.95);
+    --text-secondary: rgba(255, 255, 255, 0.55);
+
+    /* Borders */
+    --border-primary: rgba(255, 255, 255, 0.12);
+    --border-secondary: rgba(255, 255, 255, 0.08);
+
+    /* Shadows */
+    --shadow-panel:
+        0 0 0 1px rgba(255, 255, 255, 0.1),
+        0 20px 40px -12px rgba(0, 0, 0, 0.6),
+        0 0 0 1px rgba(0, 0, 0, 0.4);
+
+    /* Component Specific */
+    --bg-header: transparent;
+    /* Header blends with content */
+    --bg-header-transparent: rgba(30, 30, 30, 0.4);
+    --bg-content: rgba(30, 30, 30, 0.3);
+
+    --bg-dock: rgba(20, 20, 20, 0.4);
+    --border-dock: rgba(255, 255, 255, 0.1);
+
+    --bg-icon: rgba(255, 255, 255, 0.1);
+    --text-icon: rgba(255, 255, 255, 0.9);
+
+    --bg-tooltip: rgba(20, 20, 20, 0.8);
+    --text-tooltip: white;
+
+    --bg-input: rgba(0, 0, 0, 0.2);
+}
