@@ -79,6 +79,15 @@ export const translations = {
             chat: 'Chat',
             settings: 'System Settings',
         },
+        popup: {
+            title: 'Popup Demo',
+            label: 'Name',
+            placeholder: 'Enter your name...',
+            cancel: 'Cancel',
+            confirm: 'Confirm',
+            running: 'Popup App is running in the background.',
+            reopen: 'Reopen Dialog',
+        },
     },
     'zh-CN': {
         settings: {
@@ -158,6 +167,15 @@ export const translations = {
             chat: '消息',
             settings: '系统设置',
         },
+        popup: {
+            title: '弹窗演示',
+            label: '姓名',
+            placeholder: '请输入您的姓名...',
+            cancel: '取消',
+            confirm: '确定',
+            running: '弹窗应用正在后台运行',
+            reopen: '重新打开弹窗',
+        },
     },
     'zh-TW': {
         settings: {
@@ -236,6 +254,15 @@ export const translations = {
             files: '文件管理',
             chat: '消息',
             settings: '系統設置',
+        },
+        popup: {
+            title: '彈窗演示',
+            label: '姓名',
+            placeholder: '請輸入您的姓名...',
+            cancel: '取消',
+            confirm: '確定',
+            running: '彈窗應用正在後台運行',
+            reopen: '重新打開彈窗',
         },
     }
 };
