@@ -55,10 +55,13 @@ export const useAI = () => {
             console.error("AI API Error:", error);
             setIsTyping(false);
 
+            const maskedKey = API_KEY ? `${API_KEY.substring(0, 4)}...${API_KEY.substring(API_KEY.length - 4)}` : "undefined";
             return {
                 id: crypto.randomUUID(),
                 role: 'assistant' as const,
-                content: `抱歉，连接 Longcat 时遇到问题 (${error.message})。请检查 API Key 或网络。`,
+                content: `抱歉，连接 Longcat 时遇到问题 (${error.message})。
+当前使用的 Key: ${maskedKey}
+请检查 API Key 是否正确或尝试重启开发服务器。`,
                 timestamp: Date.now(),
             };
         }
