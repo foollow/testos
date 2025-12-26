@@ -11,29 +11,54 @@ export interface AIMessage {
 export const useAI = () => {
     const [isTyping, setIsTyping] = useState(false);
 
-    const sendMessage = useCallback(async (content: string, history: AIMessage[] = []) => {
+    const sendMessage = useCallback(async (content: string) => {
         setIsTyping(true);
 
-        // Simulate network delay
-        await new Promise(resolve => setTimeout(resolve, 1000 + Math.random() * 2000));
+        // Using Vite's environment variables
+        const API_KEY = import.meta.env.VITE_GEMINI_API_KEY;
+        const API_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${API_KEY}`;
 
-        let responseText = "I'm a system-level AI assistant. I can help you with tasks or answer questions.";
+        try {
+            const response = await fetch(API_URL, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    contents: [{
+                        parts: [{ text: content }]
+                    }]
+                }),
+            });
 
-        if (content.toLowerCase().includes('hello') || content.toLowerCase().includes('hi')) {
-            responseText = "Hello! How can I assist you today?";
-        } else if (content.toLowerCase().includes('time')) {
-            responseText = `Current time is ${new Date().toLocaleTimeString()}.`;
-        } else if (content.toLowerCase().includes('meeting')) {
-            responseText = "I can help you schedule a meeting. When would you like it to be?";
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.error?.message || 'API request failed');
+            }
+
+            const data = await response.json();
+
+            // Handle cases where response might be empty or blocked
+            const responseText = data.candidates?.[0]?.content?.parts?.[0]?.text ||
+                "I'm sorry, I couldn't generate a response for that.";
+
+            setIsTyping(false);
+            return {
+                id: crypto.randomUUID(),
+                role: 'assistant' as const,
+                content: responseText.trim(),
+                timestamp: Date.now(),
+            };
+        } catch (error) {
+            console.error("AI API Error:", error);
+            setIsTyping(false);
+            return {
+                id: crypto.randomUUID(),
+                role: 'assistant' as const,
+                content: "抱歉，连接大模型时遇到问题。请检查网络或稍后再试。",
+                timestamp: Date.now(),
+            };
         }
-
-        setIsTyping(false);
-        return {
-            id: crypto.randomUUID(),
-            role: 'assistant' as const,
-            content: responseText,
-            timestamp: Date.now(),
-        };
     }, []);
 
     return {

@@ -20,12 +20,13 @@ import {
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useOS } from '../store/useOS';
 import { useTranslation } from "@/lib/i18n";
+import { useAI } from "@/hooks/useAI";
 
 const MOCK_CHATS = [
     {
         id: '1',
-        name: '陈鹏',
-        avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Felix',
+        name: '鹏哥',
+        avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=2',
         lastMessage: '今天开始就可以用新大象了哈哈哈',
         time: '11:33',
         unread: 3,
@@ -33,93 +34,112 @@ const MOCK_CHATS = [
     },
     {
         id: '2',
-        name: '办公效率产品设计',
+        name: '办公效率产品设计研发',
         isGroup: true,
         memberCount: 32,
-        avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Aneka',
-        lastMessage: '北京各工作职场今日（7月30日...',
+        avatar: 'https://img.meituan.net/diegooacontent/9ea15ba4b65a7e3932193dffad497cb115425.jpg@format=jpeg?token=1.1766797200.mn8qspmg8w5mx9cn0000000000d89d2a.bdf6039ffc552bb28e7a1c90291ca1e0',
+        lastMessage: '受大雪影响，北京各工作职场今日提前下班',
         time: '11:09',
         unread: 0,
         muted: true,
     },
     {
         id: '3',
-        name: '史晓英',
-        avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Liliana',
-        lastMessage: '这个场景我会补充一下用户在执行过...',
+        name: 'Kiki Yang',
+        avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=kiki22',
+        lastMessage: '这个场景我会补充一下',
         time: '10:25',
         unread: 0,
     },
     {
         id: '4',
-        name: '庄舒雁',
-        avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Blythe',
-        lastMessage: '交互稿已经确认了，视觉可以开始设...',
+        name: '明哲(帅)',
+        avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=12',
+        lastMessage: '这个网站很酷',
         time: '10:15',
         unread: 0,
     },
     {
         id: '5',
-        name: '学城',
+        name: '齐学士',
         isApp: true,
-        avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Caleb',
-        lastMessage: '庄舒雁回复了你在《W29- 【...',
+        avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=144',
+        lastMessage: '我想想',
         time: '09:54',
         unread: 0,
     },
 ];
 
-const MOCK_MESSAGES = [
-    {
-        id: 'm1',
-        sender: '黄潇潇',
-        avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Vivian',
-        content: '根据后端评估结果，本次需求拆分为授权时发送消息通知和权限管理优化+移动端两个，分别在5月、6月迭代交付分别在5月、6月迭代交付',
-        time: '10:15',
-        reactions: [
-            { emoji: '🍎', count: 16 },
-            { emoji: '🤯', count: 8 },
-            { emoji: '+1', count: 8 },
-            { emoji: '👍', count: 8 },
-        ]
-    },
-    {
-        id: 'm2',
-        sender: '黄潇潇',
-        avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Vivian',
-        content: '另外约了今天下午2点的需求讨论会',
-        time: '10:16',
-    },
-    {
-        id: 'm3',
-        sender: 'Me',
-        isMe: true,
-        content: '由于iPad端崛起大象时会受浏览器影响，iPad端发送文档到大象会话后，Toast中不显示「打开会话」',
-        time: '10:20',
-    },
-    {
-        id: 'm4',
-        sender: '倪新皓',
-        avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=George',
-        type: 'audio',
-        duration: '00:45',
-        content: '语音消息',
-        time: '10:25',
-    },
-    {
-        id: 'm5',
-        sender: '倪新皓',
-        avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=George',
-        content: '大象这里他应该只有沟通权限，无搜索人/公众号权限，无日程权限，无查看用户更多卡片权限，无添加私人并联权限，大部分工作台应用也都被封禁了...',
-        time: '10:26',
-    },
-];
+interface Message {
+    id: string;
+    sender: string;
+    avatar?: string;
+    isMe?: boolean;
+    content: string;
+    time: string;
+    type?: 'audio' | 'text';
+    duration?: string;
+    reactions?: { emoji: string; count: number }[];
+}
 
 const IMApp: React.FC<{ windowId: string }> = () => {
     const { systemState } = useOS();
     const t = useTranslation(systemState.language);
+    const ai = useAI();
     const [activeChat, setActiveChat] = useState(MOCK_CHATS[1]);
     const [message, setMessage] = useState('');
+    const [messagesByChat, setMessagesByChat] = useState<Record<string, Message[]>>({});
+
+    const currentMessages = messagesByChat[activeChat.id] || [];
+
+    const handleSendMessage = async () => {
+        if (!message.trim()) return;
+
+        const newMessage = {
+            id: `m-${Date.now()}`,
+            sender: 'Me',
+            isMe: true,
+            content: message,
+            time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+        };
+
+        // Optimistically add user message
+        setMessagesByChat(prev => ({
+            ...prev,
+            [activeChat.id]: [...(prev[activeChat.id] || []), newMessage]
+        }));
+
+        const userMessageContent = message; // Capture for async closure
+        setMessage('');
+
+        // Trigger AI reply
+        try {
+            const response = await ai.sendMessage(userMessageContent);
+
+            const aiMessage = {
+                id: response.id,
+                sender: activeChat.name, // The person you are chatting with "is" the AI in this context
+                isMe: false,
+                content: response.content,
+                time: new Date(response.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+                avatar: activeChat.avatar
+            };
+
+            setMessagesByChat(prev => ({
+                ...prev,
+                [activeChat.id]: [...(prev[activeChat.id] || []), aiMessage]
+            }));
+        } catch (error) {
+            console.error("AI Error:", error);
+        }
+    };
+
+    const handleKeyDown = (e: React.KeyboardEvent) => {
+        if (e.key === 'Enter' && !e.shiftKey) {
+            e.preventDefault();
+            handleSendMessage();
+        }
+    };
 
     return (
         <div className="flex h-full bg-background text-foreground overflow-hidden">
@@ -136,7 +156,6 @@ const IMApp: React.FC<{ windowId: string }> = () => {
                             <TooltipTrigger asChild>
                                 <Button variant="ghost" size="icon" className="h-12 w-12 rounded-xl text-primary bg-primary/10 relative">
                                     <MessageSquare size={24} />
-                                    <Badge className="absolute -top-1 -right-1 h-5 w-5 p-0 flex items-center justify-center bg-red-500 border-2 border-background text-[10px]">3</Badge>
                                 </Button>
                             </TooltipTrigger>
                             <TooltipContent side="right">{t.chat.messages}</TooltipContent>
@@ -252,11 +271,6 @@ const IMApp: React.FC<{ windowId: string }> = () => {
                                         <AvatarImage src={chat.avatar} />
                                         <AvatarFallback>{chat.name[0]}</AvatarFallback>
                                     </Avatar>
-                                    {chat.unread > 0 && (
-                                        <Badge className="absolute -top-1 -right-1 h-5 w-5 p-0 flex items-center justify-center bg-red-500 text-white rounded-full text-[10px]">
-                                            {chat.unread}
-                                        </Badge>
-                                    )}
                                 </div>
                                 <div className="flex-1 min-w-0">
                                     <div className="flex items-center justify-between mb-0.5">
@@ -292,7 +306,9 @@ const IMApp: React.FC<{ windowId: string }> = () => {
                                 {activeChat.name}
                                 {activeChat.isGroup && <span className="text-[10px] text-muted-foreground font-normal">{activeChat.memberCount}人</span>}
                             </h3>
-                            <p className="text-[10px] text-muted-foreground truncate max-w-[300px]">周会请提前订会议室，会议文档及时发出，会后同步纪要</p>
+                            <p className="text-[10px] text-muted-foreground truncate max-w-[300px]">
+                                {ai.isTyping ? '正在输入...' : '周会请提前订会议室，会议文档及时发出，会后同步纪要'}
+                            </p>
                         </div>
                     </div>
                     <div className="flex items-center gap-1">
@@ -307,7 +323,7 @@ const IMApp: React.FC<{ windowId: string }> = () => {
                 {/* Messages List */}
                 <ScrollArea className="flex-1 p-6">
                     <div className="max-w-4xl mx-auto space-y-8">
-                        {MOCK_MESSAGES.map((msg) => (
+                        {currentMessages.map((msg) => (
                             <div key={msg.id} className={`flex gap-4 group ${msg.isMe ? 'flex-row-reverse' : ''}`}>
                                 {!msg.isMe && (
                                     <Avatar className="h-8 w-8 shrink-0 rounded-lg">
@@ -362,7 +378,7 @@ const IMApp: React.FC<{ windowId: string }> = () => {
 
                 {/* Input Area */}
                 <div className="p-4 bg-background shrink-0 border-t">
-                    <div className="max-w-4xl mx-auto rounded-2xl border bg-background shadow-lg p-2 focus-within:ring-1 focus-within:ring-primary/30 transition-shadow">
+                    <div className="max-w-4xl mx-auto rounded-2xl border bg-background shadow-lg p-2 focus-within:ring-1 focus-within:ring-primary/30 transition-shadow flex flex-col">
                         <div className="flex items-center gap-0.5 text-muted-foreground px-2 py-1">
                             <Button variant="ghost" size="icon" className="h-8 w-8 rounded-lg hover:text-primary"><Plus size={18} /></Button>
                             <Button variant="ghost" size="icon" className="h-8 w-8 rounded-lg hover:text-primary"><Smile size={18} /></Button>
@@ -375,9 +391,6 @@ const IMApp: React.FC<{ windowId: string }> = () => {
                             <Button variant="ghost" size="icon" className="h-8 w-8 rounded-lg hover:text-primary"><SearchCode size={18} /></Button>
                             <div className="ml-auto flex items-center gap-1">
                                 <Button variant="ghost" size="icon" className="h-8 w-8 rounded-lg hover:text-primary"><Maximize2 size={16} /></Button>
-                                <Button variant="ghost" size="icon" className="h-8 w-8 rounded-lg hover:text-primary transition-colors text-primary bg-primary/10">
-                                    <SendHorizonal size={16} />
-                                </Button>
                                 <Separator orientation="vertical" className="h-4 mx-1" />
                                 <div className="flex items-center gap-0.5 px-1 hover:text-primary cursor-pointer">
                                     <span className="text-[10px] font-bold">A</span>
@@ -385,12 +398,27 @@ const IMApp: React.FC<{ windowId: string }> = () => {
                                 </div>
                             </div>
                         </div>
-                        <Input
-                            value={message}
-                            onChange={(e) => setMessage(e.target.value)}
-                            placeholder={t.chat.typeMessage}
-                            className="border-none focus-visible:ring-0 bg-transparent text-sm min-h-[40px] px-3 shadow-none h-auto py-2"
-                        />
+                        <div className="relative flex items-end">
+                            <Input
+                                value={message}
+                                onChange={(e) => setMessage(e.target.value)}
+                                onKeyDown={handleKeyDown}
+                                placeholder={t.chat.typeMessage}
+                                className="border-none focus-visible:ring-0 bg-transparent text-sm min-h-[40px] px-3 shadow-none h-auto py-2 flex-1 pr-12"
+                            />
+                            <Button
+                                variant="ghost"
+                                size="icon"
+                                onClick={handleSendMessage}
+                                disabled={!message.trim()}
+                                className={`h-8 w-8 mb-1 mr-1 rounded-lg transition-all ${message.trim()
+                                    ? "text-primary bg-primary/10 opacity-100"
+                                    : "text-muted-foreground/40 opacity-40 cursor-not-allowed"
+                                    }`}
+                            >
+                                <SendHorizonal size={16} />
+                            </Button>
+                        </div>
                     </div>
                 </div>
             </div>
