@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import {
     Search, Plus, Smile, Type,
     Image as ImageIcon, Paperclip, Scissors, Maximize2,
@@ -7,6 +7,7 @@ import {
 } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Badge } from "@/components/ui/badge";
@@ -86,9 +87,27 @@ const IMApp: React.FC<{ windowId: string }> = () => {
     const { systemState } = useOS();
     const t = useTranslation(systemState.language);
     const ai = useAI();
-    const [activeChat, setActiveChat] = useState(MOCK_CHATS[1]);
+    const [activeChat, setActiveChat] = useState(MOCK_CHATS[0]);
     const [message, setMessage] = useState('');
     const [messagesByChat, setMessagesByChat] = useState<Record<string, Message[]>>({});
+    const inputRef = useRef<HTMLTextAreaElement>(null);
+
+    const adjustHeight = () => {
+        if (inputRef.current) {
+            inputRef.current.style.height = 'auto';
+            inputRef.current.style.height = `${Math.min(inputRef.current.scrollHeight, 200)}px`;
+        }
+    };
+
+    useEffect(() => {
+        adjustHeight();
+    }, [message]);
+
+    useEffect(() => {
+        // Automatically focus input when active chat changes or app opens
+        inputRef.current?.focus();
+        adjustHeight();
+    }, [activeChat.id]);
 
     const currentMessages = messagesByChat[activeChat.id] || [];
 
@@ -337,7 +356,7 @@ const IMApp: React.FC<{ windowId: string }> = () => {
                                         <span className="text-[10px] text-muted-foreground/60 opacity-0 group-hover:opacity-100 transition-opacity">{msg.time}</span>
                                     </div>
 
-                                    <div className={`relative px-4 py-2.5 rounded-2xl shadow-sm border text-sm leading-relaxed ${msg.isMe
+                                    <div className={`relative px-4 py-2.5 rounded-2xl shadow-sm border text-sm leading-relaxed select-text ${msg.isMe
                                         ? 'bg-primary text-primary-foreground border-primary'
                                         : 'bg-muted/30 border-muted'
                                         }`}>
@@ -399,12 +418,14 @@ const IMApp: React.FC<{ windowId: string }> = () => {
                             </div>
                         </div>
                         <div className="relative flex items-end">
-                            <Input
+                            <Textarea
+                                ref={inputRef}
                                 value={message}
                                 onChange={(e) => setMessage(e.target.value)}
                                 onKeyDown={handleKeyDown}
                                 placeholder={t.chat.typeMessage}
-                                className="border-none focus-visible:ring-0 bg-transparent text-sm min-h-[40px] px-3 shadow-none h-auto py-2 flex-1 pr-12"
+                                className="border-none focus-visible:ring-0 bg-transparent text-sm min-h-[40px] px-3 shadow-none h-auto py-2 flex-1 pr-12 resize-none overflow-y-auto"
+                                rows={1}
                             />
                             <Button
                                 variant="ghost"
