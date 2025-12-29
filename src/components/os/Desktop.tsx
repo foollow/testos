@@ -4,12 +4,10 @@ import { useTranslation } from "@/lib/i18n";
 import { WindowManager } from './WindowManager';
 import { Dock } from './Dock';
 import { TopBar } from './TopBar';
-import { Terminal, Settings as SettingsIcon, Calculator as CalculatorIcon, Palette, Globe, MessageSquare, FolderOpen } from 'lucide-react';
+import { Settings as SettingsIcon, Palette, Globe, MessageSquare, FolderOpen } from 'lucide-react';
 
 // Lazy load apps
-const TerminalApp = lazy(() => import('../../apps/Terminal'));
 const SettingsApp = lazy(() => import('../../apps/Settings'));
-const CalculatorApp = lazy(() => import('../../apps/Calculator'));
 const PaintApp = lazy(() => import('../../apps/Paint'));
 const SafariApp = lazy(() => import('../../apps/Safari'));
 const IMApp = lazy(() => import('../../apps/IM'));
@@ -21,24 +19,10 @@ export const Desktop: React.FC = () => {
 
     useEffect(() => {
         registerApp({
-            id: 'terminal',
-            title: t.apps.terminal,
-            icon: <Terminal size={28} />,
-            component: TerminalApp,
-        });
-
-        registerApp({
             id: 'safari',
             title: t.apps.safari,
             icon: <Globe size={28} className="text-blue-400" />,
             component: SafariApp,
-        });
-
-        registerApp({
-            id: 'calculator',
-            title: t.apps.calculator,
-            icon: <CalculatorIcon size={28} className="text-orange-400" />,
-            component: CalculatorApp,
         });
 
         registerApp({

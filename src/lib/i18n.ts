@@ -71,9 +71,7 @@ export const translations = {
             restore: 'Restore',
         },
         apps: {
-            terminal: 'Terminal',
             safari: 'Safari',
-            calculator: 'Calculator',
             paint: 'Paint',
             files: 'Files',
             chat: 'Chat',
@@ -159,9 +157,7 @@ export const translations = {
             restore: '还原',
         },
         apps: {
-            terminal: '终端',
             safari: '浏览器',
-            calculator: '计算器',
             paint: '画图',
             files: '文件管理',
             chat: '消息',
@@ -247,9 +243,7 @@ export const translations = {
             restore: '還原',
         },
         apps: {
-            terminal: '終端',
             safari: '瀏覽器',
-            calculator: '計算器',
             paint: '畫圖',
             files: '文件管理',
             chat: '消息',

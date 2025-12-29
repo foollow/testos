@@ -25,9 +25,9 @@ export const Dock: React.FC = () => {
                                 variant="ghost"
                                 size="icon"
                                 onClick={() => launchApp(app.id)}
-                                className="w-16 h-16 flex items-center justify-center rounded-xl transition-all duration-300 hover:-translate-y-2 hover:bg-primary/20"
+                                className="w-16 h-12 flex items-center justify-center rounded-xl transition-all duration-300 hover:-translate-y-2 hover:bg-primary/20"
                             >
-                                <div className="w-16 h-16 flex items-center justify-center text-2xl">
+                                <div className="w-16 h-12 flex items-center justify-center text-2xl">
                                     {app.icon}
                                 </div>
                                 {isRunning && (

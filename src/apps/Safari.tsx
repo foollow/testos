@@ -2,8 +2,8 @@ import React, { useState } from 'react';
 import { ArrowLeft, ArrowRight, RotateCw, Lock } from 'lucide-react';
 
 const Safari: React.FC = () => {
-    const [url, setUrl] = useState('https://www.apple.com');
-    const [inputUrl, setInputUrl] = useState('apple.com');
+    const [url, setUrl] = useState('https://en.wikipedia.org/wiki/Main_Page');
+    const [inputUrl, setInputUrl] = useState('wikipedia.org');
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();

@@ -4,7 +4,7 @@ import { Eraser, Pencil, Trash2 } from 'lucide-react';
 const Paint: React.FC = () => {
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const [isDrawing, setIsDrawing] = useState(false);
-    const [color, setColor] = useState('#ffffff');
+    const [color, setColor] = useState('#ffff00');
     const [brushSize, setBrushSize] = useState(5);
     const [tool, setTool] = useState<'pencil' | 'eraser'>('pencil');
 

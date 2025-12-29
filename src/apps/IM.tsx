@@ -3,7 +3,7 @@ import {
     Search, Plus, Smile, Type,
     Image as ImageIcon, Paperclip, Scissors, Maximize2,
     SendHorizonal, MoreHorizontal, Users, UserPlus, SearchCode,
-    MessageSquare, Calendar, Users2, LayoutDashboard, Cloud, Shield, VideoIcon
+    MessageSquare, Calendar, LayoutDashboard, VideoIcon
 } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -91,6 +91,7 @@ const IMApp: React.FC<{ windowId: string }> = () => {
     const [message, setMessage] = useState('');
     const [messagesByChat, setMessagesByChat] = useState<Record<string, Message[]>>({});
     const inputRef = useRef<HTMLTextAreaElement>(null);
+    const scrollAreaRef = useRef<HTMLDivElement>(null);
 
     const adjustHeight = () => {
         if (inputRef.current) {
@@ -110,6 +111,13 @@ const IMApp: React.FC<{ windowId: string }> = () => {
     }, [activeChat.id]);
 
     const currentMessages = messagesByChat[activeChat.id] || [];
+
+    useEffect(() => {
+        const viewport = scrollAreaRef.current?.querySelector('[data-radix-scroll-area-viewport]') as HTMLElement;
+        if (viewport) {
+            viewport.scrollTop = viewport.scrollHeight;
+        }
+    }, [currentMessages, activeChat.id]);
 
     const handleSendMessage = async () => {
         if (!message.trim()) return;
@@ -180,23 +188,7 @@ const IMApp: React.FC<{ windowId: string }> = () => {
                             <TooltipContent side="right">{t.chat.messages}</TooltipContent>
                         </Tooltip>
 
-                        <Tooltip>
-                            <TooltipTrigger asChild>
-                                <Button variant="ghost" size="icon" className="h-12 w-12 rounded-xl text-muted-foreground hover:text-foreground">
-                                    <LayoutDashboard size={24} />
-                                </Button>
-                            </TooltipTrigger>
-                            <TooltipContent side="right">学城</TooltipContent>
-                        </Tooltip>
 
-                        <Tooltip>
-                            <TooltipTrigger asChild>
-                                <Button variant="ghost" size="icon" className="h-12 w-12 rounded-xl text-muted-foreground hover:text-foreground">
-                                    <Users2 size={24} />
-                                </Button>
-                            </TooltipTrigger>
-                            <TooltipContent side="right">{t.chat.contacts}</TooltipContent>
-                        </Tooltip>
 
                         <Tooltip>
                             <TooltipTrigger asChild>
@@ -227,11 +219,7 @@ const IMApp: React.FC<{ windowId: string }> = () => {
                     </TooltipProvider>
                 </div >
 
-                <div className="mt-auto flex flex-col gap-4">
-                    <Button variant="ghost" size="icon" className="text-muted-foreground"><Cloud size={20} /></Button>
-                    <Button variant="ghost" size="icon" className="text-muted-foreground"><VideoIcon size={20} /></Button>
-                    <Button variant="ghost" size="icon" className="text-muted-foreground"><Shield size={20} /></Button>
-                </div>
+
             </div >
 
             {/* Middle Panel - Chat List */}
@@ -331,7 +319,7 @@ const IMApp: React.FC<{ windowId: string }> = () => {
                         </div>
                     </div>
                     <div className="flex items-center gap-1">
-                        <Button variant="ghost" size="icon" className="h-9 w-9 text-muted-foreground hover:text-foreground"><Users size={20} /></Button>
+                        {activeChat.isGroup && (<Button variant="ghost" size="icon" className="h-9 w-9 text-muted-foreground hover:text-foreground"><Users size={20} /></Button>)}
                         <Button variant="ghost" size="icon" className="h-9 w-9 text-muted-foreground hover:text-foreground"><UserPlus size={20} /></Button>
                         <Button variant="ghost" size="icon" className="h-9 w-9 text-muted-foreground hover:text-foreground"><Search size={20} /></Button>
                         <Separator orientation="vertical" className="h-6 mx-2" />
@@ -340,7 +328,7 @@ const IMApp: React.FC<{ windowId: string }> = () => {
                 </header>
 
                 {/* Messages List */}
-                <ScrollArea className="flex-1 p-6">
+                <ScrollArea ref={scrollAreaRef} className="flex-1 p-6">
                     <div className="max-w-4xl mx-auto space-y-8">
                         {currentMessages.map((msg) => (
                             <div key={msg.id} className={`flex gap-4 group ${msg.isMe ? 'flex-row-reverse' : ''}`}>
@@ -396,7 +384,7 @@ const IMApp: React.FC<{ windowId: string }> = () => {
                 </ScrollArea>
 
                 {/* Input Area */}
-                <div className="p-4 bg-background shrink-0 border-t">
+                <div className="p-4 bg-background shrink-0 border-t-transparent">
                     <div className="max-w-4xl mx-auto rounded-2xl border bg-background shadow-lg p-2 focus-within:ring-1 focus-within:ring-primary/30 transition-shadow flex flex-col">
                         <div className="flex items-center gap-0.5 text-muted-foreground px-2 py-1">
                             <Button variant="ghost" size="icon" className="h-8 w-8 rounded-lg hover:text-primary"><Plus size={18} /></Button>
