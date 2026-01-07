@@ -116,7 +116,7 @@ export const WindowFrame: React.FC<WindowFrameProps> = memo(({ window, zIndex, c
             style={style}
             className={clsx(
                 "flex flex-col overflow-hidden transition-all duration-300 ease-out",
-                window.appId === 'im' ? "bg-[var(--color-bg-2)] border border-[var(--color-border-weak)] shadow-xl" : "glass-panel",
+                window.appId === 'im' ? "bg-[var(--color-bg-2)] border border-[var(--color-border-a2)] shadow-xl" : "glass-panel",
                 "rounded-2xl",
                 window.isMaximized && "rounded-none border-0 transition-none",
                 window.isMinimized && "opacity-0 pointer-events-none scale-95",

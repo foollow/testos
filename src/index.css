@@ -95,71 +95,88 @@
 /* 
    =========================================================
    DESIGN TOKENS (Design System Core)
-   Directly embedded to ensure theme switching via .dark class.
    =========================================================
 */
 
 :root {
-  /* ---------- Text Colors ---------- */
-  --color-text-inverse-black: #000000;
-  --color-text-title: #000000;
-  --color-text-main: #111925;
-  --color-text-sub: rgba(17, 25, 37, 0.85);
-  --color-text-minor: rgba(17, 25, 37, 0.65);
-  --color-text-assist: rgba(17, 25, 37, 0.45);
-  --color-text-disabled: rgba(17, 25, 37, 0.3);
-  --color-text-inverse: #FFFFFF;
+  /* ---------- 文字颜色 ---------- */
+  --color-text-black: rgba(0, 0, 0, 1);
+  --color-text-1: rgba(0, 0, 0, 1);
+  --color-text-2: rgba(17, 25, 37, 1);
+  --color-text-3: rgba(17, 25, 37, 0.85);
+  --color-text-4: rgba(17, 25, 37, 0.65);
+  --color-text-5: rgba(17, 25, 37, 0.45);
+  --color-text-6: rgba(17, 25, 37, 0.3);
+  --color-text-white: rgba(255, 255, 255, 1);
 
-  /* ---------- Background Colors ---------- */
-  --color-bg-page: #FFFFFF;
-  --color-bg-page-warm: #F5F2EE;
-  --color-bg-1: #FFFFFF;
-  --color-bg-2: #F8F8F8;
-  --color-bg-3: #F3F3F4;
-  --color-bg-dialog: #F5F2EE;
+  /* ---------- 背景颜色 ---------- */
+  --color-bg-1: rgba(255, 255, 255, 1);
+  --color-bg-2: rgba(245, 246, 247, 1);
+  --color-bg-3: rgba(245, 242, 238, 1);
+  --color-bg-4: rgba(245, 242, 238, 1);
 
-  /* ---------- Fill Colors ---------- */
-  --color-fill-1: #FFFFFF;
-  --color-fill-2: rgba(17, 25, 37, 0.03);
-  --color-fill-3: rgba(17, 25, 37, 0.05);
-  --color-fill-overlay: rgba(255, 255, 255, 0.8);
-  --color-fill-overlay-strong: rgba(255, 255, 255, 0.6);
+  /* ---------- 容器颜色-实色 ---------- */
+  --color-fill-1: rgba(255, 255, 255, 1);
+  --color-fill-2: rgba(248, 248, 248, 1);
+  --color-fill-3: rgba(243, 243, 244, 1);
 
-  /* ---------- Line Colors ---------- */
-  --color-border-strong: rgba(17, 25, 37, 0.15);
-  --color-border-weak: rgba(17, 25, 37, 0.1);
-  --color-border-overlay-strong: rgba(255, 255, 255, 0.9);
+  /* ---------- 容器颜色-透明度 ---------- */
+  --color-fill-a1: rgba(255, 255, 255, 1);
+  --color-fill-a2: rgba(17, 25, 37, 0.03);
+  --color-fill-a3: rgba(17, 25, 37, 0.05);
+  --color-fill-a4: rgba(255, 255, 255, 0.9);
+  --color-fill-a5: rgba(255, 255, 255, 0.6);
 
-  /* ---------- Theme - Blue ---------- */
-  --color-blue-text-strong: #003F73;
-  --color-blue-text: #005BA6;
-  --color-blue-active: #0077D9;
-  --color-blue: #008CFF;
-  --color-blue-hover: #269DFF;
-  --color-blue-bg-disabled: #A6D7FF;
-  --color-blue-bg-weak: #E0F1FF;
+  /* ---------- 线条颜色-实色 ---------- */
+  --color-border-1: rgba(219, 221, 222, 1);
+  --color-border-2: rgba(231, 232, 233, 1);
 
-  /* ---------- Typography ---------- */
+  /* ---------- 线条颜色-透明度 ---------- */
+  --color-border-a1: rgba(17, 25, 37, 0.15);
+  --color-border-a2: rgba(17, 25, 37, 0.1);
+  --color-border-a3: rgba(255, 255, 255, 0.9);
+
+  /* ---------- 主题色 - Blue ---------- */
+  --color-blue-text-strong: rgba(0, 63, 115, 1);
+  --color-blue-text: rgba(0, 91, 166, 1);
+  --color-blue-active: rgba(0, 119, 217, 1);
+  --color-blue: rgba(0, 140, 255, 1);
+  --color-blue-hover: rgba(38, 157, 255, 1);
+  --color-blue-bg-disabled: rgba(166, 215, 255, 1);
+  --color-blue-bg-weak: rgba(224, 241, 255, 1);
+
+  /* ---------- 主题色 - Red ---------- */
+  --color-red-text-strong: rgba(64, 15, 16, 1);
+  --color-red-text: rgba(166, 38, 42, 1);
+  --color-red-active: rgba(217, 50, 55, 1);
+  --color-red: rgba(255, 59, 65, 1);
+  --color-red-hover: rgba(255, 69, 75, 1);
+  --color-red-bg-disabled: rgba(255, 186, 188, 1);
+  --color-red-bg-weak: rgba(255, 231, 232, 1);
+
+  /* ---------- 字号 & 行高 ---------- */
   --font-xs-size: 0.625rem;
-  /* 10px */
   --font-xs-line-height: 1rem;
   --font-sm-size: 0.75rem;
-  /* 12px */
   --font-sm-line-height: 1.25rem;
   --font-base-size: 0.875rem;
-  /* 14px */
   --font-base-line-height: 1.5rem;
   --font-md-size: 1rem;
-  /* 16px */
   --font-md-line-height: 1.625rem;
   --font-lg-size: 1.25rem;
-  /* 20px */
   --font-lg-line-height: 1.75rem;
   --font-xl-size: 1.5rem;
-  /* 24px */
   --font-xl-line-height: 2rem;
+  --font-2xl-size: 1.75rem;
+  --font-2xl-line-height: 2.25rem;
+  --font-3xl-size: 2.25rem;
+  --font-3xl-line-height: 2.75rem;
+  --font-4xl-size: 3rem;
+  --font-4xl-line-height: 3.5rem;
+  --font-5xl-size: 3.5rem;
+  --font-5xl-line-height: 4rem;
 
-  /* ---------- Radius ---------- */
+  /* ---------- 圆角 ---------- */
   --radius-4: 0.25rem;
   --radius-6: 0.375rem;
   --radius-8: 0.5rem;
@@ -168,50 +185,80 @@
   --radius-16: 1rem;
   --radius-20: 1.25rem;
   --radius-24: 1.5rem;
-  --radius-full: 1000px;
+  --radius-28: 1.75rem;
+  --radius-32: 2rem;
+  --radius-36: 2.25rem;
+  --radius-full: 62.5rem;
 
-  /* ---------- Effects ---------- */
+  /* ---------- 特效样式 ---------- */
   --effect-shadow-level-1-backdrop: blur(30px);
   --effect-shadow-level-1-box: 0px 4px 12px 0px rgba(0, 0, 0, 0.06), 0px -1px 2px 0px rgba(0, 0, 0, 0.02);
   --effect-shadow-level-2-backdrop: blur(30px);
   --effect-shadow-level-2-box: 0px 8px 24px 0px rgba(0, 0, 0, 0.08), 0px -1px 10px 0px rgba(0, 0, 0, 0.02);
+  --effect-shadow-level-3-backdrop: blur(30px);
+  --effect-shadow-level-3-box: 0px 16px 36px 0px rgba(0, 0, 0, 0.16), 0px -1px 10px 0px rgba(0, 0, 0, 0.04);
+  --effect-shadow-level-4-backdrop: blur(30px);
+  --effect-shadow-level-4-box: 0px 24px 48px 0px rgba(0, 0, 0, 0.32), 0px -1px 10px 0px rgba(0, 0, 0, 0.04);
   --effect-backdrop-blur: blur(30px);
+
+  /* ---------- 间距 ---------- */
+  --spacing-base: 0.25rem;
+
+  /* ---------- 边框粗细 ---------- */
+  --border-medium: 1px;
+  --border-thin: 0.5px;
 }
 
 /* 
-   Dark Mode Overrides
+   Dark 模式 Overrides
 */
 .dark,
 [data-theme="dark"] {
-  --color-text-title: #FFFFFF !important;
-  --color-text-main: rgba(255, 255, 255, 0.9) !important;
-  --color-text-sub: rgba(255, 255, 255, 0.75) !important;
-  --color-text-minor: rgba(255, 255, 255, 0.6) !important;
-  --color-text-assist: rgba(255, 255, 255, 0.45) !important;
-  --color-text-disabled: rgba(255, 255, 255, 0.35) !important;
+  /* ---------- 文字颜色 ---------- */
+  --color-text-black: rgba(0, 0, 0, 1);
+  --color-text-1: rgba(255, 255, 255, 1);
+  --color-text-2: rgba(255, 255, 255, 0.9);
+  --color-text-3: rgba(255, 255, 255, 0.75);
+  --color-text-4: rgba(255, 255, 255, 0.6);
+  --color-text-5: rgba(255, 255, 255, 0.45);
+  --color-text-6: rgba(255, 255, 255, 0.35);
+  --color-text-white: rgba(255, 255, 255, 1);
 
-  --color-bg-page: #191B1C !important;
-  --color-bg-1: #212224 !important;
-  --color-bg-2: #2A2C2E !important;
-  --color-bg-3: #343638 !important;
-  --color-bg-dialog: #2A2A2B !important;
+  /* ---------- 背景颜色 ---------- */
+  --color-bg-1: rgba(25, 27, 28, 1);
+  --color-bg-2: rgba(18, 19, 20, 1);
+  --color-bg-3: rgba(18, 19, 20, 1);
+  --color-bg-4: rgba(42, 42, 43, 1);
 
-  --color-fill-1: rgba(255, 255, 255, 0.1) !important;
-  --color-fill-2: rgba(255, 255, 255, 0.05) !important;
-  --color-fill-3: rgba(255, 255, 255, 0.07) !important;
-  --color-fill-overlay: rgba(44, 45, 46, 0.8) !important;
-  --color-fill-overlay-strong: rgba(73, 75, 77, 0.6) !important;
+  /* ---------- 容器颜色-实色 ---------- */
+  --color-fill-1: rgba(33, 34, 36, 1);
+  --color-fill-2: rgba(42, 44, 46, 1);
+  --color-fill-3: rgba(52, 54, 56, 1);
 
-  --color-border-strong: rgba(255, 255, 255, 0.17) !important;
-  --color-border-weak: rgba(255, 255, 255, 0.12) !important;
+  /* ---------- 容器颜色-透明度 ---------- */
+  --color-fill-a1: rgba(255, 255, 255, 0.1);
+  --color-fill-a2: rgba(255, 255, 255, 0.05);
+  --color-fill-a3: rgba(255, 255, 255, 0.07);
+  --color-fill-a4: rgba(44, 45, 46, 0.9);
+  --color-fill-a5: rgba(73, 75, 77, 0.6);
 
-  --color-blue-text-strong: #E6F5FF !important;
-  --color-blue-text: #A6DAFF !important;
-  --color-blue-active: #26A5FF !important;
-  --color-blue: #0095FF !important;
-  --color-blue-hover: #007FD9 !important;
-  --color-blue-bg-disabled: #00528C !important;
-  --color-blue-bg-weak: #003C66 !important;
+  /* ---------- 线条颜色-实色 ---------- */
+  --color-border-1: rgba(231, 232, 233, 1);
+  --color-border-2: rgba(53, 54, 55, 1);
+
+  /* ---------- 线条颜色-透明度 ---------- */
+  --color-border-a1: rgba(255, 255, 255, 0.17);
+  --color-border-a2: rgba(255, 255, 255, 0.12);
+  --color-border-a3: rgba(255, 255, 255, 0.05);
+
+  /* ---------- 主题色 - Blue ---------- */
+  --color-blue-text-strong: rgba(229, 244, 255, 1);
+  --color-blue-text: rgba(166, 218, 255, 1);
+  --color-blue-active: rgba(38, 165, 255, 1);
+  --color-blue: rgba(0, 149, 255, 1);
+  --color-blue-hover: rgba(0, 127, 217, 1);
+  --color-blue-bg-disabled: rgba(0, 82, 140, 1);
+  --color-blue-bg-weak: rgba(0, 60, 102, 1);
 }
 
 @theme inline {
@@ -221,15 +268,15 @@
   --radius-xl: var(--radius-16);
   --radius-4xl: var(--radius-full);
 
-  --background: var(--color-bg-page);
-  --foreground: var(--color-text-main);
+  --background: var(--color-bg-1);
+  --foreground: var(--color-text-2);
   --primary: var(--color-blue);
-  --primary-foreground: var(--color-text-inverse);
-  --border: var(--color-border-weak);
-  --muted: var(--color-fill-3);
-  --muted-foreground: var(--color-text-minor);
-  --accent: var(--color-fill-2);
-  --accent-foreground: var(--color-text-main);
+  --primary-foreground: var(--color-text-white);
+  --border: var(--color-border-a2);
+  --muted: var(--color-fill-a3);
+  --muted-foreground: var(--color-text-4);
+  --accent: var(--color-fill-a2);
+  --accent-foreground: var(--color-text-2);
 }
 
 /* Global resets and base styles */
@@ -242,14 +289,14 @@ body {
   background-position: center;
   overflow: hidden;
 
-  background-color: var(--color-bg-page) !important;
-  color: var(--color-text-main) !important;
+  background-color: var(--color-bg-1) !important;
+  color: var(--color-text-2) !important;
   transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 @layer base {
   * {
-    border-color: var(--color-border-weak);
+    border-color: var(--color-border-a2);
   }
 
   .iconfont {
@@ -267,10 +314,10 @@ body {
   .glass-panel {
     backdrop-filter: var(--effect-backdrop-blur);
     -webkit-backdrop-filter: var(--effect-backdrop-blur);
-    background-color: var(--color-fill-overlay) !important;
-    border: 1px solid var(--color-border-weak) !important;
+    background-color: var(--color-fill-a4) !important;
+    border: 1px solid var(--color-border-a2) !important;
     box-shadow: var(--effect-shadow-level-2-box);
-    color: var(--color-text-main) !important;
+    color: var(--color-text-2) !important;
     transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
   }
 }

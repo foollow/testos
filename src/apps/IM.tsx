@@ -174,10 +174,10 @@ const IMApp: React.FC<{ windowId: string }> = () => {
     };
 
     return (
-        <div className="flex h-full text-[var(--color-text-main)] overflow-hidden">
+        <div className="flex h-full text-[var(--color-text-2)] overflow-hidden">
             {/* Left Rail - Navigation */}
             <div className="w-16 flex flex-col items-center pb-4 shrink-0 pt-11">
-                <Avatar className="h-9 w-9 border border-[var(--color-border-strong)] hover:scale-105 transition-transform cursor-pointer mb-6">
+                <Avatar className="h-9 w-9 border border-[var(--color-border-a1)] hover:scale-105 transition-transform cursor-pointer mb-6">
                     <AvatarImage src="https://api.dicebear.com/7.x/avataaars/svg?seed=Felix" />
                     <AvatarFallback>JD</AvatarFallback>
                 </Avatar>
@@ -195,7 +195,7 @@ const IMApp: React.FC<{ windowId: string }> = () => {
                                             onClick={() => setActiveTab(item.id)}
                                             className={`h-10 w-10 rounded-[var(--radius-12)] transition-all ${isActive
                                                 ? 'text-[var(--color-blue)]'
-                                                : 'text-[var(--color-text-minor)] hover:text-[var(--color-text-main)] transition-colors'
+                                                : 'text-[var(--color-text-4)] hover:text-[var(--color-text-2)] transition-colors'
                                                 }`}
                                         >
                                             <span className={`iconfont icon-${item.icon}-${isActive ? 'actived' : 'default'} text-[22px]`} />
@@ -212,20 +212,20 @@ const IMApp: React.FC<{ windowId: string }> = () => {
             {/* Main Area Wrapper */}
             <div className="flex-1 flex flex-col min-w-0">
                 {/* Content Container (Layered White Box) */}
-                <div className="flex-1 ml-0 mt-10 mb-4 mr-4 bg-white rounded-2xl shadow-[0_4px_24px_rgba(0,0,0,0.06)] border border-[var(--color-border-weak)] flex overflow-hidden">
+                <div className="flex-1 ml-0 mt-10 mb-4 mr-4 bg-[var(--color-bg-1)] rounded-2xl shadow-[0_4px_24px_rgba(0,0,0,0.06)] border border-[var(--color-border-a2)] flex overflow-hidden">
                     {/* Middle Panel - Chat List */}
-                    <div className="w-72 flex flex-col border-r border-[var(--color-border-weak)] shrink-0 bg-[#fbfbfb]">
+                    <div className="w-72 flex flex-col border-r border-[var(--color-border-a2)] shrink-0 bg-[var(--color-fill-2)]">
                         <div className="pt-6 p-4 pb-0 space-y-4">
                             <div className="flex items-center justify-between px-1">
-                                <h2 className="text-[17px] font-bold tracking-tight text-[var(--color-text-title)]">消息</h2>
-                                <Button variant="ghost" size="icon" className="h-8 w-8 text-[var(--color-text-minor)]"><Plus size={18} /></Button>
+                                <h2 className="text-[17px] font-bold tracking-tight text-[var(--color-text-1)]">消息</h2>
+                                <Button variant="ghost" size="icon" className="h-8 w-8 text-[var(--color-text-4)]"><Plus size={18} /></Button>
                             </div>
 
                             <div className="relative">
-                                <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-[var(--color-text-assist)]" />
+                                <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-[var(--color-text-5)]" />
                                 <Input
                                     placeholder={t.chat.search}
-                                    className="pl-9 h-9 bg-[var(--color-bg-3)] border-none focus-visible:ring-1 focus-visible:ring-[var(--color-blue-active)]/30 text-[var(--color-text-main)] rounded-[var(--radius-8)]"
+                                    className="pl-9 h-9 bg-[var(--color-bg-3)] border-none focus-visible:ring-1 focus-visible:ring-[var(--color-blue-active)]/30 text-[var(--color-text-2)] rounded-[var(--radius-8)]"
                                 />
                             </div>
 
@@ -240,23 +240,23 @@ const IMApp: React.FC<{ windowId: string }> = () => {
                                                 </Avatar>
                                                 {contact.online && <div className="absolute bottom-0 right-0 h-3 w-3 rounded-full bg-[var(--color-blue)] border-2 border-[var(--color-bg-page)]" />}
                                             </div>
-                                            <span className="text-[var(--font-xs-size)] text-[var(--color-text-main)] truncate w-full text-center font-medium">{contact.name}</span>
+                                            <span className="text-[var(--font-sm-size)] text-[var(--color-text-2)] truncate w-full text-center font-medium">{contact.name}</span>
                                         </div>
                                     ))}
                                 </div>
 
                                 <Tabs defaultValue="all" className="w-full">
-                                    <TabsList className="bg-transparent h-auto p-0 gap-4 w-full justify-start border-none rounded-none overflow-x-auto no-scrollbar">
-                                        <TabsTrigger value="all" className="rounded-none border-b-2 border-transparent data-[state=active]:border-[var(--color-blue)] data-[state=active]:bg-transparent px-1 pb-2 font-bold text-[var(--color-text-main)] transition-all">全部</TabsTrigger>
-                                        <TabsTrigger value="later" className="rounded-none border-b-2 border-transparent data-[state=active]:border-[var(--color-blue)] data-[state=active]:bg-transparent px-1 pb-2 font-medium text-[var(--color-text-minor)] transition-all flex items-center gap-1">
-                                            稍后处理 <Badge variant="secondary" className="h-4 min-w-[16px] px-1 bg-[var(--color-bg-3)] text-[var(--color-text-assist)] border-none text-[8px]">3</Badge>
+                                    <TabsList className="bg-transparent h-auto p-0 gap-3 w-full justify-start border-none rounded-none overflow-x-auto no-scrollbar">
+                                        <TabsTrigger value="all" className="rounded-none border-b-2 border-transparent data-[state=active]:border-[var(--color-blue)] data-[state=active]:bg-transparent px-0.5 pb-2 font-bold text-[var(--color-text-2)] transition-all">全部</TabsTrigger>
+                                        <TabsTrigger value="later" className="rounded-none border-b-2 border-transparent data-[state=active]:border-[var(--color-blue)] data-[state=active]:bg-transparent px-0.5 pb-2 font-medium text-[var(--color-text-4)] transition-all flex items-center gap-1">
+                                            稍后处理 <Badge variant="secondary" className="h-4 min-w-[16px] px-1 bg-[var(--color-bg-3)] text-[var(--color-text-5)] border-none text-[8px]">3</Badge>
                                         </TabsTrigger>
-                                        <TabsTrigger value="group" className="rounded-none border-b-2 border-transparent data-[state=active]:border-[var(--color-blue)] data-[state=active]:bg-transparent px-1 pb-2 font-medium text-[var(--color-text-minor)] transition-all">分组</TabsTrigger>
-                                        <TabsTrigger value="unread" className="rounded-none border-b-2 border-transparent data-[state=active]:border-[var(--color-blue)] data-[state=active]:bg-transparent px-1 pb-2 font-medium text-[var(--color-text-minor)] transition-all flex items-center gap-1">
-                                            未读 <Badge variant="secondary" className="h-4 min-w-[16px] px-1 bg-[var(--color-bg-3)] text-[var(--color-text-assist)] border-none text-[8px]">3</Badge>
+                                        <TabsTrigger value="group" className="rounded-none border-b-2 border-transparent data-[state=active]:border-[var(--color-blue)] data-[state=active]:bg-transparent px-0.5 pb-2 font-medium text-[var(--color-text-4)] transition-all">分组</TabsTrigger>
+                                        <TabsTrigger value="unread" className="rounded-none border-b-2 border-transparent data-[state=active]:border-[var(--color-blue)] data-[state=active]:bg-transparent px-0.5 pb-2 font-medium text-[var(--color-text-4)] transition-all flex items-center gap-1">
+                                            未读 <Badge variant="secondary" className="h-4 min-w-[16px] px-1 bg-[var(--color-bg-3)] text-[var(--color-text-5)] border-none text-[8px]">3</Badge>
                                         </TabsTrigger>
-                                        <TabsTrigger value="at" className="rounded-none border-b-2 border-transparent data-[state=active]:border-[var(--color-blue)] data-[state=active]:bg-transparent px-1 pb-2 font-medium text-[var(--color-text-minor)] transition-all">@我</TabsTrigger>
-                                        <Button variant="ghost" size="icon" className="h-6 w-6 ml-auto flex-shrink-0 text-[var(--color-text-minor)] hover:text-[var(--color-text-main)] transition-colors"><MoreHorizontal size={16} /></Button>
+                                        <TabsTrigger value="at" className="rounded-none border-b-2 border-transparent data-[state=active]:border-[var(--color-blue)] data-[state=active]:bg-transparent px-0.5 pb-2 font-medium text-[var(--color-text-4)] transition-all">@我</TabsTrigger>
+                                        <Button variant="ghost" size="icon" className="h-6 w-6 ml-auto flex-shrink-0 text-[var(--color-text-4)] hover:text-[var(--color-text-2)] transition-colors"><MoreHorizontal size={16} /></Button>
                                     </TabsList>
                                 </Tabs>
                             </div>
@@ -278,18 +278,18 @@ const IMApp: React.FC<{ windowId: string }> = () => {
                                         </div>
                                         <div className="flex-1 min-w-0">
                                             <div className="flex items-center justify-between mb-0.5">
-                                                <span className={`text-[var(--font-sm-size)] font-semibold truncate text-[var(--color-text-main)] transition-colors`}>
+                                                <span className={`text-[var(--font-sm-size)] font-semibold truncate text-[var(--color-text-2)] transition-colors`}>
                                                     {chat.name}
-                                                    {chat.isGroup && <span className="ml-1 text-[var(--font-xs-size)] text-[var(--color-text-minor)] font-normal">{chat.memberCount}人</span>}
+                                                    {chat.isGroup && <span className="ml-1 text-[var(--font-xs-size)] text-[var(--color-text-4)] font-normal">{chat.memberCount}人</span>}
                                                 </span>
-                                                <span className="text-[var(--font-xs-size)] text-[var(--color-text-minor)]">{chat.time}</span>
+                                                <span className="text-[var(--font-xs-size)] text-[var(--color-text-4)]">{chat.time}</span>
                                             </div>
-                                            <p className="text-[var(--font-xs-size)] text-[var(--color-text-assist)] truncate leading-relaxed">
+                                            <p className="text-[var(--font-sm-size)] text-[var(--color-text-5)] truncate leading-relaxed">
                                                 {chat.lastMessage}
                                             </p>
                                         </div>
                                         {chat.muted && (
-                                            <div className="text-[var(--color-text-assist)]">
+                                            <div className="text-[var(--color-text-5)]">
                                                 <svg width="12" height="12" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                                                     <path d="M19.1001 19.1L4.8999 4.8999M10.1999 4.3999L6.1999 8.3999H3.1999V15.6H6.1999L10.1999 19.6V4.3999ZM15.1999 8.3999C16.1999 9.3999 16.7999 10.6 16.7999 12M18.8999 5.3999C20.6 7.0999 21.6 9.3999 21.6 12C21.6 14.6001 20.6 17 18.8999 18.6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
                                                 </svg>
@@ -312,24 +312,24 @@ const IMApp: React.FC<{ windowId: string }> = () => {
                                 </Avatar>
                                 <div className="flex flex-col">
                                     <div className="flex items-center gap-2">
-                                        <h3 className="text-[var(--font-base-size)] font-bold text-[var(--color-text-title)]">{activeChat.name}</h3>
-                                        {activeChat.isGroup && <span className="text-[var(--font-xs-size)] text-[var(--color-text-assist)] font-normal">{activeChat.memberCount}人</span>}
+                                        <h3 className="text-[var(--font-base-size)] font-bold text-[var(--color-text-1)]">{activeChat.name}</h3>
+                                        {activeChat.isGroup && <span className="text-[var(--font-xs-size)] text-[var(--color-text-5)] font-normal">{activeChat.memberCount}人</span>}
                                     </div>
-                                    <p className="text-[var(--font-xs-size)] text-[var(--color-text-assist)] truncate max-w-[400px]">
+                                    <p className="text-[var(--font-sm-size)] text-[var(--color-text-5)] truncate max-w-[400px]">
                                         {ai.isTyping ? '正在输入...' : '周会请提前订会议室，会议文档及时发出，会后同步纪要'}
                                     </p>
                                 </div>
                             </div>
-                            <div className="flex items-center gap-1 text-[var(--color-text-minor)]">
-                                <Button variant="ghost" size="icon" className="h-9 w-9 hover:text-[var(--color-text-main)] transition-colors"><Users size={20} /></Button>
-                                <Button variant="ghost" size="icon" className="h-9 w-9 hover:text-[var(--color-text-main)] transition-colors"><UserPlus size={20} /></Button>
-                                <Button variant="ghost" size="icon" className="h-9 w-9 hover:text-[var(--color-text-main)] transition-colors"><Search size={20} /></Button>
-                                <Button variant="ghost" size="icon" className="h-9 w-9 hover:text-[var(--color-text-main)] transition-colors"><MoreHorizontal size={20} /></Button>
+                            <div className="flex items-center gap-1 text-[var(--color-text-4)]">
+                                <Button variant="ghost" size="icon" className="h-9 w-9 hover:text-[var(--color-text-2)] transition-colors"><Users size={20} /></Button>
+                                <Button variant="ghost" size="icon" className="h-9 w-9 hover:text-[var(--color-text-2)] transition-colors"><UserPlus size={20} /></Button>
+                                <Button variant="ghost" size="icon" className="h-9 w-9 hover:text-[var(--color-text-2)] transition-colors"><Search size={20} /></Button>
+                                <Button variant="ghost" size="icon" className="h-9 w-9 hover:text-[var(--color-text-2)] transition-colors"><MoreHorizontal size={20} /></Button>
                             </div>
                         </header>
 
                         {/* Messages List */}
-                        <ScrollArea ref={scrollAreaRef} className="flex-1 p-6">
+                        <ScrollArea ref={scrollAreaRef} className="flex-1 p-5">
                             <div className="max-w-4xl mx-auto space-y-8">
                                 {currentMessages.map((msg) => (
                                     <div key={msg.id} className={`flex gap-3 group ${msg.isMe ? 'flex-row-reverse' : ''}`}>
@@ -341,13 +341,13 @@ const IMApp: React.FC<{ windowId: string }> = () => {
                                         )}
                                         <div className={`flex flex-col gap-1 max-w-[75%] ${msg.isMe ? 'items-end' : 'items-start'}`}>
                                             <div className={`flex items-baseline gap-2 ${msg.isMe ? 'flex-row-reverse' : ''}`}>
-                                                <span className="text-[11px] font-medium text-[var(--color-text-assist)]">{msg.sender}</span>
-                                                <span className="text-[10px] text-[var(--color-text-assist)] opacity-0 group-hover:opacity-100 transition-opacity">{msg.time}</span>
+                                                <span className="text-[11px] font-medium text-[var(--color-text-5)]">{msg.sender}</span>
+                                                <span className="text-[10px] text-[var(--color-text-5)] opacity-0 group-hover:opacity-100 transition-opacity">{msg.time}</span>
                                             </div>
 
                                             <div className={`relative px-4 py-2 rounded-[var(--radius-12)] text-[var(--font-base-size)] leading-relaxed select-text ${msg.isMe
-                                                ? 'bg-[var(--color-blue)] text-[var(--color-text-inverse)]'
-                                                : 'bg-[var(--color-bg-2)] border border-[var(--color-border-weak)] text-[var(--color-text-main)]'
+                                                ? 'bg-[var(--color-blue)] text-[var(--color-text-white)]'
+                                                : 'bg-[var(--color-bg-2)] border border-[var(--color-border-a2)] text-[var(--color-text-2)]'
                                                 } transition-all`}>
                                                 {msg.content}
                                             </div>
@@ -358,8 +358,8 @@ const IMApp: React.FC<{ windowId: string }> = () => {
                         </ScrollArea>
 
                         {/* Input Area */}
-                        <div className="px-6 pb-6 pt-2 shrink-0 border-t border-transparent">
-                            <div className="max-w-[1240px] mx-auto rounded-[var(--radius-16)] border border-[var(--color-border-weak)] bg-[var(--color-bg-1)] shadow-[var(--effect-shadow-level-1-box)] p-1.5 focus-within:ring-1 focus-within:ring-[var(--color-blue-active)]/10 transition-all flex flex-col group">
+                        <div className="px-5 pb-5 pt-2 shrink-0 border-t border-transparent">
+                            <div className="max-w-[1240px] mx-auto rounded-[var(--radius-12)] border border-[var(--color-border-a2)] bg-[var(--color-bg-1)] shadow-[var(--effect-shadow-level-1-box)] p-1.5 focus-within:ring-1 focus-within:ring-[var(--color-blue-active)]/10 transition-all flex flex-col group">
                                 <div className="relative flex items-end">
                                     <Textarea
                                         ref={inputRef}
@@ -367,12 +367,12 @@ const IMApp: React.FC<{ windowId: string }> = () => {
                                         onChange={(e) => setMessage(e.target.value)}
                                         onKeyDown={handleKeyDown}
                                         placeholder="输入“/”，大象AI帮你..."
-                                        className="border-none focus-visible:ring-0 bg-transparent text-[var(--font-base-size)] min-h-[44px] px-3 shadow-none h-auto py-2.5 flex-1 pr-12 resize-none overflow-y-auto text-[var(--color-text-main)] placeholder:text-[var(--color-text-assist)]"
+                                        className="border-none focus-visible:ring-0 bg-transparent text-[var(--font-base-size)] min-h-[44px] px-3 shadow-none h-auto py-2.5 flex-1 pr-12 resize-none overflow-y-auto text-[var(--color-text-2)] placeholder:text-[var(--color-text-5)]"
                                         rows={1}
                                     />
                                 </div>
 
-                                <div className="flex items-center gap-0.5 text-[var(--color-text-minor)] px-1 pb-1">
+                                <div className="flex items-center gap-0.5 text-[var(--color-text-4)] px-1 pb-1">
                                     <Button variant="ghost" size="icon" className="h-8 w-8 rounded-[var(--radius-8)] hover:text-[var(--color-blue)] hover:bg-[var(--color-blue-bg-weak)]/50 transition-colors"><Plus size={18} /></Button>
                                     <Button variant="ghost" size="icon" className="h-8 w-8 rounded-[var(--radius-8)] hover:text-[var(--color-blue)] hover:bg-[var(--color-blue-bg-weak)]/50 transition-colors"><Smile size={18} /></Button>
                                     <div className="flex items-center h-8 px-2 rounded-[var(--radius-8)] hover:text-[var(--color-blue)] hover:bg-[var(--color-blue-bg-weak)]/50 transition-colors cursor-pointer text-[13px] font-medium ml-1">
@@ -400,7 +400,7 @@ const IMApp: React.FC<{ windowId: string }> = () => {
                                         >
                                             <SendHorizonal size={18} />
                                         </Button>
-                                        <div className="flex items-center px-1 text-[var(--color-text-assist)]">
+                                        <div className="flex items-center px-1 text-[var(--color-text-5)]">
                                             <svg width="10" height="10" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                                                 <path d="M6 9L12 15L18 9" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
                                             </svg>
