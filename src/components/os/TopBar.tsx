@@ -1,6 +1,6 @@
 import React from 'react';
 import { useTime } from '../../hooks/useTime';
-import { Wifi, Battery, Search, Apple } from 'lucide-react';
+import { Wifi, Battery, Apple } from 'lucide-react';
 import { useOS } from '../../store/useOS';
 
 export const TopBar: React.FC = () => {
@@ -38,7 +38,7 @@ export const TopBar: React.FC = () => {
                 <div className="flex items-center gap-3" style={{ color: 'var(--text-primary)' }}>
                     <Battery size={18} className="opacity-80" />
                     <Wifi size={16} className="opacity-80" />
-                    <Search size={16} className="opacity-80" />
+                    <span className="iconfont icon-message-default opacity-80 text-[16px]" />
                 </div>
 
                 <div className="flex items-center gap-2 cursor-default">

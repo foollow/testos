@@ -2,6 +2,94 @@
 
 @plugin "tailwindcss-animate";
 
+/* Iconfont - Project 1506 (v0.0.5) */
+@font-face {
+  font-family: 'iconfont';
+  src: url('https://s3plus.meituan.net/v1/mss_28a77f134e5b4abf876b4ff035f4107f/iconfont/project/1506/0.0.5/workos.woff2') format('woff2'),
+    url('https://s3plus.meituan.net/v1/mss_28a77f134e5b4abf876b4ff035f4107f/iconfont/project/1506/0.0.5/workos.woff') format('woff'),
+    url('https://s3plus.meituan.net/v1/mss_28a77f134e5b4abf876b4ff035f4107f/iconfont/project/1506/0.0.5/workos.ttf') format('truetype');
+}
+
+.icon-document-actived:before {
+  content: "\e000";
+}
+
+.icon-document-default:before {
+  content: "\e001";
+}
+
+.icon-calendar-default:before {
+  content: "\e002";
+}
+
+.icon-message-actived:before {
+  content: "\e003";
+}
+
+.icon-approval-actived:before {
+  content: "\e004";
+}
+
+.icon-approval-default:before {
+  content: "\e005";
+}
+
+.icon-workplace-actived:before {
+  content: "\e006";
+}
+
+.icon-workplace-default:before {
+  content: "\e007";
+}
+
+.icon-message-default:before {
+  content: "\e008";
+}
+
+.icon-calendar-actived:before {
+  content: "\e009";
+}
+
+.icon-send-plane:before {
+  content: "\e00d";
+}
+
+.icon-tool-ai-star:before {
+  content: "\e00e";
+}
+
+.icon-tool-cut:before {
+  content: "\e00f";
+}
+
+.icon-tool-emoji:before {
+  content: "\e010";
+}
+
+.icon-tool-picture:before {
+  content: "\e011";
+}
+
+.icon-tool-text-format:before {
+  content: "\e012";
+}
+
+.icon-tool-upload:before {
+  content: "\e013";
+}
+
+.icon-tool-video:before {
+  content: "\e014";
+}
+
+.icon-more-horizontal:before {
+  content: "\e017";
+}
+
+.icon-logo-daxiang:before {
+  content: "\e019";
+}
+
 @custom-variant dark (&:is(.dark *));
 
 /* 
@@ -162,6 +250,16 @@ body {
 @layer base {
   * {
     border-color: var(--color-border-weak);
+  }
+
+  .iconfont {
+    font-family: "iconfont" !important;
+    font-size: 16px;
+    font-style: normal;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    display: inline-block;
+    line-height: 1;
   }
 }
 

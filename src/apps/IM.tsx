@@ -2,9 +2,8 @@ import React, { useState, useRef, useEffect } from 'react';
 import {
     Search, Plus, Smile,
     ImageIcon, Paperclip, Scissors, Maximize2,
-    SendHorizonal, MoreHorizontal, Users, UserPlus, SearchCode,
-    MessageSquare, Calendar, LayoutDashboard, VideoIcon,
-    Contact2, GraduationCap, Cloud, Monitor, ShieldCheck,
+    SendHorizonal, MoreHorizontal, Users, UserPlus,
+    VideoIcon,
 } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -12,7 +11,6 @@ import { Textarea } from "@/components/ui/textarea";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Badge } from "@/components/ui/badge";
-import { Separator } from "@/components/ui/separator";
 import {
     Tooltip,
     TooltipContent,
@@ -88,11 +86,20 @@ const IMApp: React.FC<{ windowId: string }> = () => {
     const { systemState } = useOS();
     const t = useTranslation(systemState.language);
     const ai = useAI();
+    const [activeTab, setActiveTab] = useState('messages');
     const [activeChat, setActiveChat] = useState(MOCK_CHATS[0]);
     const [message, setMessage] = useState('');
     const [messagesByChat, setMessagesByChat] = useState<Record<string, Message[]>>({});
     const inputRef = useRef<HTMLTextAreaElement>(null);
     const scrollAreaRef = useRef<HTMLDivElement>(null);
+
+    const NAV_ITEMS = [
+        { id: 'messages', label: t.chat.messages, icon: 'message' },
+        { id: 'docs', label: '学城', icon: 'document' },
+        { id: 'calendar', label: '日程', icon: 'calendar' },
+        { id: 'approval', label: '审批', icon: 'approval' },
+        { id: 'workplace', label: '工作台', icon: 'workplace' },
+    ];
 
     const adjustHeight = () => {
         if (inputRef.current) {
@@ -177,90 +184,27 @@ const IMApp: React.FC<{ windowId: string }> = () => {
 
                 <div className="flex flex-col gap-2 flex-1 items-center">
                     <TooltipProvider>
-                        <Tooltip>
-                            <TooltipTrigger asChild>
-                                <Button variant="ghost" size="icon" className="h-10 w-10 rounded-[var(--radius-12)] text-[var(--color-text-inverse)] bg-[var(--color-blue)] shadow-[0_4px_12px_rgba(0,140,255,0.3)]">
-                                    <MessageSquare size={22} strokeWidth={2.5} />
-                                </Button>
-                            </TooltipTrigger>
-                            <TooltipContent side="right">{t.chat.messages}</TooltipContent>
-                        </Tooltip>
-
-                        <Tooltip>
-                            <TooltipTrigger asChild>
-                                <Button variant="ghost" size="icon" className="h-10 w-10 rounded-[var(--radius-12)] text-[var(--color-text-minor)] hover:text-[var(--color-text-main)] transition-colors">
-                                    <GraduationCap size={22} />
-                                </Button>
-                            </TooltipTrigger>
-                            <TooltipContent side="right">学城</TooltipContent>
-                        </Tooltip>
-
-                        <Tooltip>
-                            <TooltipTrigger asChild>
-                                <Button variant="ghost" size="icon" className="h-10 w-10 rounded-[var(--radius-12)] text-[var(--color-text-minor)] hover:text-[var(--color-text-main)] transition-colors">
-                                    <Contact2 size={22} />
-                                </Button>
-                            </TooltipTrigger>
-                            <TooltipContent side="right">通讯录</TooltipContent>
-                        </Tooltip>
-
-                        <Tooltip>
-                            <TooltipTrigger asChild>
-                                <Button variant="ghost" size="icon" className="h-10 w-10 rounded-[var(--radius-12)] text-[var(--color-text-minor)] hover:text-[var(--color-text-main)] transition-colors">
-                                    <Calendar size={22} />
-                                </Button>
-                            </TooltipTrigger>
-                            <TooltipContent side="right">日程</TooltipContent>
-                        </Tooltip>
-
-                        <Tooltip>
-                            <TooltipTrigger asChild>
-                                <Button variant="ghost" size="icon" className="h-10 w-10 rounded-[var(--radius-12)] text-[var(--color-text-minor)] hover:text-[var(--color-text-main)] transition-colors">
-                                    <SearchCode size={22} />
-                                </Button>
-                            </TooltipTrigger>
-                            <TooltipContent side="right">审批</TooltipContent>
-                        </Tooltip>
-
-                        <Tooltip>
-                            <TooltipTrigger asChild>
-                                <Button variant="ghost" size="icon" className="h-10 w-10 rounded-[var(--radius-12)] text-[var(--color-text-minor)] hover:text-[var(--color-text-main)] transition-colors">
-                                    <LayoutDashboard size={22} />
-                                </Button>
-                            </TooltipTrigger>
-                            <TooltipContent side="right">工作台</TooltipContent>
-                        </Tooltip>
-                    </TooltipProvider>
-
-                    <Separator className="w-8 my-2 bg-[var(--color-border-weak)]" />
-
-                    <TooltipProvider>
-                        <Tooltip>
-                            <TooltipTrigger asChild>
-                                <Button variant="ghost" size="icon" className="h-10 w-10 rounded-[var(--radius-12)] text-[var(--color-text-minor)] hover:text-[var(--color-text-main)] transition-colors">
-                                    <Cloud size={20} />
-                                </Button>
-                            </TooltipTrigger>
-                            <TooltipContent side="right">云盘</TooltipContent>
-                        </Tooltip>
-
-                        <Tooltip>
-                            <TooltipTrigger asChild>
-                                <Button variant="ghost" size="icon" className="h-10 w-10 rounded-[var(--radius-12)] text-[var(--color-text-minor)] hover:text-[var(--color-text-main)] transition-colors">
-                                    <Monitor size={20} />
-                                </Button>
-                            </TooltipTrigger>
-                            <TooltipContent side="right">视频会议</TooltipContent>
-                        </Tooltip>
-
-                        <Tooltip>
-                            <TooltipTrigger asChild>
-                                <Button variant="ghost" size="icon" className="h-10 w-10 rounded-[var(--radius-12)] text-[var(--color-text-minor)] hover:text-[var(--color-text-main)] transition-colors mt-auto">
-                                    <ShieldCheck size={20} />
-                                </Button>
-                            </TooltipTrigger>
-                            <TooltipContent side="right">VPN</TooltipContent>
-                        </Tooltip>
+                        {NAV_ITEMS.map((item) => {
+                            const isActive = activeTab === item.id;
+                            return (
+                                <Tooltip key={item.id}>
+                                    <TooltipTrigger asChild>
+                                        <Button
+                                            variant="ghost"
+                                            size="icon"
+                                            onClick={() => setActiveTab(item.id)}
+                                            className={`h-10 w-10 rounded-[var(--radius-12)] transition-all ${isActive
+                                                ? 'text-[var(--color-blue)]'
+                                                : 'text-[var(--color-text-minor)] hover:text-[var(--color-text-main)] transition-colors'
+                                                }`}
+                                        >
+                                            <span className={`iconfont icon-${item.icon}-${isActive ? 'actived' : 'default'} text-[22px]`} />
+                                        </Button>
+                                    </TooltipTrigger>
+                                    <TooltipContent side="right">{item.label}</TooltipContent>
+                                </Tooltip>
+                            );
+                        })}
                     </TooltipProvider>
                 </div>
             </div>

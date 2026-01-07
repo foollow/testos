@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Folder, File, FileText, Image as ImageIcon, Music, Film, ChevronRight, LayoutGrid, List } from 'lucide-react';
+import { Image as ImageIcon, Music, Film, ChevronRight, LayoutGrid, List } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import { useTranslation } from "@/lib/i18n";
 import { useOS } from "@/store/useOS";
@@ -32,12 +32,12 @@ const Files: React.FC = () => {
 
     const getIcon = (type: FileItem['type']) => {
         switch (type) {
-            case 'folder': return <Folder className="text-blue-500 fill-blue-500/20" size={view === 'grid' ? 48 : 20} />;
-            case 'text': return <FileText className="text-gray-500" size={view === 'grid' ? 48 : 20} />;
+            case 'folder': return <span className={`iconfont icon-document-actived text-blue-500 ${view === 'grid' ? 'text-[48px]' : 'text-[20px]'}`} />;
+            case 'text': return <span className={`iconfont icon-document-default text-gray-500 ${view === 'grid' ? 'text-[48px]' : 'text-[20px]'}`} />;
             case 'image': return <ImageIcon className="text-purple-500" size={view === 'grid' ? 48 : 20} />;
             case 'music': return <Music className="text-pink-500" size={view === 'grid' ? 48 : 20} />;
             case 'video': return <Film className="text-red-500" size={view === 'grid' ? 48 : 20} />;
-            default: return <File className="text-gray-400" size={view === 'grid' ? 48 : 20} />;
+            default: return <span className={`iconfont icon-document-default text-gray-400 ${view === 'grid' ? 'text-[48px]' : 'text-[20px]'}`} />;
         }
     };
 
@@ -48,13 +48,13 @@ const Files: React.FC = () => {
                 <div className="space-y-1">
                     <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider px-2">{t.files.sidebar.favorites}</p>
                     <button className="flex items-center gap-2 w-full p-2 bg-primary/10 text-primary rounded-lg text-sm font-medium">
-                        <Folder size={16} /> {t.files.sidebar.airdrop}
+                        <span className="iconfont icon-document-actived text-[16px]" /> {t.files.sidebar.airdrop}
                     </button>
                     <button className="flex items-center gap-2 w-full p-2 hover:bg-muted/50 rounded-lg text-sm transition-colors duration-300 text-muted-foreground hover:text-foreground">
-                        <LayoutGrid size={16} /> {t.files.sidebar.applications}
+                        <span className="iconfont icon-workplace-default text-[16px]" /> {t.files.sidebar.applications}
                     </button>
                     <button className="flex items-center gap-2 w-full p-2 hover:bg-muted/50 rounded-lg text-sm transition-colors duration-300 text-muted-foreground hover:text-foreground">
-                        <FileText size={16} /> {t.files.sidebar.documents}
+                        <span className="iconfont icon-document-default text-[16px]" /> {t.files.sidebar.documents}
                     </button>
                 </div>
             </div>
