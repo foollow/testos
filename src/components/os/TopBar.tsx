@@ -1,9 +1,15 @@
 import React from 'react';
 import { useTime } from '../../hooks/useTime';
 import { Wifi, Battery, Search, Apple } from 'lucide-react';
+import { useOS } from '../../store/useOS';
 
 export const TopBar: React.FC = () => {
     const time = useTime();
+    const activeWindowId = useOS((state) => state.windowOrder[state.windowOrder.length - 1]);
+    const activeWindow = useOS((state) => activeWindowId ? state.windows[activeWindowId] : null);
+    const activeApp = useOS((state) => activeWindow ? state.apps[activeWindow.appId] : null);
+
+    const activeAppName = activeApp?.title || 'Finder';
 
     return (
         <div
@@ -17,7 +23,7 @@ export const TopBar: React.FC = () => {
                 <button className="hover:bg-[var(--bg-panel-hover)] p-1 rounded transition-colors">
                     <Apple size={16} fill="currentColor" />
                 </button>
-                <span className="font-semibold">Finder</span>
+                <span className="font-bold">{activeAppName}</span>
                 <div className="flex items-center gap-4" style={{ color: 'var(--text-primary)' }}>
                     <span className="hover:bg-[var(--bg-panel-hover)] px-2 py-0.5 rounded transition-colors cursor-default">File</span>
                     <span className="hover:bg-[var(--bg-panel-hover)] px-2 py-0.5 rounded transition-colors cursor-default">Edit</span>

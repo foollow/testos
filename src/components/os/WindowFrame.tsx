@@ -66,9 +66,19 @@ export const WindowFrame: React.FC<WindowFrameProps> = memo(({ window, zIndex, c
                 newX = startPosX + (startWidth - w);
             }
             if (direction.includes('n')) {
+                const TOP_BAR_HEIGHT = 32;
+                const MIN_GAP = 4;
+                const MIN_Y = TOP_BAR_HEIGHT + MIN_GAP;
+
                 const h = Math.max(minH, startHeight - deltaY);
-                newHeight = h;
-                newY = startPosY + (startHeight - h);
+                // If moving top edge would put window above MIN_Y, cap it
+                if (startPosY + (startHeight - h) < MIN_Y) {
+                    newHeight = startHeight + (startPosY - MIN_Y);
+                    newY = MIN_Y;
+                } else {
+                    newHeight = h;
+                    newY = startPosY + (startHeight - h);
+                }
             }
 
             if (newWidth !== window.width || newHeight !== window.height) {
@@ -106,10 +116,11 @@ export const WindowFrame: React.FC<WindowFrameProps> = memo(({ window, zIndex, c
             style={style}
             className={clsx(
                 "flex flex-col overflow-hidden transition-all duration-300 ease-out",
-                "glass-panel rounded-2xl", // Increased rounding for macOS 26 look
+                window.appId === 'im' ? "bg-[var(--color-bg-2)] border border-[var(--color-border-weak)] shadow-xl" : "glass-panel",
+                "rounded-2xl",
                 window.isMaximized && "rounded-none border-0 transition-none",
                 window.isMinimized && "opacity-0 pointer-events-none scale-95",
-                (isDragging || isResizing) && "scale-[1.005] shadow-2xl cursor-grabbing transition-none" // No opacity change
+                (isDragging || isResizing) && "scale-[1.005] shadow-2xl cursor-grabbing transition-none"
             )}
             onMouseDown={() => focusWindow(window.id)}
         >
@@ -117,8 +128,11 @@ export const WindowFrame: React.FC<WindowFrameProps> = memo(({ window, zIndex, c
             <div
                 {...attributes}
                 {...listeners}
-                className="h-11 flex items-center px-4 select-none cursor-default relative transition-colors duration-300"
-                style={{ backgroundColor: 'var(--bg-header)' }}
+                className={clsx(
+                    "h-11 flex items-center px-4 select-none cursor-default z-50 transition-colors duration-300",
+                    window.appId === 'im' ? "absolute top-0 left-0 right-0 bg-transparent" : "relative"
+                )}
+                style={window.appId !== 'im' ? { backgroundColor: 'var(--bg-header)' } : { backgroundColor: 'transparent' }}
                 onDoubleClick={() => window.isMaximized ? restoreWindow(window.id) : maximizeWindow(window.id)}
             >
                 {/* Traffic Lights */}
@@ -147,13 +161,16 @@ export const WindowFrame: React.FC<WindowFrameProps> = memo(({ window, zIndex, c
                 </div>
 
                 {/* Title */}
-                <div className="flex-1 flex justify-center items-center text-sm font-medium transition-colors duration-300" style={{ color: 'var(--text-secondary)' }}>
+                <div className={clsx(
+                    "flex-1 flex justify-center items-center text-sm font-medium transition-colors duration-300",
+                    window.appId === 'im' && "opacity-0" // Hide title for IM to match design
+                )} style={{ color: 'var(--text-secondary)' }}>
                     <span>{useOS(state => state.apps[window.appId]?.title) || window.title}</span>
                 </div>
             </div>
 
             {/* Content */}
-            <div className="flex-1 relative overflow-hidden backdrop-blur-3xl transition-colors duration-300" style={{ backgroundColor: 'var(--bg-content)' }}>
+            <div className="flex-1 relative overflow-hidden transition-colors duration-300 h-full" style={window.appId !== 'im' ? { backgroundColor: 'var(--bg-content)', backdropFilter: 'blur(30px)' } : {}}>
                 {/* Iframe Fix Overlay */}
                 {(isDragging || isResizing) && (
                     <div className="absolute inset-0 z-50 bg-transparent" />

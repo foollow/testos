@@ -1,9 +1,10 @@
 import React, { useState, useRef, useEffect } from 'react';
 import {
-    Search, Plus, Smile, Type,
-    Image as ImageIcon, Paperclip, Scissors, Maximize2,
+    Search, Plus, Smile,
+    ImageIcon, Paperclip, Scissors, Maximize2,
     SendHorizonal, MoreHorizontal, Users, UserPlus, SearchCode,
-    MessageSquare, Calendar, LayoutDashboard, VideoIcon
+    MessageSquare, Calendar, LayoutDashboard, VideoIcon,
+    Contact2, GraduationCap, Cloud, Monitor, ShieldCheck,
 } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -105,7 +106,6 @@ const IMApp: React.FC<{ windowId: string }> = () => {
     }, [message]);
 
     useEffect(() => {
-        // Automatically focus input when active chat changes or app opens
         inputRef.current?.focus();
         adjustHeight();
     }, [activeChat.id]);
@@ -130,22 +130,20 @@ const IMApp: React.FC<{ windowId: string }> = () => {
             time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
         };
 
-        // Optimistically add user message
         setMessagesByChat(prev => ({
             ...prev,
             [activeChat.id]: [...(prev[activeChat.id] || []), newMessage]
         }));
 
-        const userMessageContent = message; // Capture for async closure
+        const userMessageContent = message;
         setMessage('');
 
-        // Trigger AI reply
         try {
             const response = await ai.sendMessage(userMessageContent);
 
             const aiMessage = {
                 id: response.id,
-                sender: activeChat.name, // The person you are chatting with "is" the AI in this context
+                sender: activeChat.name,
                 isMe: false,
                 content: response.content,
                 time: new Date(response.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
@@ -169,31 +167,47 @@ const IMApp: React.FC<{ windowId: string }> = () => {
     };
 
     return (
-        <div className="flex h-full bg-background text-foreground overflow-hidden">
+        <div className="flex h-full text-[var(--color-text-main)] overflow-hidden">
             {/* Left Rail - Navigation */}
-            <div className="w-16 flex flex-col items-center py-4 gap-6 bg-muted/30 border-r shrink-0">
-                <Avatar className="h-10 w-10 border-2 border-primary/20 hover:scale-105 transition-transform cursor-pointer">
+            <div className="w-16 flex flex-col items-center pb-4 shrink-0 pt-11">
+                <Avatar className="h-9 w-9 border border-[var(--color-border-strong)] hover:scale-105 transition-transform cursor-pointer mb-6">
                     <AvatarImage src="https://api.dicebear.com/7.x/avataaars/svg?seed=Felix" />
                     <AvatarFallback>JD</AvatarFallback>
                 </Avatar>
 
-                <div className="flex flex-col gap-4 mt-2">
+                <div className="flex flex-col gap-2 flex-1 items-center">
                     <TooltipProvider>
                         <Tooltip>
                             <TooltipTrigger asChild>
-                                <Button variant="ghost" size="icon" className="h-12 w-12 rounded-xl text-primary bg-primary/10 relative">
-                                    <MessageSquare size={24} />
+                                <Button variant="ghost" size="icon" className="h-10 w-10 rounded-[var(--radius-12)] text-[var(--color-text-inverse)] bg-[var(--color-blue)] shadow-[0_4px_12px_rgba(0,140,255,0.3)]">
+                                    <MessageSquare size={22} strokeWidth={2.5} />
                                 </Button>
                             </TooltipTrigger>
                             <TooltipContent side="right">{t.chat.messages}</TooltipContent>
                         </Tooltip>
 
-
+                        <Tooltip>
+                            <TooltipTrigger asChild>
+                                <Button variant="ghost" size="icon" className="h-10 w-10 rounded-[var(--radius-12)] text-[var(--color-text-minor)] hover:text-[var(--color-text-main)] transition-colors">
+                                    <GraduationCap size={22} />
+                                </Button>
+                            </TooltipTrigger>
+                            <TooltipContent side="right">学城</TooltipContent>
+                        </Tooltip>
 
                         <Tooltip>
                             <TooltipTrigger asChild>
-                                <Button variant="ghost" size="icon" className="h-12 w-12 rounded-xl text-muted-foreground hover:text-foreground">
-                                    <Calendar size={24} />
+                                <Button variant="ghost" size="icon" className="h-10 w-10 rounded-[var(--radius-12)] text-[var(--color-text-minor)] hover:text-[var(--color-text-main)] transition-colors">
+                                    <Contact2 size={22} />
+                                </Button>
+                            </TooltipTrigger>
+                            <TooltipContent side="right">通讯录</TooltipContent>
+                        </Tooltip>
+
+                        <Tooltip>
+                            <TooltipTrigger asChild>
+                                <Button variant="ghost" size="icon" className="h-10 w-10 rounded-[var(--radius-12)] text-[var(--color-text-minor)] hover:text-[var(--color-text-main)] transition-colors">
+                                    <Calendar size={22} />
                                 </Button>
                             </TooltipTrigger>
                             <TooltipContent side="right">日程</TooltipContent>
@@ -201,8 +215,8 @@ const IMApp: React.FC<{ windowId: string }> = () => {
 
                         <Tooltip>
                             <TooltipTrigger asChild>
-                                <Button variant="ghost" size="icon" className="h-12 w-12 rounded-xl text-muted-foreground hover:text-foreground">
-                                    <SearchCode size={24} />
+                                <Button variant="ghost" size="icon" className="h-10 w-10 rounded-[var(--radius-12)] text-[var(--color-text-minor)] hover:text-[var(--color-text-main)] transition-colors">
+                                    <SearchCode size={22} />
                                 </Button>
                             </TooltipTrigger>
                             <TooltipContent side="right">审批</TooltipContent>
@@ -210,223 +224,246 @@ const IMApp: React.FC<{ windowId: string }> = () => {
 
                         <Tooltip>
                             <TooltipTrigger asChild>
-                                <Button variant="ghost" size="icon" className="h-12 w-12 rounded-xl text-muted-foreground hover:text-foreground">
-                                    <LayoutDashboard size={24} />
+                                <Button variant="ghost" size="icon" className="h-10 w-10 rounded-[var(--radius-12)] text-[var(--color-text-minor)] hover:text-[var(--color-text-main)] transition-colors">
+                                    <LayoutDashboard size={22} />
                                 </Button>
                             </TooltipTrigger>
                             <TooltipContent side="right">工作台</TooltipContent>
                         </Tooltip>
                     </TooltipProvider>
-                </div >
 
+                    <Separator className="w-8 my-2 bg-[var(--color-border-weak)]" />
 
-            </div >
+                    <TooltipProvider>
+                        <Tooltip>
+                            <TooltipTrigger asChild>
+                                <Button variant="ghost" size="icon" className="h-10 w-10 rounded-[var(--radius-12)] text-[var(--color-text-minor)] hover:text-[var(--color-text-main)] transition-colors">
+                                    <Cloud size={20} />
+                                </Button>
+                            </TooltipTrigger>
+                            <TooltipContent side="right">云盘</TooltipContent>
+                        </Tooltip>
 
-            {/* Middle Panel - Chat List */}
-            <div className="w-80 flex flex-col border-r bg-background shrink-0">
-                <div className="p-4 space-y-4">
-                    <div className="flex items-center justify-between">
-                        <h2 className="text-xl font-bold tracking-tight">{t.chat.messages}</h2>
-                        <Button variant="ghost" size="icon" className="h-8 w-8"><Plus size={18} /></Button>
-                    </div>
+                        <Tooltip>
+                            <TooltipTrigger asChild>
+                                <Button variant="ghost" size="icon" className="h-10 w-10 rounded-[var(--radius-12)] text-[var(--color-text-minor)] hover:text-[var(--color-text-main)] transition-colors">
+                                    <Monitor size={20} />
+                                </Button>
+                            </TooltipTrigger>
+                            <TooltipContent side="right">视频会议</TooltipContent>
+                        </Tooltip>
 
-                    <div className="relative">
-                        <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-                        <Input
-                            placeholder={t.chat.search}
-                            className="pl-9 h-9 bg-muted/50 border-none focus-visible:ring-1"
-                        />
-                    </div>
+                        <Tooltip>
+                            <TooltipTrigger asChild>
+                                <Button variant="ghost" size="icon" className="h-10 w-10 rounded-[var(--radius-12)] text-[var(--color-text-minor)] hover:text-[var(--color-text-main)] transition-colors mt-auto">
+                                    <ShieldCheck size={20} />
+                                </Button>
+                            </TooltipTrigger>
+                            <TooltipContent side="right">VPN</TooltipContent>
+                        </Tooltip>
+                    </TooltipProvider>
+                </div>
+            </div>
 
-                    <div className="flex flex-col gap-4">
-                        <div className="flex gap-4 overflow-x-auto pb-2 no-scrollbar">
-                            {MOCK_CHATS.filter(c => !c.isGroup && !c.isApp).map(contact => (
-                                <div key={contact.id} className="flex flex-col items-center gap-1 min-w-[56px]">
-                                    <div className="relative">
-                                        <Avatar className="h-12 w-12 border-2 border-transparent hover:border-primary transition-colors cursor-pointer">
-                                            <AvatarImage src={contact.avatar} />
-                                            <AvatarFallback>{contact.name[0]}</AvatarFallback>
-                                        </Avatar>
-                                        {contact.online && <div className="absolute bottom-0 right-0 h-3 w-3 rounded-full bg-green-500 border-2 border-background" />}
-                                    </div>
-                                    <span className="text-[10px] text-muted-foreground truncate w-full text-center">{contact.name}</span>
+            {/* Main Area Wrapper */}
+            <div className="flex-1 flex flex-col min-w-0">
+                {/* Content Container (Layered White Box) */}
+                <div className="flex-1 ml-0 mt-10 mb-4 mr-4 bg-white rounded-2xl shadow-[0_4px_24px_rgba(0,0,0,0.06)] border border-[var(--color-border-weak)] flex overflow-hidden">
+                    {/* Middle Panel - Chat List */}
+                    <div className="w-72 flex flex-col border-r border-[var(--color-border-weak)] shrink-0 bg-[#fbfbfb]">
+                        <div className="pt-6 p-4 pb-0 space-y-4">
+                            <div className="flex items-center justify-between px-1">
+                                <h2 className="text-[17px] font-bold tracking-tight text-[var(--color-text-title)]">消息</h2>
+                                <Button variant="ghost" size="icon" className="h-8 w-8 text-[var(--color-text-minor)]"><Plus size={18} /></Button>
+                            </div>
+
+                            <div className="relative">
+                                <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-[var(--color-text-assist)]" />
+                                <Input
+                                    placeholder={t.chat.search}
+                                    className="pl-9 h-9 bg-[var(--color-bg-3)] border-none focus-visible:ring-1 focus-visible:ring-[var(--color-blue-active)]/30 text-[var(--color-text-main)] rounded-[var(--radius-8)]"
+                                />
+                            </div>
+
+                            <div className="flex flex-col gap-4">
+                                <div className="flex gap-4 overflow-x-auto pb-2 no-scrollbar">
+                                    {MOCK_CHATS.filter(c => !c.isGroup && !c.isApp).map(contact => (
+                                        <div key={contact.id} className="flex flex-col items-center gap-1.5 min-w-[56px] group cursor-pointer">
+                                            <div className="relative">
+                                                <Avatar className="h-12 w-12 border-2 border-transparent group-hover:border-[var(--color-blue)] transition-colors rounded-full">
+                                                    <AvatarImage src={contact.avatar} />
+                                                    <AvatarFallback>{contact.name[0]}</AvatarFallback>
+                                                </Avatar>
+                                                {contact.online && <div className="absolute bottom-0 right-0 h-3 w-3 rounded-full bg-[var(--color-blue)] border-2 border-[var(--color-bg-page)]" />}
+                                            </div>
+                                            <span className="text-[var(--font-xs-size)] text-[var(--color-text-main)] truncate w-full text-center font-medium">{contact.name}</span>
+                                        </div>
+                                    ))}
                                 </div>
-                            ))}
+
+                                <Tabs defaultValue="all" className="w-full">
+                                    <TabsList className="bg-transparent h-auto p-0 gap-4 w-full justify-start border-none rounded-none overflow-x-auto no-scrollbar">
+                                        <TabsTrigger value="all" className="rounded-none border-b-2 border-transparent data-[state=active]:border-[var(--color-blue)] data-[state=active]:bg-transparent px-1 pb-2 font-bold text-[var(--color-text-main)] transition-all">全部</TabsTrigger>
+                                        <TabsTrigger value="later" className="rounded-none border-b-2 border-transparent data-[state=active]:border-[var(--color-blue)] data-[state=active]:bg-transparent px-1 pb-2 font-medium text-[var(--color-text-minor)] transition-all flex items-center gap-1">
+                                            稍后处理 <Badge variant="secondary" className="h-4 min-w-[16px] px-1 bg-[var(--color-bg-3)] text-[var(--color-text-assist)] border-none text-[8px]">3</Badge>
+                                        </TabsTrigger>
+                                        <TabsTrigger value="group" className="rounded-none border-b-2 border-transparent data-[state=active]:border-[var(--color-blue)] data-[state=active]:bg-transparent px-1 pb-2 font-medium text-[var(--color-text-minor)] transition-all">分组</TabsTrigger>
+                                        <TabsTrigger value="unread" className="rounded-none border-b-2 border-transparent data-[state=active]:border-[var(--color-blue)] data-[state=active]:bg-transparent px-1 pb-2 font-medium text-[var(--color-text-minor)] transition-all flex items-center gap-1">
+                                            未读 <Badge variant="secondary" className="h-4 min-w-[16px] px-1 bg-[var(--color-bg-3)] text-[var(--color-text-assist)] border-none text-[8px]">3</Badge>
+                                        </TabsTrigger>
+                                        <TabsTrigger value="at" className="rounded-none border-b-2 border-transparent data-[state=active]:border-[var(--color-blue)] data-[state=active]:bg-transparent px-1 pb-2 font-medium text-[var(--color-text-minor)] transition-all">@我</TabsTrigger>
+                                        <Button variant="ghost" size="icon" className="h-6 w-6 ml-auto flex-shrink-0 text-[var(--color-text-minor)] hover:text-[var(--color-text-main)] transition-colors"><MoreHorizontal size={16} /></Button>
+                                    </TabsList>
+                                </Tabs>
+                            </div>
                         </div>
 
-                        <Tabs defaultValue="all" className="w-full">
-                            <TabsList className="bg-transparent h-auto p-0 gap-4 w-full justify-start border-b rounded-none">
-                                <TabsTrigger value="all" className="rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent px-1 pb-2 font-medium">全部</TabsTrigger>
-                                <TabsTrigger value="later" className="rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent px-1 pb-2 font-medium">稍后处理</TabsTrigger>
-                                <TabsTrigger value="unread" className="rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent px-1 pb-2 font-medium">未读</TabsTrigger>
-                                <Button variant="ghost" size="icon" className="h-6 w-6 ml-auto"><MoreHorizontal size={16} /></Button>
-                            </TabsList>
-                        </Tabs>
-                    </div>
-                </div>
-
-                <ScrollArea className="flex-1">
-                    <div className="px-2">
-                        {MOCK_CHATS.map(chat => (
-                            <div
-                                key={chat.id}
-                                onClick={() => setActiveChat(chat)}
-                                className={`flex items-center gap-3 p-3 rounded-xl cursor-pointer transition-all hover:bg-muted/50 group mb-1 ${activeChat.id === chat.id ? 'bg-primary/10' : ''}`}
-                            >
-                                <div className="relative">
-                                    <Avatar className="h-12 w-12 rounded-xl group-hover:scale-105 transition-transform">
-                                        <AvatarImage src={chat.avatar} />
-                                        <AvatarFallback>{chat.name[0]}</AvatarFallback>
-                                    </Avatar>
-                                </div>
-                                <div className="flex-1 min-w-0">
-                                    <div className="flex items-center justify-between mb-0.5">
-                                        <span className={`text-sm font-semibold truncate ${activeChat.id === chat.id ? 'text-primary' : ''}`}>
-                                            {chat.name}
-                                            {chat.isGroup && <span className="ml-1 text-[10px] text-muted-foreground font-normal">{chat.memberCount}人</span>}
-                                        </span>
-                                        <span className="text-[10px] text-muted-foreground">{chat.time}</span>
+                        <ScrollArea className="flex-1">
+                            <div className="px-2">
+                                {MOCK_CHATS.map(chat => (
+                                    <div
+                                        key={chat.id}
+                                        onClick={() => setActiveChat(chat)}
+                                        className={`flex items-center gap-3 p-3 rounded-[var(--radius-12)] cursor-pointer transition-all hover:bg-[var(--color-fill-2)] group mb-1 ${activeChat.id === chat.id ? 'bg-[var(--color-fill-2)]' : ''}`}
+                                    >
+                                        <div className="relative">
+                                            <Avatar className="h-12 w-12 rounded-[var(--radius-12)] group-hover:scale-105 transition-transform overflow-hidden">
+                                                <AvatarImage src={chat.avatar} />
+                                                <AvatarFallback>{chat.name[0]}</AvatarFallback>
+                                            </Avatar>
+                                        </div>
+                                        <div className="flex-1 min-w-0">
+                                            <div className="flex items-center justify-between mb-0.5">
+                                                <span className={`text-[var(--font-sm-size)] font-semibold truncate text-[var(--color-text-main)] transition-colors`}>
+                                                    {chat.name}
+                                                    {chat.isGroup && <span className="ml-1 text-[var(--font-xs-size)] text-[var(--color-text-minor)] font-normal">{chat.memberCount}人</span>}
+                                                </span>
+                                                <span className="text-[var(--font-xs-size)] text-[var(--color-text-minor)]">{chat.time}</span>
+                                            </div>
+                                            <p className="text-[var(--font-xs-size)] text-[var(--color-text-assist)] truncate leading-relaxed">
+                                                {chat.lastMessage}
+                                            </p>
+                                        </div>
+                                        {chat.muted && (
+                                            <div className="text-[var(--color-text-assist)]">
+                                                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                    <path d="M19.1001 19.1L4.8999 4.8999M10.1999 4.3999L6.1999 8.3999H3.1999V15.6H6.1999L10.1999 19.6V4.3999ZM15.1999 8.3999C16.1999 9.3999 16.7999 10.6 16.7999 12M18.8999 5.3999C20.6 7.0999 21.6 9.3999 21.6 12C21.6 14.6001 20.6 17 18.8999 18.6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                                                </svg>
+                                            </div>
+                                        )}
                                     </div>
-                                    <p className="text-xs text-muted-foreground truncate leading-relaxed">
-                                        {chat.lastMessage}
+                                ))}
+                            </div>
+                        </ScrollArea>
+                    </div>
+
+                    {/* Right Main Area */}
+                    <div className="flex-1 flex flex-col relative overflow-hidden bg-white">
+                        {/* Chat Header */}
+                        <header className="h-[64px] flex items-center justify-between px-6 border-b border-[var(--color-border-weak)] shrink-0 bg-white/80 backdrop-blur-sm z-10">
+                            <div className="flex items-center gap-3">
+                                <Avatar className="h-10 w-10 rounded-[var(--radius-8)] overflow-hidden">
+                                    <AvatarImage src={activeChat.avatar} />
+                                    <AvatarFallback>{activeChat.name[0]}</AvatarFallback>
+                                </Avatar>
+                                <div className="flex flex-col">
+                                    <div className="flex items-center gap-2">
+                                        <h3 className="text-[var(--font-base-size)] font-bold text-[var(--color-text-title)]">{activeChat.name}</h3>
+                                        {activeChat.isGroup && <span className="text-[var(--font-xs-size)] text-[var(--color-text-assist)] font-normal">{activeChat.memberCount}人</span>}
+                                    </div>
+                                    <p className="text-[var(--font-xs-size)] text-[var(--color-text-assist)] truncate max-w-[400px]">
+                                        {ai.isTyping ? '正在输入...' : '周会请提前订会议室，会议文档及时发出，会后同步纪要'}
                                     </p>
                                 </div>
                             </div>
-                        ))}
-                    </div>
-                </ScrollArea>
-            </div>
+                            <div className="flex items-center gap-1 text-[var(--color-text-minor)]">
+                                <Button variant="ghost" size="icon" className="h-9 w-9 hover:text-[var(--color-text-main)] transition-colors"><Users size={20} /></Button>
+                                <Button variant="ghost" size="icon" className="h-9 w-9 hover:text-[var(--color-text-main)] transition-colors"><UserPlus size={20} /></Button>
+                                <Button variant="ghost" size="icon" className="h-9 w-9 hover:text-[var(--color-text-main)] transition-colors"><Search size={20} /></Button>
+                                <Button variant="ghost" size="icon" className="h-9 w-9 hover:text-[var(--color-text-main)] transition-colors"><MoreHorizontal size={20} /></Button>
+                            </div>
+                        </header>
 
-            {/* Right Main Area */}
-            <div className="flex-1 flex flex-col bg-background relative overflow-hidden">
-                {/* Chat Header */}
-                <header className="h-16 flex items-center justify-between px-6 border-b shrink-0 bg-background/80 backdrop-blur-sm z-10">
-                    <div className="flex items-center gap-3">
-                        <div className="relative">
-                            <Avatar className="h-10 w-10 rounded-lg">
-                                <AvatarImage src={activeChat.avatar} />
-                                <AvatarFallback>{activeChat.name[0]}</AvatarFallback>
-                            </Avatar>
-                        </div>
-                        <div className="flex flex-col">
-                            <h3 className="text-sm font-bold flex items-center gap-2">
-                                {activeChat.name}
-                                {activeChat.isGroup && <span className="text-[10px] text-muted-foreground font-normal">{activeChat.memberCount}人</span>}
-                            </h3>
-                            <p className="text-[10px] text-muted-foreground truncate max-w-[300px]">
-                                {ai.isTyping ? '正在输入...' : '周会请提前订会议室，会议文档及时发出，会后同步纪要'}
-                            </p>
-                        </div>
-                    </div>
-                    <div className="flex items-center gap-1">
-                        {activeChat.isGroup && (<Button variant="ghost" size="icon" className="h-9 w-9 text-muted-foreground hover:text-foreground"><Users size={20} /></Button>)}
-                        <Button variant="ghost" size="icon" className="h-9 w-9 text-muted-foreground hover:text-foreground"><UserPlus size={20} /></Button>
-                        <Button variant="ghost" size="icon" className="h-9 w-9 text-muted-foreground hover:text-foreground"><Search size={20} /></Button>
-                        <Separator orientation="vertical" className="h-6 mx-2" />
-                        <Button variant="ghost" size="icon" className="h-9 w-9 text-muted-foreground hover:text-foreground"><MoreHorizontal size={20} /></Button>
-                    </div>
-                </header>
+                        {/* Messages List */}
+                        <ScrollArea ref={scrollAreaRef} className="flex-1 p-6">
+                            <div className="max-w-4xl mx-auto space-y-8">
+                                {currentMessages.map((msg) => (
+                                    <div key={msg.id} className={`flex gap-3 group ${msg.isMe ? 'flex-row-reverse' : ''}`}>
+                                        {!msg.isMe && (
+                                            <Avatar className="h-9 w-9 shrink-0 rounded-[var(--radius-8)] overflow-hidden">
+                                                <AvatarImage src={msg.avatar} />
+                                                <AvatarFallback>{msg.sender[0]}</AvatarFallback>
+                                            </Avatar>
+                                        )}
+                                        <div className={`flex flex-col gap-1 max-w-[75%] ${msg.isMe ? 'items-end' : 'items-start'}`}>
+                                            <div className={`flex items-baseline gap-2 ${msg.isMe ? 'flex-row-reverse' : ''}`}>
+                                                <span className="text-[11px] font-medium text-[var(--color-text-assist)]">{msg.sender}</span>
+                                                <span className="text-[10px] text-[var(--color-text-assist)] opacity-0 group-hover:opacity-100 transition-opacity">{msg.time}</span>
+                                            </div>
 
-                {/* Messages List */}
-                <ScrollArea ref={scrollAreaRef} className="flex-1 p-6">
-                    <div className="max-w-4xl mx-auto space-y-8">
-                        {currentMessages.map((msg) => (
-                            <div key={msg.id} className={`flex gap-4 group ${msg.isMe ? 'flex-row-reverse' : ''}`}>
-                                {!msg.isMe && (
-                                    <Avatar className="h-8 w-8 shrink-0 rounded-lg">
-                                        <AvatarImage src={msg.avatar} />
-                                        <AvatarFallback>{msg.sender[0]}</AvatarFallback>
-                                    </Avatar>
-                                )}
-                                <div className={`flex flex-col gap-1.5 max-w-[80%] ${msg.isMe ? 'items-end' : 'items-start'}`}>
-                                    <div className={`flex items-baseline gap-2 ${msg.isMe ? 'flex-row-reverse' : ''}`}>
-                                        <span className="text-xs font-semibold text-muted-foreground">{msg.sender}</span>
-                                        <span className="text-[10px] text-muted-foreground/60 opacity-0 group-hover:opacity-100 transition-opacity">{msg.time}</span>
+                                            <div className={`relative px-4 py-2 rounded-[var(--radius-12)] text-[var(--font-base-size)] leading-relaxed select-text ${msg.isMe
+                                                ? 'bg-[var(--color-blue)] text-[var(--color-text-inverse)]'
+                                                : 'bg-[var(--color-bg-2)] border border-[var(--color-border-weak)] text-[var(--color-text-main)]'
+                                                } transition-all`}>
+                                                {msg.content}
+                                            </div>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        </ScrollArea>
+
+                        {/* Input Area */}
+                        <div className="px-6 pb-6 pt-2 shrink-0 border-t border-transparent">
+                            <div className="max-w-[1240px] mx-auto rounded-[var(--radius-16)] border border-[var(--color-border-weak)] bg-[var(--color-bg-1)] shadow-[var(--effect-shadow-level-1-box)] p-1.5 focus-within:ring-1 focus-within:ring-[var(--color-blue-active)]/10 transition-all flex flex-col group">
+                                <div className="relative flex items-end">
+                                    <Textarea
+                                        ref={inputRef}
+                                        value={message}
+                                        onChange={(e) => setMessage(e.target.value)}
+                                        onKeyDown={handleKeyDown}
+                                        placeholder="输入“/”，大象AI帮你..."
+                                        className="border-none focus-visible:ring-0 bg-transparent text-[var(--font-base-size)] min-h-[44px] px-3 shadow-none h-auto py-2.5 flex-1 pr-12 resize-none overflow-y-auto text-[var(--color-text-main)] placeholder:text-[var(--color-text-assist)]"
+                                        rows={1}
+                                    />
+                                </div>
+
+                                <div className="flex items-center gap-0.5 text-[var(--color-text-minor)] px-1 pb-1">
+                                    <Button variant="ghost" size="icon" className="h-8 w-8 rounded-[var(--radius-8)] hover:text-[var(--color-blue)] hover:bg-[var(--color-blue-bg-weak)]/50 transition-colors"><Plus size={18} /></Button>
+                                    <Button variant="ghost" size="icon" className="h-8 w-8 rounded-[var(--radius-8)] hover:text-[var(--color-blue)] hover:bg-[var(--color-blue-bg-weak)]/50 transition-colors"><Smile size={18} /></Button>
+                                    <div className="flex items-center h-8 px-2 rounded-[var(--radius-8)] hover:text-[var(--color-blue)] hover:bg-[var(--color-blue-bg-weak)]/50 transition-colors cursor-pointer text-[13px] font-medium ml-1">
+                                        Aa
+                                    </div>
+                                    <Button variant="ghost" size="icon" className="h-8 w-8 rounded-[var(--radius-8)] hover:text-[var(--color-blue)] hover:bg-[var(--color-blue-bg-weak)]/50 transition-colors"><ImageIcon size={18} /></Button>
+                                    <Button variant="ghost" size="icon" className="h-8 w-8 rounded-[var(--radius-8)] hover:text-[var(--color-blue)] hover:bg-[var(--color-blue-bg-weak)]/50 transition-colors"><Paperclip size={18} /></Button>
+                                    <Button variant="ghost" size="icon" className="h-8 w-8 rounded-[var(--radius-8)] hover:text-[var(--color-blue)] hover:bg-[var(--color-blue-bg-weak)]/50 transition-colors"><Scissors size={18} /></Button>
+                                    <Button variant="ghost" size="icon" className="h-8 w-8 rounded-[var(--radius-8)] hover:text-[var(--color-blue)] hover:bg-[var(--color-blue-bg-weak)]/50 transition-colors"><VideoIcon size={18} /></Button>
+                                    <div className="flex items-center h-8 px-2 rounded-[var(--radius-8)] hover:text-[var(--color-blue)] hover:bg-[var(--color-blue-bg-weak)]/50 transition-colors cursor-pointer text-[13px] font-medium">
+                                        ✨
                                     </div>
 
-                                    <div className={`relative px-4 py-2.5 rounded-2xl shadow-sm border text-sm leading-relaxed select-text ${msg.isMe
-                                        ? 'bg-primary text-primary-foreground border-primary'
-                                        : 'bg-muted/30 border-muted'
-                                        }`}>
-                                        {msg.type === 'audio' ? (
-                                            <div className="flex items-center gap-3 min-w-[200px]">
-                                                <Button size="icon" variant="ghost" className="h-8 w-8 rounded-full bg-background shrink-0">
-                                                    <div className="w-0 h-0 border-t-[5px] border-t-transparent border-l-[8px] border-l-primary border-b-[5px] border-b-transparent ml-1" />
-                                                </Button>
-                                                <span className="text-[10px] tabular-nums">{msg.duration}</span>
-                                                <div className="flex-1 flex items-end gap-0.5 h-6">
-                                                    {[2, 4, 8, 3, 6, 2, 9, 5, 3, 7, 4, 2, 6, 8, 4, 3, 2, 6, 4, 3, 5, 2, 4, 7, 3, 2].map((h, i) => (
-                                                        <div key={i} className={`flex-1 rounded-full ${i < 10 ? 'bg-primary' : 'bg-muted-foreground/30'}`} style={{ height: `${h * 10}%` }} />
-                                                    ))}
-                                                </div>
-                                                <span className="text-[10px] text-muted-foreground">01:32</span>
-                                            </div>
-                                        ) : (
-                                            msg.content
-                                        )}
-
-                                        {msg.reactions && (
-                                            <div className="absolute -bottom-3 left-2 flex gap-1 items-center scale-90 origin-left">
-                                                {msg.reactions.map((r, i) => (
-                                                    <Badge key={i} variant="secondary" className="px-1.5 py-0.5 bg-background border rounded-full text-[10px] font-normal flex gap-1 hover:bg-muted transition-colors cursor-pointer shadow-sm">
-                                                        <span>{r.emoji}</span>
-                                                        <span className="text-muted-foreground">{r.count}</span>
-                                                    </Badge>
-                                                ))}
-                                                <Button variant="outline" size="icon" className="h-5 w-5 rounded-full bg-background"><Smile size={10} /></Button>
-                                            </div>
-                                        )}
+                                    <div className="ml-auto flex items-center gap-1">
+                                        <Button variant="ghost" size="icon" className="h-8 w-8 rounded-[var(--radius-8)] hover:text-[var(--color-blue)] hover:bg-[var(--color-blue-bg-weak)]/50 transition-colors"><Maximize2 size={16} /></Button>
+                                        <Button
+                                            variant="ghost"
+                                            size="icon"
+                                            onClick={handleSendMessage}
+                                            disabled={!message.trim()}
+                                            className={`h-8 w-8 flex items-center justify-center rounded-[var(--radius-8)] transition-all ${message.trim()
+                                                ? "text-[var(--color-blue)]"
+                                                : "text-[var(--color-text-assist)]/40"
+                                                }`}
+                                        >
+                                            <SendHorizonal size={18} />
+                                        </Button>
+                                        <div className="flex items-center px-1 text-[var(--color-text-assist)]">
+                                            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                <path d="M6 9L12 15L18 9" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                                            </svg>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-                        ))}
-                    </div>
-                </ScrollArea>
-
-                {/* Input Area */}
-                <div className="p-4 bg-background shrink-0 border-t-transparent">
-                    <div className="max-w-4xl mx-auto rounded-2xl border bg-background shadow-lg p-2 focus-within:ring-1 focus-within:ring-primary/30 transition-shadow flex flex-col">
-                        <div className="flex items-center gap-0.5 text-muted-foreground px-2 py-1">
-                            <Button variant="ghost" size="icon" className="h-8 w-8 rounded-lg hover:text-primary"><Plus size={18} /></Button>
-                            <Button variant="ghost" size="icon" className="h-8 w-8 rounded-lg hover:text-primary"><Smile size={18} /></Button>
-                            <Button variant="ghost" size="icon" className="h-8 w-8 rounded-lg hover:text-primary"><Type size={18} /></Button>
-                            <Button variant="ghost" size="icon" className="h-8 w-8 rounded-lg hover:text-primary"><ImageIcon size={18} /></Button>
-                            <Button variant="ghost" size="icon" className="h-8 w-8 rounded-lg hover:text-primary"><Paperclip size={18} /></Button>
-                            <Button variant="ghost" size="icon" className="h-8 w-8 rounded-lg hover:text-primary"><Scissors size={18} /></Button>
-                            <Button variant="ghost" size="icon" className="h-8 w-8 rounded-lg hover:text-primary"><VideoIcon size={18} /></Button>
-                            <Separator orientation="vertical" className="h-4 mx-1" />
-                            <Button variant="ghost" size="icon" className="h-8 w-8 rounded-lg hover:text-primary"><SearchCode size={18} /></Button>
-                            <div className="ml-auto flex items-center gap-1">
-                                <Button variant="ghost" size="icon" className="h-8 w-8 rounded-lg hover:text-primary"><Maximize2 size={16} /></Button>
-                                <Separator orientation="vertical" className="h-4 mx-1" />
-                                <div className="flex items-center gap-0.5 px-1 hover:text-primary cursor-pointer">
-                                    <span className="text-[10px] font-bold">A</span>
-                                    <span className="text-[10px] italic">I</span>
-                                </div>
-                            </div>
-                        </div>
-                        <div className="relative flex items-end">
-                            <Textarea
-                                ref={inputRef}
-                                value={message}
-                                onChange={(e) => setMessage(e.target.value)}
-                                onKeyDown={handleKeyDown}
-                                placeholder={t.chat.typeMessage}
-                                className="border-none focus-visible:ring-0 bg-transparent text-sm min-h-[40px] px-3 shadow-none h-auto py-2 flex-1 pr-12 resize-none overflow-y-auto"
-                                rows={1}
-                            />
-                            <Button
-                                variant="ghost"
-                                size="icon"
-                                onClick={handleSendMessage}
-                                disabled={!message.trim()}
-                                className={`h-8 w-8 mb-1 mr-1 rounded-lg transition-all ${message.trim()
-                                    ? "text-primary bg-primary/10 opacity-100"
-                                    : "text-muted-foreground/40 opacity-40 cursor-not-allowed"
-                                    }`}
-                            >
-                                <SendHorizonal size={16} />
-                            </Button>
                         </div>
                     </div>
                 </div>

@@ -24,10 +24,14 @@ export const WindowManager: React.FC = memo(() => {
         const windowState = windows[windowId];
 
         if (windowState) {
+            const TOP_BAR_HEIGHT = 32;
+            const MIN_GAP = 4;
+            const MIN_Y = TOP_BAR_HEIGHT + MIN_GAP;
+
             updateWindowPosition(
                 windowId,
                 windowState.x + delta.x,
-                windowState.y + delta.y
+                Math.max(MIN_Y, windowState.y + delta.y)
             );
         }
     };
