@@ -3,95 +3,122 @@ import {
     Search, Plus, Smile,
     ImageIcon, Paperclip, Scissors, Maximize2,
     SendHorizonal, MoreHorizontal, Users, UserPlus,
-    VideoIcon,
+    VideoIcon, Edit2, RefreshCw, AlertCircle,
 } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Badge } from "@/components/ui/badge";
 import {
     Tooltip,
     TooltipContent,
     TooltipProvider,
     TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import {
+    Dialog,
+    DialogContent,
+    DialogHeader,
+    DialogTitle,
+    DialogFooter,
+} from "@/components/ui/dialog";
 import { useOS } from '../store/useOS';
 import { useTranslation } from "@/lib/i18n";
 import { useAI } from "@/hooks/useAI";
 
-const MOCK_CHATS = [
-    {
-        id: '1',
-        name: '鹏哥',
-        avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=2',
-        lastMessage: '今天开始就可以用新大象了哈哈哈',
-        time: '11:33',
-        unread: 3,
-        online: true,
-    },
-    {
-        id: '2',
-        name: '办公效率产品设计研发',
-        isGroup: true,
-        memberCount: 32,
-        avatar: 'https://img.meituan.net/diegooacontent/9ea15ba4b65a7e3932193dffad497cb115425.jpg@format=jpeg?token=1.1766797200.mn8qspmg8w5mx9cn0000000000d89d2a.bdf6039ffc552bb28e7a1c90291ca1e0',
-        lastMessage: '受大雪影响，北京各工作职场今日提前下班',
-        time: '11:09',
-        unread: 0,
-        muted: true,
-    },
-    {
-        id: '3',
-        name: 'Kiki Yang',
-        avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=kiki22',
-        lastMessage: '这个场景我会补充一下',
-        time: '10:25',
-        unread: 0,
-    },
-    {
-        id: '4',
-        name: '明哲(帅)',
-        avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=12',
-        lastMessage: '这个网站很酷',
-        time: '10:15',
-        unread: 0,
-    },
-    {
-        id: '5',
-        name: '齐学士',
-        isApp: true,
-        avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=144',
-        lastMessage: '我想想',
-        time: '09:54',
-        unread: 0,
-    },
+// Firebase initialization
+import { initializeApp } from 'firebase/app';
+import { getAuth, signInWithCustomToken, signInAnonymously, onAuthStateChanged, setPersistence, browserLocalPersistence, inMemoryPersistence } from 'firebase/auth';
+import { getFirestore, doc, setDoc, getDoc, collection, onSnapshot, addDoc, serverTimestamp } from 'firebase/firestore';
+
+// Firebase initialization wrapper to prevent crashes
+const getFirebase = () => {
+    try {
+        if (typeof __firebase_config === 'undefined') return null;
+        const config = JSON.parse(__firebase_config);
+        const app = initializeApp(config);
+        return {
+            auth: getAuth(app),
+            db: getFirestore(app),
+            appId: typeof __app_id !== 'undefined' ? __app_id : 'p2p-chat-v1'
+        };
+    } catch (e) {
+        console.error("Firebase Init Failed:", e);
+        return null;
+    }
+};
+
+const FOOD_NAMES = [
+    "麻婆豆腐", "红烧狮子头", "大盘鸡", "冰糖葫芦", "脆皮烤鸭",
+    "小笼汤包", "螺蛳粉", "酸菜鱼", "宫保鸡丁", "锅包肉",
+    "芝士火锅", "手撕包菜", "地三鲜", "佛跳墙"
 ];
+
+const getRandomFood = () => FOOD_NAMES[Math.floor(Math.random() * FOOD_NAMES.length)];
+const getAvatarUrl = (seed: string) => `https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(seed || 'default')}`;
+
+const QA_BOT = {
+    id: 'longcat-bot',
+    uid: 'longcat-bot',
+    name: 'LongCat',
+    avatar: 'https://api.dicebear.com/7.x/bottts/svg?seed=LongCat',
+    lastMessage: '你好！我是 LongCat，有什么我可以帮你的吗？',
+    time: '刚刚',
+    unread: 0,
+    online: true,
+    isBot: true,
+};
 
 interface Message {
     id: string;
-    sender: string;
+    senderId: string;
+    senderName: string;
     avatar?: string;
-    isMe?: boolean;
-    content: string;
-    time: string;
-    type?: 'audio' | 'text';
-    duration?: string;
-    reactions?: { emoji: string; count: number }[];
+    text: string;
+    timestamp: string;
+    createdAt?: any;
 }
 
 const IMApp: React.FC<{ windowId: string }> = () => {
     const { systemState } = useOS();
     const t = useTranslation(systemState.language);
     const ai = useAI();
-    const [activeTab, setActiveTab] = useState('messages');
-    const [activeChat, setActiveChat] = useState(MOCK_CHATS[0]);
+
+    // Auth & Profile State
+    const [user, setUser] = useState<any>(null);
+    const [authStatus, setAuthStatus] = useState('connecting'); // 'connecting', 'authenticated', 'error', 'guest'
+    const [nickname, setNickname] = useState('');
+    const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+    const [tempNickname, setTempNickname] = useState('');
+
+    // Firebase instance
+    const fb = React.useMemo(() => getFirebase(), []);
+    const auth = fb?.auth;
+    const db = fb?.db;
+    const appId = fb?.appId || 'p2p-chat-v1';
+
+    // Chat State
+    const [activeChat, setActiveChat] = useState<any>(QA_BOT);
+    const [onlineUsers, setOnlineUsers] = useState<any[]>([QA_BOT]);
+    const [firestoreMessages, setFirestoreMessages] = useState<Message[]>([]);
     const [message, setMessage] = useState('');
-    const [messagesByChat, setMessagesByChat] = useState<Record<string, Message[]>>({});
+
+    const [activeTab, setActiveTab] = useState('messages');
     const inputRef = useRef<HTMLTextAreaElement>(null);
     const scrollAreaRef = useRef<HTMLDivElement>(null);
+
+    // Helpers
+    const retryAction = async (fn: () => Promise<any>, maxRetries = 3) => {
+        for (let i = 0; i < maxRetries; i++) {
+            try {
+                return await fn();
+            } catch (err) {
+                if (i === maxRetries - 1) throw err;
+                await new Promise(r => setTimeout(r, Math.pow(2, i) * 800));
+            }
+        }
+    };
 
     const NAV_ITEMS = [
         { id: 'messages', label: t.chat.messages, icon: 'message' },
@@ -115,54 +142,186 @@ const IMApp: React.FC<{ windowId: string }> = () => {
     useEffect(() => {
         inputRef.current?.focus();
         adjustHeight();
-    }, [activeChat.id]);
+    }, [activeChat.id, activeChat.uid]);
 
-    const currentMessages = messagesByChat[activeChat.id] || [];
-
+    // 1. Auth Logic
     useEffect(() => {
+        let isMounted = true;
+
+        const performAuth = async () => {
+            if (!auth) {
+                setAuthStatus('error');
+                return;
+            }
+            try {
+                setAuthStatus('connecting');
+                try {
+                    await setPersistence(auth, browserLocalPersistence);
+                } catch (e) {
+                    await setPersistence(auth, inMemoryPersistence);
+                }
+
+                await retryAction(async () => {
+                    if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+                        await signInWithCustomToken(auth, __initial_auth_token);
+                    } else {
+                        await signInAnonymously(auth);
+                    }
+                });
+            } catch (error) {
+                console.error("Auth Error:", error);
+                if (isMounted) setAuthStatus('error');
+            }
+        };
+
+        performAuth();
+
+        if (!auth || !db) return;
+        const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
+            if (currentUser && isMounted) {
+                setUser(currentUser);
+                setAuthStatus('authenticated');
+
+                if (db) {
+                    const userSettingsRef = doc(db, 'artifacts', appId, 'users', currentUser.uid, 'settings', 'profile');
+                    try {
+                        const docSnap = await getDoc(userSettingsRef);
+                        let currentName = docSnap.exists() ? docSnap.data().name : getRandomFood();
+
+                        setNickname(currentName);
+                        await setDoc(userSettingsRef, { name: currentName, lastLogin: serverTimestamp() }, { merge: true });
+
+                        // Register Online
+                        const publicUserRef = doc(db, 'artifacts', appId, 'public', 'data', 'online_users', currentUser.uid);
+                        await setDoc(publicUserRef, {
+                            uid: currentUser.uid,
+                            name: currentName,
+                            lastActive: serverTimestamp()
+                        }, { merge: true });
+                    } catch (e) {
+                        console.error("Firestore Init Error:", e);
+                    }
+                }
+            }
+        });
+
+        return () => {
+            isMounted = false;
+            unsubscribe();
+        };
+    }, []);
+
+    // 2. Real-time Data Sync
+    useEffect(() => {
+        if (!user || authStatus !== 'authenticated' || !db) return;
+
+        // Listen for online users
+        const usersQuery = collection(db, 'artifacts', appId, 'public', 'data', 'online_users');
+        const unsubscribeUsers = onSnapshot(usersQuery, (snapshot) => {
+            const usersList = snapshot.docs
+                .map(doc => doc.data())
+                .filter(u => u.uid !== user.uid);
+            setOnlineUsers([QA_BOT, ...usersList]);
+        });
+
+        // Determine room ID
+        let roomId;
+        const targetId = activeChat.uid || activeChat.id;
+        if (activeChat.isBot) {
+            roomId = `bot_qa_${user.uid}`;
+        } else {
+            roomId = [user.uid, targetId].sort().join('_');
+        }
+
+        // Listen for messages
+        const msgsQuery = collection(db, 'artifacts', appId, 'public', 'data', `room_${roomId}`);
+        const unsubscribeMsgs = onSnapshot(msgsQuery, (snapshot) => {
+            const loadedMsgs = snapshot.docs
+                .map(doc => ({ id: doc.id, ...doc.data() } as Message))
+                .sort((a, b) => (a.createdAt?.toMillis() || 0) - (b.createdAt?.toMillis() || 0));
+            setFirestoreMessages(loadedMsgs);
+        }, (err) => console.warn("Messages sync restricted:", err));
+
+        return () => {
+            unsubscribeUsers();
+            unsubscribeMsgs();
+        };
+    }, [user, authStatus, activeChat.uid, activeChat.id, db, appId]);
+
+    const scrollToBottom = () => {
         const viewport = scrollAreaRef.current?.querySelector('[data-radix-scroll-area-viewport]') as HTMLElement;
         if (viewport) {
             viewport.scrollTop = viewport.scrollHeight;
         }
-    }, [currentMessages, activeChat.id]);
+    };
 
-    const handleSendMessage = async () => {
-        if (!message.trim()) return;
+    useEffect(() => {
+        scrollToBottom();
+    }, [firestoreMessages, activeChat.id]);
 
-        const newMessage = {
-            id: `m-${Date.now()}`,
-            sender: 'Me',
-            isMe: true,
-            content: message,
-            time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-        };
+    const handleUpdateNickname = async () => {
+        if (!tempNickname.trim() || !user) return;
 
-        setMessagesByChat(prev => ({
-            ...prev,
-            [activeChat.id]: [...(prev[activeChat.id] || []), newMessage]
-        }));
+        const newName = tempNickname.trim();
+        setNickname(newName);
 
-        const userMessageContent = message;
+        if (authStatus === 'authenticated' && db) {
+            const userSettingsRef = doc(db, 'artifacts', appId, 'users', user.uid, 'settings', 'profile');
+            await setDoc(userSettingsRef, { name: newName }, { merge: true });
+            const publicUserRef = doc(db, 'artifacts', appId, 'public', 'data', 'online_users', user.uid);
+            await setDoc(publicUserRef, { name: newName }, { merge: true });
+        }
+
+        setIsEditModalOpen(false);
+    };
+
+    const enterAsGuest = () => {
+        const guestId = 'guest_' + Math.random().toString(36).substr(2, 9);
+        const name = getRandomFood();
+        setNickname(name);
+        setUser({ uid: guestId, isGuest: true });
+        setAuthStatus('guest');
+    };
+
+    const handleSendMessage = async (e?: React.FormEvent) => {
+        if (e) e.preventDefault();
+        if (!message.trim() || !user) return;
+
+        const text = message;
         setMessage('');
 
-        try {
-            const response = await ai.sendMessage(userMessageContent);
+        let roomId;
+        const targetId = activeChat.uid || activeChat.id;
+        if (activeChat.isBot) {
+            roomId = `bot_qa_${user.uid}`;
+        } else {
+            roomId = [user.uid, targetId].sort().join('_');
+        }
 
-            const aiMessage = {
-                id: response.id,
-                sender: activeChat.name,
-                isMe: false,
-                content: response.content,
-                time: new Date(response.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-                avatar: activeChat.avatar
-            };
+        const chatRef = collection(db!, 'artifacts', appId, 'public', 'data', `room_${roomId}`);
 
-            setMessagesByChat(prev => ({
-                ...prev,
-                [activeChat.id]: [...(prev[activeChat.id] || []), aiMessage]
-            }));
-        } catch (error) {
-            console.error("AI Error:", error);
+        await addDoc(chatRef, {
+            text,
+            senderId: user.uid,
+            senderName: nickname,
+            createdAt: serverTimestamp(),
+            timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+        });
+
+        if (activeChat.isBot) {
+            try {
+                const response = await ai.sendMessage(text);
+                await addDoc(chatRef, {
+                    text: response.content,
+                    senderId: 'bot',
+                    senderName: activeChat.name,
+                    createdAt: serverTimestamp(),
+                    timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+                    avatar: activeChat.avatar
+                });
+            } catch (error) {
+                console.error("AI Error:", error);
+            }
         }
     };
 
@@ -173,14 +332,52 @@ const IMApp: React.FC<{ windowId: string }> = () => {
         }
     };
 
+    if (authStatus === 'error') {
+        return (
+            <div className="flex items-center justify-center h-full bg-[var(--color-bg-1)] p-6">
+                <div className="bg-[var(--color-bg-2)] p-10 rounded-[3rem] shadow-2xl max-w-sm text-center border border-[var(--color-border-a1)]">
+                    <AlertCircle className="w-12 h-12 text-amber-500 mx-auto mb-4" />
+                    <h2 className="text-xl font-black mb-2">连接受限</h2>
+                    <p className="text-[var(--color-text-4)] text-sm mb-6">检测到网络拦截，这通常由于环境安全策略引起。您可以刷新页面或以预览模式进入。</p>
+                    <div className="space-y-2">
+                        <Button onClick={() => window.location.reload()} className="w-full bg-[var(--color-blue)] text-white font-bold py-6 rounded-2xl shadow-lg">重新连接</Button>
+                        <Button onClick={enterAsGuest} variant="ghost" className="w-full text-[var(--color-text-4)] font-bold py-6 rounded-2xl">本地预览</Button>
+                    </div>
+                </div>
+            </div>
+        );
+    }
+
+    if (authStatus === 'connecting') {
+        return (
+            <div className="flex flex-col items-center justify-center h-full bg-[var(--color-bg-1)]">
+                <div className="w-12 h-12 border-4 border-[var(--color-border-a1)] border-t-[var(--color-blue)] rounded-full animate-spin mb-4"></div>
+                <p className="text-[var(--color-text-4)] font-black text-[10px] tracking-[0.3em] uppercase">Initializing P2P Node</p>
+            </div>
+        );
+    }
+
     return (
         <div className="flex h-full text-[var(--color-text-2)] overflow-hidden">
             {/* Left Rail - Navigation */}
             <div className="w-16 flex flex-col items-center pb-4 shrink-0 pt-11">
-                <Avatar className="h-9 w-9 border border-[var(--color-border-a1)] hover:scale-105 transition-transform cursor-pointer mb-6">
-                    <AvatarImage src="https://api.dicebear.com/7.x/avataaars/svg?seed=Felix" />
-                    <AvatarFallback>JD</AvatarFallback>
-                </Avatar>
+                <TooltipProvider>
+                    <Tooltip>
+                        <TooltipTrigger asChild>
+                            <div className="relative cursor-pointer mb-6 group" onClick={() => { setTempNickname(nickname); setIsEditModalOpen(true); }}>
+                                <Avatar className="h-9 w-9 border border-[var(--color-border-a1)] group-hover:scale-105 transition-transform">
+                                    <AvatarImage src={getAvatarUrl(nickname)} />
+                                    <AvatarFallback>{nickname[0]}</AvatarFallback>
+                                </Avatar>
+                                <div className="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-green-500 border-2 border-[var(--color-bg-1)] rounded-full"></div>
+                                <div className="absolute inset-0 flex items-center justify-center bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity rounded-full">
+                                    <Edit2 className="w-3 h-3 text-white" />
+                                </div>
+                            </div>
+                        </TooltipTrigger>
+                        <TooltipContent side="right">修改资料: {nickname}</TooltipContent>
+                    </Tooltip>
+                </TooltipProvider>
 
                 <div className="flex flex-col gap-2 flex-1 items-center">
                     <TooltipProvider>
@@ -229,72 +426,33 @@ const IMApp: React.FC<{ windowId: string }> = () => {
                                 />
                             </div>
 
-                            <div className="flex flex-col gap-4">
-                                <div className="flex gap-4 overflow-x-auto pb-2 no-scrollbar">
-                                    {MOCK_CHATS.filter(c => !c.isGroup && !c.isApp).map(contact => (
-                                        <div key={contact.id} className="flex flex-col items-center gap-1.5 min-w-[56px] group cursor-pointer">
-                                            <div className="relative">
-                                                <Avatar className="h-12 w-12 border-2 border-transparent group-hover:border-[var(--color-blue)] transition-colors rounded-full">
-                                                    <AvatarImage src={contact.avatar} />
-                                                    <AvatarFallback>{contact.name[0]}</AvatarFallback>
-                                                </Avatar>
-                                                {contact.online && <div className="absolute bottom-0 right-0 h-3 w-3 rounded-full bg-[var(--color-blue)] border-2 border-[var(--color-bg-page)]" />}
-                                            </div>
-                                            <span className="text-[var(--font-sm-size)] text-[var(--color-text-2)] truncate w-full text-center font-medium">{contact.name}</span>
-                                        </div>
-                                    ))}
-                                </div>
-
-                                <Tabs defaultValue="all" className="w-full">
-                                    <TabsList className="bg-transparent h-auto p-0 gap-3 w-full justify-start border-none rounded-none overflow-x-auto no-scrollbar">
-                                        <TabsTrigger value="all" className="rounded-none border-b-2 border-transparent data-[state=active]:border-[var(--color-blue)] data-[state=active]:bg-transparent px-0.5 pb-2 font-bold text-[var(--color-text-2)] transition-all">全部</TabsTrigger>
-                                        <TabsTrigger value="later" className="rounded-none border-b-2 border-transparent data-[state=active]:border-[var(--color-blue)] data-[state=active]:bg-transparent px-0.5 pb-2 font-medium text-[var(--color-text-4)] transition-all flex items-center gap-1">
-                                            稍后处理 <Badge variant="secondary" className="h-4 min-w-[16px] px-1 bg-[var(--color-bg-3)] text-[var(--color-text-5)] border-none text-[8px]">3</Badge>
-                                        </TabsTrigger>
-                                        <TabsTrigger value="group" className="rounded-none border-b-2 border-transparent data-[state=active]:border-[var(--color-blue)] data-[state=active]:bg-transparent px-0.5 pb-2 font-medium text-[var(--color-text-4)] transition-all">分组</TabsTrigger>
-                                        <TabsTrigger value="unread" className="rounded-none border-b-2 border-transparent data-[state=active]:border-[var(--color-blue)] data-[state=active]:bg-transparent px-0.5 pb-2 font-medium text-[var(--color-text-4)] transition-all flex items-center gap-1">
-                                            未读 <Badge variant="secondary" className="h-4 min-w-[16px] px-1 bg-[var(--color-bg-3)] text-[var(--color-text-5)] border-none text-[8px]">3</Badge>
-                                        </TabsTrigger>
-                                        <TabsTrigger value="at" className="rounded-none border-b-2 border-transparent data-[state=active]:border-[var(--color-blue)] data-[state=active]:bg-transparent px-0.5 pb-2 font-medium text-[var(--color-text-4)] transition-all">@我</TabsTrigger>
-                                        <Button variant="ghost" size="icon" className="h-6 w-6 ml-auto flex-shrink-0 text-[var(--color-text-4)] hover:text-[var(--color-text-2)] transition-colors"><MoreHorizontal size={16} /></Button>
-                                    </TabsList>
-                                </Tabs>
-                            </div>
                         </div>
-
                         <ScrollArea className="flex-1">
                             <div className="px-2">
-                                {MOCK_CHATS.map(chat => (
+                                {onlineUsers.map(chat => (
                                     <div
-                                        key={chat.id}
+                                        key={chat.uid || chat.id}
                                         onClick={() => setActiveChat(chat)}
-                                        className={`flex items-center gap-3 p-3 rounded-[var(--radius-12)] cursor-pointer transition-all hover:bg-[var(--color-fill-2)] group mb-1 ${activeChat.id === chat.id ? 'bg-[var(--color-fill-2)]' : ''}`}
+                                        className={`flex items-center gap-3 p-3 rounded-[var(--radius-12)] cursor-pointer transition-all hover:bg-[var(--color-fill-2)] group mb-1 ${(activeChat.uid || activeChat.id) === (chat.uid || chat.id) ? 'bg-[var(--color-fill-3)] border border-[var(--color-border-a1)]' : ''}`}
                                     >
                                         <div className="relative">
                                             <Avatar className="h-12 w-12 rounded-[var(--radius-12)] group-hover:scale-105 transition-transform overflow-hidden">
-                                                <AvatarImage src={chat.avatar} />
+                                                <AvatarImage src={chat.avatar || getAvatarUrl(chat.name)} />
                                                 <AvatarFallback>{chat.name[0]}</AvatarFallback>
                                             </Avatar>
+                                            {!chat.isBot && <div className="absolute -bottom-1 -right-1 w-3 h-3 bg-green-500 border-2 border-[var(--color-bg-1)] rounded-full"></div>}
                                         </div>
                                         <div className="flex-1 min-w-0">
                                             <div className="flex items-center justify-between mb-0.5">
                                                 <span className={`text-[var(--font-sm-size)] font-semibold truncate text-[var(--color-text-2)] transition-colors`}>
                                                     {chat.name}
-                                                    {chat.isGroup && <span className="ml-1 text-[var(--font-xs-size)] text-[var(--color-text-4)] font-normal">{chat.memberCount}人</span>}
                                                 </span>
-                                                <span className="text-[var(--font-xs-size)] text-[var(--color-text-4)]">{chat.time}</span>
+                                                <span className="text-[var(--font-xs-size)] text-[var(--color-text-4)]">{chat.time || '刚刚'}</span>
                                             </div>
                                             <p className="text-[var(--font-sm-size)] text-[var(--color-text-5)] truncate leading-relaxed">
-                                                {chat.lastMessage}
+                                                {chat.lastMessage || (chat.isBot ? '长猫 AI 助手' : '点击发起私聊')}
                                             </p>
                                         </div>
-                                        {chat.muted && (
-                                            <div className="text-[var(--color-text-5)]">
-                                                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                                    <path d="M19.1001 19.1L4.8999 4.8999M10.1999 4.3999L6.1999 8.3999H3.1999V15.6H6.1999L10.1999 19.6V4.3999ZM15.1999 8.3999C16.1999 9.3999 16.7999 10.6 16.7999 12M18.8999 5.3999C20.6 7.0999 21.6 9.3999 21.6 12C21.6 14.6001 20.6 17 18.8999 18.6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-                                                </svg>
-                                            </div>
-                                        )}
                                     </div>
                                 ))}
                             </div>
@@ -313,10 +471,9 @@ const IMApp: React.FC<{ windowId: string }> = () => {
                                 <div className="flex flex-col">
                                     <div className="flex items-center gap-2">
                                         <h3 className="text-[var(--font-base-size)] font-bold text-[var(--color-text-1)]">{activeChat.name}</h3>
-                                        {activeChat.isGroup && <span className="text-[var(--font-xs-size)] text-[var(--color-text-5)] font-normal">{activeChat.memberCount}人</span>}
                                     </div>
                                     <p className="text-[var(--font-sm-size)] text-[var(--color-text-5)] truncate max-w-[400px]">
-                                        {ai.isTyping ? '正在输入...' : '周会请提前订会议室，会议文档及时发出，会后同步纪要'}
+                                        {ai.isTyping ? '正在输入...' : '有什么可以帮您的？'}
                                     </p>
                                 </div>
                             </div>
@@ -331,29 +488,41 @@ const IMApp: React.FC<{ windowId: string }> = () => {
                         {/* Messages List */}
                         <ScrollArea ref={scrollAreaRef} className="flex-1 p-5">
                             <div className="max-w-4xl mx-auto space-y-8">
-                                {currentMessages.map((msg) => (
-                                    <div key={msg.id} className={`flex gap-3 group ${msg.isMe ? 'flex-row-reverse' : ''}`}>
-                                        {!msg.isMe && (
-                                            <Avatar className="h-9 w-9 shrink-0 rounded-[var(--radius-8)] overflow-hidden">
-                                                <AvatarImage src={msg.avatar} />
-                                                <AvatarFallback>{msg.sender[0]}</AvatarFallback>
-                                            </Avatar>
-                                        )}
-                                        <div className={`flex flex-col gap-1 max-w-[75%] ${msg.isMe ? 'items-end' : 'items-start'}`}>
-                                            <div className={`flex items-baseline gap-2 ${msg.isMe ? 'flex-row-reverse' : ''}`}>
-                                                <span className="text-[11px] font-medium text-[var(--color-text-5)]">{msg.sender}</span>
-                                                <span className="text-[10px] text-[var(--color-text-5)] opacity-0 group-hover:opacity-100 transition-opacity">{msg.time}</span>
-                                            </div>
-
-                                            <div className={`relative px-4 py-2 rounded-[var(--radius-12)] text-[var(--font-base-size)] leading-relaxed select-text ${msg.isMe
-                                                ? 'bg-[var(--color-blue)] text-[var(--color-text-white)]'
-                                                : 'bg-[var(--color-bg-2)] border border-[var(--color-border-a2)] text-[var(--color-text-2)]'
-                                                } transition-all`}>
-                                                {msg.content}
-                                            </div>
+                                {firestoreMessages.length === 0 ? (
+                                    <div className="h-full flex flex-col items-center justify-center text-[var(--color-text-5)] py-20 gap-4 opacity-40">
+                                        <div className="w-20 h-20 bg-[var(--color-fill-3)] rounded-[2.5rem] flex items-center justify-center border border-[var(--color-border-a1)]">
+                                            <Search className="w-8 h-8 opacity-20" />
+                                        </div>
+                                        <div className="text-center">
+                                            <p className="text-sm font-black uppercase tracking-widest">已开启加密对话</p>
+                                            <p className="text-[10px]">只有你和 {activeChat.name} 能看到此对话内容</p>
                                         </div>
                                     </div>
-                                ))}
+                                ) : (
+                                    firestoreMessages.map((msg: Message) => (
+                                        <div key={msg.id} className={`flex gap-3 group ${msg.senderId === user.uid ? 'flex-row-reverse' : ''}`}>
+                                            {msg.senderId !== user.uid && (
+                                                <Avatar className="h-9 w-9 shrink-0 rounded-[var(--radius-8)] overflow-hidden">
+                                                    <AvatarImage src={msg.avatar || getAvatarUrl(msg.senderName)} />
+                                                    <AvatarFallback>{msg.senderName?.[0]}</AvatarFallback>
+                                                </Avatar>
+                                            )}
+                                            <div className={`flex flex-col gap-1 max-w-[75%] ${msg.senderId === user.uid ? 'items-end' : 'items-start'}`}>
+                                                <div className={`flex items-baseline gap-2 ${msg.senderId === user.uid ? 'flex-row-reverse' : ''}`}>
+                                                    <span className="text-[11px] font-medium text-[var(--color-text-5)]">{msg.senderId === user.uid ? '我' : msg.senderName}</span>
+                                                    <span className="text-[10px] text-[var(--color-text-5)] opacity-0 group-hover:opacity-100 transition-opacity">{msg.timestamp}</span>
+                                                </div>
+
+                                                <div className={`relative px-4 py-2 rounded-[var(--radius-12)] text-[var(--font-base-size)] leading-relaxed select-text ${msg.senderId === user.uid
+                                                    ? 'bg-[var(--color-blue)] text-white'
+                                                    : 'bg-[var(--color-bg-2)] border border-[var(--color-border-a2)] text-[var(--color-text-2)]'
+                                                    } transition-all`}>
+                                                    {msg.text}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    ))
+                                )}
                             </div>
                         </ScrollArea>
 
@@ -412,6 +581,44 @@ const IMApp: React.FC<{ windowId: string }> = () => {
                     </div>
                 </div>
             </div>
+
+            {/* Edit Profile Modal */}
+            <Dialog open={isEditModalOpen} onOpenChange={setIsEditModalOpen}>
+                <DialogContent className="sm:max-w-[400px] rounded-[2rem] border-[var(--color-border-a1)] bg-[var(--color-bg-1)] p-8">
+                    <DialogHeader>
+                        <DialogTitle className="text-xl font-black mb-2">修改个人资料</DialogTitle>
+                    </DialogHeader>
+                    <div className="grid gap-6 py-4">
+                        <div className="flex flex-col items-center gap-4 mb-2">
+                            <div className="relative group">
+                                <Avatar className="h-24 w-24 border-2 border-[var(--color-border-a1)] shadow-xl">
+                                    <AvatarImage src={getAvatarUrl(tempNickname || nickname)} />
+                                    <AvatarFallback>{nickname[0]}</AvatarFallback>
+                                </Avatar>
+                                <div className="absolute inset-0 bg-black/10 rounded-full opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                                    <RefreshCw className="w-6 h-6 text-white animate-spin-slow" />
+                                </div>
+                            </div>
+                            <p className="text-[10px] font-black uppercase tracking-widest text-[var(--color-text-5)]">头像随昵称自动生成</p>
+                        </div>
+                        <div className="space-y-3">
+                            <label htmlFor="nickname" className="text-xs font-black uppercase tracking-widest text-[var(--color-text-4)] pl-1">新昵称 (菜名推荐)</label>
+                            <Input
+                                id="nickname"
+                                value={tempNickname}
+                                onChange={(e) => setTempNickname(e.target.value)}
+                                placeholder="起个有意思的菜名..."
+                                className="h-12 bg-[var(--color-fill-2)] border-transparent focus-visible:ring-1 focus-visible:ring-[var(--color-blue)] transition-all rounded-xl font-bold"
+                                autoFocus
+                            />
+                        </div>
+                    </div>
+                    <DialogFooter className="gap-2 sm:gap-0">
+                        <Button variant="ghost" onClick={() => setIsEditModalOpen(false)} className="rounded-xl font-bold">取消</Button>
+                        <Button type="submit" onClick={handleUpdateNickname} className="bg-[var(--color-blue)] text-white rounded-xl font-bold px-8 shadow-lg shadow-[var(--color-blue)]/20 transition-all hover:scale-105 active:scale-95">确认修改</Button>
+                    </DialogFooter>
+                </DialogContent>
+            </Dialog>
         </div>
     );
 };
