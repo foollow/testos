@@ -35,8 +35,22 @@ import { getFirestore, doc, setDoc, getDoc, collection, onSnapshot, addDoc, serv
 // Firebase initialization wrapper to prevent crashes
 const getFirebase = () => {
     try {
-        if (typeof __firebase_config === 'undefined') return null;
-        const config = JSON.parse(__firebase_config);
+        if (typeof __firebase_config === 'undefined' || !__firebase_config || __firebase_config === '{}') {
+            console.warn("Firebase config is empty or undefined");
+            return null;
+        }
+
+        let configStr = __firebase_config;
+
+        // Defensive check: if it's double stringified or contains escaped quotes, clean it
+        if (configStr.startsWith('"') && configStr.endsWith('"')) {
+            try {
+                configStr = JSON.parse(configStr);
+            } catch (e) { }
+        }
+
+        const config = typeof configStr === 'string' ? JSON.parse(configStr) : configStr;
+
         const app = initializeApp(config);
         return {
             auth: getAuth(app),
@@ -45,6 +59,10 @@ const getFirebase = () => {
         };
     } catch (e) {
         console.error("Firebase Init Failed:", e);
+        // Log a hint about the common JSON error to help user
+        if (e instanceof SyntaxError) {
+            console.error("Potential JSON format issue. Check if keys like apiKey are quoted with double quotes (\").");
+        }
         return null;
     }
 };
