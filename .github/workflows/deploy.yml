@@ -41,6 +41,9 @@ jobs:
       - name: Build
         env:
           VITE_LONGCAT_API_KEY: ${{ secrets.VITE_LONGCAT_API_KEY }}
+          VITE_FIREBASE_CONFIG: ${{ secrets.VITE_FIREBASE_CONFIG }}
+          VITE_APP_ID: ${{ secrets.VITE_APP_ID }}
+          VITE_INITIAL_AUTH_TOKEN: ${{ secrets.VITE_INITIAL_AUTH_TOKEN }}
         run: npm run build
       - name: Setup Pages
         uses: actions/configure-pages@v4
