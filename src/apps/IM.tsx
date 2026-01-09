@@ -436,15 +436,8 @@ const IMApp: React.FC<{ windowId: string }> = () => {
                                 <Button variant="ghost" size="icon" className="h-8 w-8 text-[var(--color-text-4)]"><Plus size={18} /></Button>
                             </div>
 
-                            <div className="relative">
-                                <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-[var(--color-text-5)]" />
-                                <Input
-                                    placeholder={t.chat.search}
-                                    className="pl-9 h-9 bg-[var(--color-bg-3)] border-none focus-visible:ring-1 focus-visible:ring-[var(--color-blue-active)]/30 text-[var(--color-text-2)] rounded-[var(--radius-8)]"
-                                />
-                            </div>
-
                         </div>
+
                         <ScrollArea className="flex-1">
                             <div className="px-2">
                                 {onlineUsers.map(chat => (

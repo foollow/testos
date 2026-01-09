@@ -1,8 +1,9 @@
 import React, { useState, memo, useCallback } from 'react';
 import { useDraggable } from '@dnd-kit/core';
 import { CSS } from '@dnd-kit/utilities';
-import { X, Minus, Square, Maximize2 } from 'lucide-react';
+import { X, Minus, Square, Maximize2, Search } from 'lucide-react';
 import { useOS, type WindowState } from '../../store/useOS';
+import { useTranslation } from '../../lib/i18n';
 import { clsx } from 'clsx';
 
 interface WindowFrameProps {
@@ -160,12 +161,25 @@ export const WindowFrame: React.FC<WindowFrameProps> = memo(({ window, zIndex, c
                     </button>
                 </div>
 
-                {/* Title */}
+                {/* Title or Search Box */}
                 <div className={clsx(
                     "flex-1 flex justify-center items-center text-sm font-medium transition-colors duration-300",
-                    window.appId === 'im' && "opacity-0" // Hide title for IM to match design
                 )} style={{ color: 'var(--text-secondary)' }}>
-                    <span>{useOS(state => state.apps[window.appId]?.title) || window.title}</span>
+                    {window.appId === 'im' ? (
+                        <div className="w-full max-w-[280px] relative group pointer-events-auto" onMouseDown={(e) => e.stopPropagation()}>
+                            <div className="absolute inset-y-0 left-3 flex items-center pointer-events-none opacity-50">
+                                <Search size={14} className="text-[var(--color-text-5)]" />
+                            </div>
+                            <input
+                                type="text"
+                                placeholder={useTranslation(useOS.getState().systemState.language).chat.search}
+                                className="w-full h-7 rounded-lg pl-8 pr-4 text-[12px] transition-all outline-none bg-[var(--color-bg-3)] border-none text-[var(--color-text-2)] hover:bg-[var(--color-fill-3)] focus:bg-[var(--color-bg-2)] focus:ring-1 focus:ring-[var(--color-blue)]/20"
+                                onClick={(e) => e.stopPropagation()}
+                            />
+                        </div>
+                    ) : (
+                        <span>{useOS(state => state.apps[window.appId]?.title) || window.title}</span>
+                    )}
                 </div>
             </div>
 
