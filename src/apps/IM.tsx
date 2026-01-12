@@ -427,9 +427,9 @@ const IMApp: React.FC<{ windowId: string }> = () => {
             {/* Main Area Wrapper */}
             <div className="flex-1 flex flex-col min-w-0">
                 {/* Content Container (Layered White Box) */}
-                <div className="flex-1 ml-0 mt-10 mb-4 mr-4 bg-[var(--color-bg-1)] rounded-2xl shadow-[0_4px_24px_rgba(0,0,0,0.06)] border border-[var(--color-border-a2)] flex overflow-hidden">
+                <div className="flex-1 ml-0 mt-10 mb-4 mr-4 bg-[var(--color-bg-1)] rounded-2xl shadow-[0_4px_24px_rgba(0,0,0,0.06)] border border-[var(--divider-color)] flex overflow-hidden">
                     {/* Middle Panel - Chat List */}
-                    <div className="w-72 flex flex-col border-r border-[var(--color-border-a2)] shrink-0 bg-[var(--color-fill-2)]">
+                    <div className="w-72 flex flex-col border-r border-[var(--divider-color)] shrink-0 bg-[var(--color-fill-2)]">
                         <div className="pt-6 p-4 pb-0 space-y-4">
                             <div className="flex items-center justify-between px-1">
                                 <h2 className="text-[17px] font-bold tracking-tight text-[var(--color-text-1)]">消息</h2>
@@ -444,7 +444,7 @@ const IMApp: React.FC<{ windowId: string }> = () => {
                                     <div
                                         key={chat.uid || chat.id}
                                         onClick={() => setActiveChat(chat)}
-                                        className={`flex items-center gap-3 p-3 rounded-[var(--radius-12)] cursor-pointer transition-all hover:bg-[var(--color-fill-2)] group mb-1 ${(activeChat.uid || activeChat.id) === (chat.uid || chat.id) ? 'bg-[var(--color-fill-3)] border border-[var(--color-border-a1)]' : ''}`}
+                                        className={`flex items-center gap-3 p-3 rounded-[var(--radius-12)] cursor-pointer transition-all hover:bg-[var(--hover-bg)] group mb-1 ${(activeChat.uid || activeChat.id) === (chat.uid || chat.id) ? 'bg-[var(--active-bg)] border border-[var(--divider-color)]' : ''}`}
                                     >
                                         <div className="relative">
                                             <Avatar className="h-12 w-12 rounded-[var(--radius-12)] group-hover:scale-105 transition-transform overflow-hidden">
@@ -473,7 +473,7 @@ const IMApp: React.FC<{ windowId: string }> = () => {
                     {/* Right Main Area */}
                     <div className="flex-1 flex flex-col relative overflow-hidden bg-white">
                         {/* Chat Header */}
-                        <header className="h-[64px] flex items-center justify-between px-6 border-b border-[var(--color-border-weak)] shrink-0 bg-white/80 backdrop-blur-sm z-10">
+                        <header className="h-[64px] flex items-center justify-between px-6 border-b border-[var(--divider-color)] shrink-0 bg-white/80 backdrop-blur-sm z-10">
                             <div className="flex items-center gap-3">
                                 <Avatar className="h-10 w-10 rounded-[var(--radius-8)] overflow-hidden">
                                     <AvatarImage src={activeChat.avatar} />
@@ -526,7 +526,7 @@ const IMApp: React.FC<{ windowId: string }> = () => {
 
                                                 <div className={`relative px-4 py-2 rounded-[var(--radius-12)] text-[var(--font-base-size)] leading-relaxed select-text ${msg.senderId === user.uid
                                                     ? 'bg-[var(--color-blue)] text-white'
-                                                    : 'bg-[var(--color-bg-2)] border border-[var(--color-border-a2)] text-[var(--color-text-2)]'
+                                                    : 'bg-[var(--color-bg-2)] border border-[var(--divider-color)] text-[var(--color-text-2)]'
                                                     } transition-all`}>
                                                     {msg.text}
                                                 </div>
@@ -538,8 +538,8 @@ const IMApp: React.FC<{ windowId: string }> = () => {
                         </ScrollArea>
 
                         {/* Input Area */}
-                        <div className="px-5 pb-5 pt-2 shrink-0 border-t border-transparent">
-                            <div className="max-w-[1240px] mx-auto rounded-[var(--radius-12)] border border-[var(--color-border-a2)] bg-[var(--color-bg-1)] shadow-[var(--effect-shadow-level-1-box)] p-1.5 focus-within:ring-1 focus-within:ring-[var(--color-blue-active)]/10 transition-all flex flex-col group">
+                        <div className="px-5 pb-5 pt-2 shrink-0 border-t border-[var(--divider-color)]">
+                            <div className="max-w-[1240px] mx-auto rounded-[var(--radius-12)] border border-[var(--divider-color)] bg-[var(--color-bg-1)] shadow-[var(--effect-shadow-level-1-box)] p-1.5 focus-within:ring-1 focus-within:ring-[var(--color-blue-active)]/10 transition-all flex flex-col group">
                                 <div className="relative flex items-end">
                                     <Textarea
                                         ref={inputRef}
@@ -553,15 +553,15 @@ const IMApp: React.FC<{ windowId: string }> = () => {
                                 </div>
 
                                 <div className="flex items-center gap-0.5 text-[var(--color-text-4)] px-1 pb-1">
-                                    <Button variant="ghost" size="icon" className="h-8 w-8 rounded-[var(--radius-8)] hover:text-[var(--color-blue)] hover:bg-[var(--color-blue-bg-weak)]/50 transition-colors"><Plus size={18} /></Button>
-                                    <Button variant="ghost" size="icon" className="h-8 w-8 rounded-[var(--radius-8)] hover:text-[var(--color-blue)] hover:bg-[var(--color-blue-bg-weak)]/50 transition-colors"><Smile size={18} /></Button>
-                                    <div className="flex items-center h-8 px-2 rounded-[var(--radius-8)] hover:text-[var(--color-blue)] hover:bg-[var(--color-blue-bg-weak)]/50 transition-colors cursor-pointer text-[13px] font-medium ml-1">
+                                    <Button variant="ghost" size="icon" className="h-8 w-8 rounded-[var(--radius-8)] hover:text-[var(--color-blue)] hover:bg-[var(--hover-bg)] transition-colors"><Plus size={18} /></Button>
+                                    <Button variant="ghost" size="icon" className="h-8 w-8 rounded-[var(--radius-8)] hover:text-[var(--color-blue)] hover:bg-[var(--hover-bg)] transition-colors"><Smile size={18} /></Button>
+                                    <div className="flex items-center h-8 px-2 rounded-[var(--radius-8)] hover:text-[var(--color-blue)] hover:bg-[var(--hover-bg)] transition-colors cursor-pointer text-[13px] font-medium ml-1">
                                         Aa
                                     </div>
-                                    <Button variant="ghost" size="icon" className="h-8 w-8 rounded-[var(--radius-8)] hover:text-[var(--color-blue)] hover:bg-[var(--color-blue-bg-weak)]/50 transition-colors"><ImageIcon size={18} /></Button>
-                                    <Button variant="ghost" size="icon" className="h-8 w-8 rounded-[var(--radius-8)] hover:text-[var(--color-blue)] hover:bg-[var(--color-blue-bg-weak)]/50 transition-colors"><Paperclip size={18} /></Button>
-                                    <Button variant="ghost" size="icon" className="h-8 w-8 rounded-[var(--radius-8)] hover:text-[var(--color-blue)] hover:bg-[var(--color-blue-bg-weak)]/50 transition-colors"><Scissors size={18} /></Button>
-                                    <Button variant="ghost" size="icon" className="h-8 w-8 rounded-[var(--radius-8)] hover:text-[var(--color-blue)] hover:bg-[var(--color-blue-bg-weak)]/50 transition-colors"><VideoIcon size={18} /></Button>
+                                    <Button variant="ghost" size="icon" className="h-8 w-8 rounded-[var(--radius-8)] hover:text-[var(--color-blue)] hover:bg-[var(--hover-bg)] transition-colors"><ImageIcon size={18} /></Button>
+                                    <Button variant="ghost" size="icon" className="h-8 w-8 rounded-[var(--radius-8)] hover:text-[var(--color-blue)] hover:bg-[var(--hover-bg)] transition-colors"><Paperclip size={18} /></Button>
+                                    <Button variant="ghost" size="icon" className="h-8 w-8 rounded-[var(--radius-8)] hover:text-[var(--color-blue)] hover:bg-[var(--hover-bg)] transition-colors"><Scissors size={18} /></Button>
+                                    <Button variant="ghost" size="icon" className="h-8 w-8 rounded-[var(--radius-8)] hover:text-[var(--color-blue)] hover:bg-[var(--hover-bg)] transition-colors"><VideoIcon size={18} /></Button>
                                     <div className="flex items-center h-8 px-2 rounded-[var(--radius-8)] hover:text-[var(--color-blue)] hover:bg-[var(--color-blue-bg-weak)]/50 transition-colors cursor-pointer text-[13px] font-medium">
                                         ✨
                                     </div>

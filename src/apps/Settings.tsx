@@ -10,8 +10,16 @@ import {
     SelectValue,
 } from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Globe } from 'lucide-react';
+import { Globe, Pipette } from 'lucide-react';
 import { useTranslation } from "@/lib/i18n";
+
+const PRESET_COLORS = [
+    { name: 'Blue', hsl: "212.1 100% 50%" },
+    { name: 'Red', hsl: "0 100% 60%" },
+    { name: 'Green', hsl: "142.1 76.2% 45.3%" },
+    { name: 'Orange', hsl: "24.6 95% 53.1%" },
+    { name: 'Purple', hsl: "262.1 83.3% 57.8%" },
+];
 
 const hexToHsl = (hex: string): string => {
     let r = 0, g = 0, b = 0;
@@ -116,16 +124,6 @@ const Settings: React.FC = () => {
                         <h2 className="text-xl font-semibold">{t.settings.theme.title}</h2>
                         <div className="grid grid-cols-2 gap-4">
                             <button
-                                onClick={() => setTheme('dark')}
-                                className={`flex items-center justify-center gap-3 p-4 rounded-xl border-2 transition-all duration-300 ${theme === 'dark'
-                                    ? 'bg-primary/10 border-primary ring-2 ring-primary/20'
-                                    : 'border-white/5 hover:bg-white/5'
-                                    }`}
-                            >
-                                <div className="w-4 h-4 rounded-full bg-slate-950 border border-slate-800" />
-                                <span className="font-medium">{t.settings.theme.dark}</span>
-                            </button>
-                            <button
                                 onClick={() => setTheme('light')}
                                 className={`flex items-center justify-center gap-3 p-4 rounded-xl border-2 transition-all duration-300 ${theme === 'light'
                                     ? 'bg-primary/10 border-primary ring-2 ring-primary/20'
@@ -135,6 +133,16 @@ const Settings: React.FC = () => {
                                 <div className="w-4 h-4 rounded-full bg-white border border-slate-200" />
                                 <span className="font-medium">{t.settings.theme.light}</span>
                             </button>
+                            <button
+                                onClick={() => setTheme('dark')}
+                                className={`flex items-center justify-center gap-3 p-4 rounded-xl border-2 transition-all duration-300 ${theme === 'dark'
+                                    ? 'bg-primary/10 border-primary ring-2 ring-primary/20'
+                                    : 'border-white/5 hover:bg-white/5'
+                                    }`}
+                            >
+                                <div className="w-4 h-4 rounded-full bg-slate-950 border border-slate-800" />
+                                <span className="font-medium">{t.settings.theme.dark}</span>
+                            </button>
                         </div>
                     </section>
 
@@ -143,35 +151,42 @@ const Settings: React.FC = () => {
                         <div className="space-y-6">
                             <div className="space-y-4">
                                 <Label className="text-sm font-medium opacity-70">{t.settings.brand.primary}</Label>
-                                <div className="flex gap-4 items-center">
-                                    <div className="relative w-12 h-12 rounded-xl shrink-0 overflow-hidden border border-white/10 shadow-sm transition-transform active:scale-95">
+                                <div className="grid grid-cols-6 gap-3">
+                                    {PRESET_COLORS.map((color) => (
+                                        <button
+                                            key={color.name}
+                                            onClick={() => handleConfigChange('primary', color.hsl)}
+                                            className={`group relative w-full aspect-square rounded-xl transition-all duration-300 hover:scale-105 active:scale-95 ${themeConfig.primary === color.hsl
+                                                ? 'ring-2 ring-primary ring-offset-2 dark:ring-offset-slate-900 shadow-lg'
+                                                : 'border border-black/5 dark:border-white/10 hover:shadow-md'
+                                                }`}
+                                            style={{ backgroundColor: `hsl(${color.hsl})` }}
+                                            title={color.name}
+                                        >
+                                            {themeConfig.primary === color.hsl && (
+                                                <div className="absolute inset-0 flex items-center justify-center">
+                                                    <div className="w-2 h-2 rounded-full bg-white shadow-sm" />
+                                                </div>
+                                            )}
+                                        </button>
+                                    ))}
+                                    <div className={`relative w-full aspect-square rounded-xl border-2 border-dashed transition-all duration-300 hover:bg-black/5 dark:hover:bg-white/5 ${!PRESET_COLORS.find(c => c.hsl === themeConfig.primary)
+                                        ? 'border-primary bg-primary/5'
+                                        : 'border-black/10 dark:border-white/10'
+                                        }`}>
                                         <input
                                             type="color"
-                                            className="absolute inset-[-50%] w-[200%] h-[200%] cursor-pointer border-none bg-transparent p-0 m-0"
+                                            className="absolute inset-0 w-full h-full cursor-pointer opacity-0"
                                             value={hslToHex(themeConfig.primary)}
                                             onChange={(e) => handleConfigChange('primary', hexToHsl(e.target.value))}
                                         />
-                                    </div>
-                                    <div className="text-xs text-muted-foreground">
-                                        {t.settings.brand.desc_primary}
+                                        <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                                            <Pipette size={18} className={!PRESET_COLORS.find(c => c.hsl === themeConfig.primary) ? 'text-primary' : 'opacity-40'} />
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-
-                            <div className="space-y-4">
-                                <Label className="text-sm font-medium opacity-70">{t.settings.brand.secondary}</Label>
-                                <div className="flex gap-4 items-center">
-                                    <div className="relative w-12 h-12 rounded-xl shrink-0 overflow-hidden border border-white/10 shadow-sm transition-transform active:scale-95">
-                                        <input
-                                            type="color"
-                                            className="absolute inset-[-50%] w-[200%] h-[200%] cursor-pointer border-none bg-transparent p-0 m-0"
-                                            value={hslToHex(themeConfig.secondary)}
-                                            onChange={(e) => handleConfigChange('secondary', hexToHsl(e.target.value))}
-                                        />
-                                    </div>
-                                    <div className="text-xs text-muted-foreground">
-                                        {t.settings.brand.desc_secondary}
-                                    </div>
+                                <div className="text-xs text-muted-foreground mt-2">
+                                    {t.settings.brand.desc_primary}
                                 </div>
                             </div>
                         </div>
@@ -206,15 +221,18 @@ const Settings: React.FC = () => {
                             <div className="space-y-4">
                                 <Label className="flex justify-between items-center pr-1">
                                     <span className="text-sm font-medium opacity-70">{t.settings.components.fontSize}</span>
-                                    <span className="text-xs bg-primary/20 text-primary px-2 py-0.5 rounded">{themeConfig.fontSize}px</span>
+                                    <span className="text-xs bg-primary/20 text-primary px-2 py-0.5 rounded">{themeConfig.fontSize}rem</span>
                                 </Label>
-                                <Slider
-                                    value={[themeConfig.fontSize]}
-                                    min={12}
-                                    max={24}
-                                    step={1}
-                                    onValueChange={([val]) => handleConfigChange('fontSize', val)}
-                                />
+                                <div className="px-1 py-2">
+                                    <Slider
+                                        value={[themeConfig.fontSize]}
+                                        min={0.75}
+                                        max={1.5}
+                                        step={0.05}
+                                        onValueChange={([val]) => handleConfigChange('fontSize', val)}
+                                        className="py-4"
+                                    />
+                                </div>
                             </div>
 
                             <div className="space-y-4">
@@ -222,13 +240,16 @@ const Settings: React.FC = () => {
                                     <span className="text-sm font-medium opacity-70">{t.settings.components.radius}</span>
                                     <span className="text-xs bg-primary/20 text-primary px-2 py-0.5 rounded">{themeConfig.radius}rem</span>
                                 </Label>
-                                <Slider
-                                    value={[themeConfig.radius]}
-                                    min={0}
-                                    max={2}
-                                    step={0.1}
-                                    onValueChange={([val]) => handleConfigChange('radius', val)}
-                                />
+                                <div className="px-1 py-2">
+                                    <Slider
+                                        value={[themeConfig.radius]}
+                                        min={0}
+                                        max={2}
+                                        step={0.1}
+                                        onValueChange={([val]) => handleConfigChange('radius', val)}
+                                        className="py-4"
+                                    />
+                                </div>
                             </div>
 
                             <div className="space-y-4">

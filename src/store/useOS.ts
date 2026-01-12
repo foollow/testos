@@ -66,12 +66,12 @@ export const useOS = create<OSState>((set, get) => ({
     apps: {},
     windows: {},
     windowOrder: [],
-    theme: 'dark',
+    theme: 'light',
     themeConfig: {
-        primary: "262.1 83.3% 57.8%", // Default purple
-        secondary: "262.1 40% 90%",
+        primary: "212.1 100% 50%", // Default blue
+        secondary: "212.1 100% 95%",
         radius: 0.5,
-        fontSize: 16,
+        fontSize: 1, // 1rem
         fontFamily: 'Inter',
         shadow: 'base',
         spacing: 1,

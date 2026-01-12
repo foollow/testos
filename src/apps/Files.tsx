@@ -44,16 +44,16 @@ const Files: React.FC = () => {
     return (
         <div className="flex h-full bg-background/80 backdrop-blur-md overflow-hidden text-foreground transition-colors duration-300">
             {/* Sidebar */}
-            <div className="w-48 border-r border-border/40 bg-muted/20 p-4 space-y-4 hidden md:block">
+            <div className="w-48 border-r border-[var(--divider-color)] bg-muted/20 p-4 space-y-4 hidden md:block">
                 <div className="space-y-1">
                     <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider px-2">{t.files.sidebar.favorites}</p>
-                    <button className="flex items-center gap-2 w-full p-2 bg-primary/10 text-primary rounded-lg text-sm font-medium">
+                    <button className="flex items-center gap-2 w-full p-2 bg-[var(--active-bg)] text-primary rounded-lg text-sm font-medium">
                         <span className="iconfont icon-document-actived text-[16px]" /> {t.files.sidebar.airdrop}
                     </button>
-                    <button className="flex items-center gap-2 w-full p-2 hover:bg-muted/50 rounded-lg text-sm transition-colors duration-300 text-muted-foreground hover:text-foreground">
+                    <button className="flex items-center gap-2 w-full p-2 hover:bg-[var(--hover-bg)] rounded-lg text-sm transition-colors duration-300 text-muted-foreground hover:text-foreground">
                         <span className="iconfont icon-workplace-default text-[16px]" /> {t.files.sidebar.applications}
                     </button>
-                    <button className="flex items-center gap-2 w-full p-2 hover:bg-muted/50 rounded-lg text-sm transition-colors duration-300 text-muted-foreground hover:text-foreground">
+                    <button className="flex items-center gap-2 w-full p-2 hover:bg-[var(--hover-bg)] rounded-lg text-sm transition-colors duration-300 text-muted-foreground hover:text-foreground">
                         <span className="iconfont icon-document-default text-[16px]" /> {t.files.sidebar.documents}
                     </button>
                 </div>
@@ -61,12 +61,12 @@ const Files: React.FC = () => {
 
             {/* Main Content */}
             <div className="flex-1 flex flex-col min-w-0">
-                <header className="h-14 border-b border-border/40 flex items-center justify-between px-6 bg-muted/10">
+                <header className="h-14 border-b border-[var(--divider-color)] flex items-center justify-between px-6 bg-muted/10">
                     <div className="flex items-center gap-2">
-                        <button className="p-1.5 hover:bg-muted rounded text-muted-foreground">
+                        <button className="p-1.5 hover:bg-[var(--hover-bg)] rounded text-muted-foreground">
                             <ChevronRight className="rotate-180" size={18} />
                         </button>
-                        <button className="p-1.5 hover:bg-muted rounded text-muted-foreground">
+                        <button className="p-1.5 hover:bg-[var(--hover-bg)] rounded text-muted-foreground">
                             <ChevronRight size={18} />
                         </button>
                         <h2 className="ml-4 font-semibold text-sm">{t.files.header.allFiles}</h2>
@@ -94,13 +94,13 @@ const Files: React.FC = () => {
                                 key={file.id}
                                 onClick={() => setSelectedFile(file)}
                                 className={view === 'grid'
-                                    ? `flex flex-col items-center p-4 rounded-xl cursor-default group transition-all duration-300 ${selectedFile?.id === file.id ? 'bg-primary/20 ring-1 ring-primary/30' : 'hover:bg-muted/40'}`
-                                    : `flex items-center gap-3 p-2 rounded-lg cursor-default group transition-all duration-300 text-sm ${selectedFile?.id === file.id ? 'bg-primary/20' : 'hover:bg-muted/40'}`
+                                    ? `flex flex-col items-center p-4 rounded-xl cursor-default group transition-all duration-300 ${selectedFile?.id === file.id ? 'bg-[var(--active-bg)] ring-1 ring-primary/30' : 'hover:bg-[var(--hover-bg)]'}`
+                                    : `flex items-center gap-3 p-2 rounded-lg cursor-default group transition-all duration-300 text-sm ${selectedFile?.id === file.id ? 'bg-[var(--active-bg)]' : 'hover:bg-[var(--hover-bg)]'}`
                                 }
                             >
                                 <div className={view === 'grid' ? "mb-3 drop-shadow-lg" : ""}>
                                     {file.type === 'image' && file.thumbnail && view === 'grid' ? (
-                                        <div className="w-12 h-12 rounded-lg overflow-hidden border border-border/50">
+                                        <div className="w-12 h-12 rounded-lg overflow-hidden border border-[var(--divider-color)]">
                                             <img src={file.thumbnail} alt={file.name} className="w-full h-full object-cover" />
                                         </div>
                                     ) : getIcon(file.type)}
@@ -122,12 +122,12 @@ const Files: React.FC = () => {
 
             {/* Preview Pane (Inspector) */}
             {selectedFile && (
-                <div className="w-72 border-l border-border/40 bg-muted/10 p-6 flex flex-col items-center text-center animate-in slide-in-from-right-4 duration-200">
+                <div className="w-72 border-l border-[var(--divider-color)] bg-muted/10 p-6 flex flex-col items-center text-center animate-in slide-in-from-right-4 duration-200">
                     <div className="w-full mb-6">
                         {selectedFile.type === 'image' && selectedFile.thumbnail ? (
-                            <img src={selectedFile.thumbnail} className="w-full aspect-video object-cover rounded-xl shadow-xl border border-border/50" alt="Preview" />
+                            <img src={selectedFile.thumbnail} className="w-full aspect-video object-cover rounded-xl shadow-xl border border-[var(--divider-color)]" alt="Preview" />
                         ) : (
-                            <div className="w-full aspect-video bg-muted/40 rounded-xl flex items-center justify-center border border-border/50 border-dashed">
+                            <div className="w-full aspect-video bg-muted/40 rounded-xl flex items-center justify-center border border-[var(--divider-color)] border-dashed">
                                 {getIcon(selectedFile.type)}
                             </div>
                         )}
@@ -139,7 +139,7 @@ const Files: React.FC = () => {
                     <div className="w-full space-y-4">
                         <Button className="w-full rounded-xl">{t.files.preview.open}</Button>
                         {selectedFile.content && (
-                            <div className="text-left bg-muted/40 p-3 rounded-lg border border-border/50 max-h-48 overflow-auto">
+                            <div className="text-left bg-muted/40 p-3 rounded-lg border border-[var(--divider-color)] max-h-48 overflow-auto">
                                 <p className="text-[11px] leading-relaxed font-mono whitespace-pre-wrap text-muted-foreground">
                                     {selectedFile.content}
                                 </p>

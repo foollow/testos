@@ -205,8 +205,14 @@
   --spacing-base: 0.25rem;
 
   /* ---------- 边框粗细 ---------- */
-  --border-medium: 1px;
-  --border-thin: 0.5px;
+  /* ---------- 基础动态变量 ---------- */
+  --radius: 0.5rem;
+  --font-size: 1rem;
+
+  /* ---------- 全局统一界面变量 ---------- */
+  --divider-color: var(--color-border-a2);
+  --hover-bg: var(--color-blue-bg-weak);
+  --active-bg: var(--color-blue-bg-weak);
 }
 
 /* 
@@ -255,17 +261,20 @@
   --color-blue-text-strong: rgba(229, 244, 255, 1);
   --color-blue-text: rgba(166, 218, 255, 1);
   --color-blue-active: rgba(38, 165, 255, 1);
-  --color-blue: rgba(0, 149, 255, 1);
-  --color-blue-hover: rgba(0, 127, 217, 1);
-  --color-blue-bg-disabled: rgba(0, 82, 140, 1);
   --color-blue-bg-weak: rgba(0, 60, 102, 1);
+
+  /* ---------- 全局统一界面变量 ---------- */
+  --divider-color: var(--color-border-a2);
+  --hover-bg: rgba(0, 149, 255, 0.15);
+  --active-bg: rgba(0, 149, 255, 0.25);
 }
 
 @theme inline {
-  --radius-sm: var(--radius-4);
-  --radius-md: var(--radius-8);
-  --radius-lg: var(--radius-12);
-  --radius-xl: var(--radius-16);
+  --radius-xs: calc(var(--radius) * 0.5);
+  --radius-sm: calc(var(--radius) * 0.75);
+  --radius-md: var(--radius);
+  --radius-lg: calc(var(--radius) * 1.5);
+  --radius-xl: calc(var(--radius) * 2);
   --radius-4xl: var(--radius-full);
 
   --background: var(--color-bg-1);
@@ -291,12 +300,13 @@ body {
 
   background-color: var(--color-bg-1) !important;
   color: var(--color-text-2) !important;
-  transition: background-color 0.3s ease, color 0.3s ease;
+  font-size: var(--font-size);
+  transition: background-color 0.3s ease, color 0.3s ease, font-size 0.3s ease;
 }
 
 @layer base {
   * {
-    border-color: var(--color-border-a2);
+    border-color: var(--divider-color);
   }
 
   .iconfont {
@@ -315,7 +325,7 @@ body {
     backdrop-filter: var(--effect-backdrop-blur);
     -webkit-backdrop-filter: var(--effect-backdrop-blur);
     background-color: var(--color-fill-a4) !important;
-    border: 1px solid var(--color-border-a2) !important;
+    border: 1px solid var(--divider-color) !important;
     box-shadow: var(--effect-shadow-level-2-box);
     color: var(--color-text-2) !important;
     transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;

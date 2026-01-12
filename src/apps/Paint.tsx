@@ -88,21 +88,21 @@ const Paint: React.FC = () => {
                     <div className="flex items-center gap-2 p-1 rounded-lg" style={{ backgroundColor: 'var(--bg-input)' }}>
                         <button
                             onClick={() => setTool('pencil')}
-                            className={`p-1.5 rounded transition-colors ${tool === 'pencil' ? 'bg-blue-500 text-white' : 'hover:bg-black/10 dark:hover:bg-white/10'}`}
+                            className={`p-1.5 rounded transition-colors ${tool === 'pencil' ? 'bg-[var(--color-blue)] text-white shadow-sm' : 'hover:bg-[var(--hover-bg)]'}`}
                             style={tool !== 'pencil' ? { color: 'var(--text-secondary)' } : {}}
                         >
                             <Pencil size={18} />
                         </button>
                         <button
                             onClick={() => setTool('eraser')}
-                            className={`p-1.5 rounded transition-colors ${tool === 'eraser' ? 'bg-blue-500 text-white' : 'hover:bg-black/10 dark:hover:bg-white/10'}`}
+                            className={`p-1.5 rounded transition-colors ${tool === 'eraser' ? 'bg-[var(--color-blue)] text-white shadow-sm' : 'hover:bg-[var(--hover-bg)]'}`}
                             style={tool !== 'eraser' ? { color: 'var(--text-secondary)' } : {}}
                         >
                             <Eraser size={18} />
                         </button>
                     </div>
 
-                    <div className="h-6 w-px bg-white/10" style={{ backgroundColor: 'var(--border-secondary)' }} />
+                    <div className="h-6 w-px bg-[var(--divider-color)]" />
 
                     <input
                         type="color"
@@ -123,7 +123,7 @@ const Paint: React.FC = () => {
 
                 <button
                     onClick={clearCanvas}
-                    className="p-1.5 hover:text-red-400 transition-colors"
+                    className="p-1.5 hover:text-red-400 hover:bg-[var(--hover-bg)] rounded-lg transition-colors"
                 >
                     <Trash2 size={18} style={{ color: 'var(--text-secondary)' }} />
                 </button>

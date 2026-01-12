@@ -25,9 +25,9 @@ const Safari: React.FC = () => {
                 }}
             >
                 <div className="flex items-center gap-2" style={{ color: 'var(--text-secondary)' }}>
-                    <button className="p-1 hover:bg-[var(--bg-panel-hover)] rounded transition-colors"><ArrowLeft size={16} /></button>
-                    <button className="p-1 hover:bg-[var(--bg-panel-hover)] rounded transition-colors"><ArrowRight size={16} /></button>
-                    <button className="p-1 hover:bg-[var(--bg-panel-hover)] rounded transition-colors"><RotateCw size={14} /></button>
+                    <button className="p-1 hover:bg-[var(--hover-bg)] rounded transition-colors"><ArrowLeft size={16} /></button>
+                    <button className="p-1 hover:bg-[var(--hover-bg)] rounded transition-colors"><ArrowRight size={16} /></button>
+                    <button className="p-1 hover:bg-[var(--hover-bg)] rounded transition-colors"><RotateCw size={14} /></button>
                 </div>
 
                 <form onSubmit={handleSubmit} className="flex-1 max-w-2xl mx-auto">
