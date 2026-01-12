@@ -397,30 +397,24 @@ const IMApp: React.FC<{ windowId: string }> = () => {
                     </Tooltip>
                 </TooltipProvider>
 
-                <div className="flex flex-col gap-2 flex-1 items-center">
-                    <TooltipProvider>
-                        {NAV_ITEMS.map((item) => {
-                            const isActive = activeTab === item.id;
-                            return (
-                                <Tooltip key={item.id}>
-                                    <TooltipTrigger asChild>
-                                        <Button
-                                            variant="ghost"
-                                            size="icon"
-                                            onClick={() => setActiveTab(item.id)}
-                                            className={`h-10 w-10 rounded-[var(--radius-12)] transition-all ${isActive
-                                                ? 'text-[var(--color-blue)]'
-                                                : 'text-[var(--color-text-4)] hover:text-[var(--color-text-2)] transition-colors'
-                                                }`}
-                                        >
-                                            <span className={`iconfont icon-${item.icon}-${isActive ? 'actived' : 'default'} text-[22px]`} />
-                                        </Button>
-                                    </TooltipTrigger>
-                                    <TooltipContent side="right">{item.label}</TooltipContent>
-                                </Tooltip>
-                            );
-                        })}
-                    </TooltipProvider>
+                <div className="flex flex-col gap-3 flex-1 items-center">
+                    {NAV_ITEMS.map((item) => {
+                        const isActive = activeTab === item.id;
+                        return (
+                            <Button
+                                key={item.id}
+                                variant="ghost"
+                                onClick={() => setActiveTab(item.id)}
+                                className={`flex flex-col items-center justify-center h-auto w-14 py-2 rounded-[var(--radius-12)] transition-all gap-1 ${isActive
+                                    ? 'text-[var(--color-blue)] bg-[var(--color-blue-bg-weak)]/50'
+                                    : 'text-[var(--color-text-4)] hover:text-[var(--color-text-2)] hover:bg-[var(--color-fill-a2)]'
+                                    }`}
+                            >
+                                <span className={`iconfont icon-${item.icon}-${isActive ? 'actived' : 'default'} text-[22px]`} />
+                                <span className="text-[10px] scale-90 origin-top font-medium mt-0.5">{item.label}</span>
+                            </Button>
+                        );
+                    })}
                 </div>
             </div>
 
@@ -429,9 +423,9 @@ const IMApp: React.FC<{ windowId: string }> = () => {
                 {/* Content Container (Layered White Box) */}
                 <div className="flex-1 ml-0 mt-10 mb-4 mr-4 bg-[var(--color-bg-1)] rounded-2xl shadow-[0_4px_24px_rgba(0,0,0,0.06)] border border-[var(--divider-color)] flex overflow-hidden">
                     {/* Middle Panel - Chat List */}
-                    <div className="w-72 flex flex-col border-r border-[var(--divider-color)] shrink-0 bg-[var(--color-fill-2)]">
-                        <div className="pt-6 p-4 pb-0 space-y-4">
-                            <div className="flex items-center justify-between px-1">
+                    <div className="w-72 flex flex-col border-r border-[var(--divider-color)] shrink-0 bg-[var(--color-fill-2)] max-w-full overflow-x-hidden">
+                        <div className="pt-6 px-4 pb-4 space-y-4">
+                            <div className="flex items-center justify-between">
                                 <h2 className="text-[17px] font-bold tracking-tight text-[var(--color-text-1)]">消息</h2>
                                 <Button variant="ghost" size="icon" className="h-8 w-8 text-[var(--color-text-4)]"><Plus size={18} /></Button>
                             </div>
@@ -439,12 +433,12 @@ const IMApp: React.FC<{ windowId: string }> = () => {
                         </div>
 
                         <ScrollArea className="flex-1">
-                            <div className="px-2">
+                            <div className="px-3 space-y-1 pb-4">
                                 {onlineUsers.map(chat => (
                                     <div
                                         key={chat.uid || chat.id}
                                         onClick={() => setActiveChat(chat)}
-                                        className={`flex items-center gap-3 p-3 rounded-[var(--radius-12)] cursor-pointer transition-all hover:bg-[var(--hover-bg)] group mb-1 ${(activeChat.uid || activeChat.id) === (chat.uid || chat.id) ? 'bg-[var(--active-bg)] border border-[var(--divider-color)]' : ''}`}
+                                        className={`flex items-center gap-3 p-3 rounded-[var(--radius-12)] cursor-pointer transition-all hover:bg-[var(--hover-bg)] group mb-1 min-w-0 ${(activeChat.uid || activeChat.id) === (chat.uid || chat.id) ? 'bg-[var(--active-bg)] border border-[var(--divider-color)]' : ''}`}
                                     >
                                         <div className="relative">
                                             <Avatar className="h-12 w-12 rounded-[var(--radius-12)] group-hover:scale-105 transition-transform overflow-hidden">
@@ -460,7 +454,7 @@ const IMApp: React.FC<{ windowId: string }> = () => {
                                                 </span>
                                                 <span className="text-[var(--font-xs-size)] text-[var(--color-text-4)]">{chat.time || '刚刚'}</span>
                                             </div>
-                                            <p className="text-[var(--font-sm-size)] text-[var(--color-text-5)] truncate leading-relaxed">
+                                            <p className="text-[10px] text-[var(--color-text-5)] truncate leading-relaxed">
                                                 {chat.lastMessage || (chat.isBot ? '长猫 AI 助手' : '点击发起私聊')}
                                             </p>
                                         </div>

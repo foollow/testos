@@ -320,6 +320,12 @@ body {
   }
 }
 
+/* Force override Radix ScrollArea internal display: table causing truncation */
+[data-radix-scroll-area-viewport]>div {
+  display: block !important;
+  min-width: 100% !important;
+}
+
 @layer components {
   .glass-panel {
     backdrop-filter: var(--effect-backdrop-blur);
