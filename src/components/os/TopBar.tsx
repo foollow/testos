@@ -2,46 +2,68 @@ import React from 'react';
 import { useTime } from '../../hooks/useTime';
 import { Wifi, Battery, Apple } from 'lucide-react';
 import { useOS } from '../../store/useOS';
+import { useTranslation } from "@/lib/i18n";
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuSeparator,
+    DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 export const TopBar: React.FC = () => {
     const time = useTime();
+    const { theme, systemState } = useOS();
+    const t = useTranslation(systemState.language);
+
     const activeWindowId = useOS((state) => state.windowOrder[state.windowOrder.length - 1]);
     const activeWindow = useOS((state) => activeWindowId ? state.windows[activeWindowId] : null);
     const activeApp = useOS((state) => activeWindow ? state.apps[activeWindow.appId] : null);
 
     const activeAppName = activeApp?.title || 'Finder';
 
+    // In light mode, we want dark text for the top bar (macOS style)
+    const textColor = theme === 'light' ? 'rgba(0, 0, 0, 0.8)' : 'rgba(255, 255, 255, 0.9)';
+
     return (
         <div
-            className="fixed top-0 left-0 right-0 h-8 backdrop-blur-xl flex items-center justify-between px-4 z-50 text-sm select-none transition-colors duration-300"
+            className="fixed top-0 left-0 right-0 h-8 backdrop-blur-xl flex items-center justify-between px-4 z-50 text-sm font-medium select-none transition-colors duration-300"
             style={{
                 backgroundColor: 'var(--bg-header-transparent)',
-                color: 'var(--text-primary)'
+                color: textColor
             }}
         >
-            <div className="flex items-center gap-4">
-                <button className="hover:bg-[var(--bg-panel-hover)] p-1 rounded transition-colors">
+            <div className="flex items-center gap-1">
+                <button className="hover:bg-white/10 dark:hover:bg-black/10 px-2 py-1 rounded transition-colors">
                     <Apple size={16} fill="currentColor" />
                 </button>
-                <span className="font-bold">{activeAppName}</span>
-                <div className="flex items-center gap-4" style={{ color: 'var(--text-primary)' }}>
-                    <span className="hover:bg-[var(--bg-panel-hover)] px-2 py-0.5 rounded transition-colors cursor-default">File</span>
-                    <span className="hover:bg-[var(--bg-panel-hover)] px-2 py-0.5 rounded transition-colors cursor-default">Edit</span>
-                    <span className="hover:bg-[var(--bg-panel-hover)] px-2 py-0.5 rounded transition-colors cursor-default">View</span>
-                    <span className="hover:bg-[var(--bg-panel-hover)] px-2 py-0.5 rounded transition-colors cursor-default">Go</span>
-                    <span className="hover:bg-[var(--bg-panel-hover)] px-2 py-0.5 rounded transition-colors cursor-default">Window</span>
-                    <span className="hover:bg-[var(--bg-panel-hover)] px-2 py-0.5 rounded transition-colors cursor-default">Help</span>
-                </div>
+
+                <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                        <button className="hover:bg-white/10 dark:hover:bg-black/10 px-2 py-0.5 rounded transition-colors cursor-default outline-none">
+                            <span className="font-bold">{activeAppName}</span>
+                        </button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="start" className="w-56 glass-panel border-none shadow-xl mt-1">
+                        <DropdownMenuItem className="focus:bg-primary focus:text-white rounded-md mx-1">
+                            {t.apps.about} {activeAppName}
+                        </DropdownMenuItem>
+                        <DropdownMenuSeparator className="bg-divider-color opacity-50" />
+                        <DropdownMenuItem className="focus:bg-primary focus:text-white rounded-md mx-1">
+                            {systemState.language === 'en' ? 'Preferences...' : '偏好设置...'}
+                        </DropdownMenuItem>
+                    </DropdownMenuContent>
+                </DropdownMenu>
             </div>
 
             <div className="flex items-center gap-4">
-                <div className="flex items-center gap-3" style={{ color: 'var(--text-primary)' }}>
+                <div className="flex items-center gap-3">
                     <Battery size={18} className="opacity-80" />
                     <Wifi size={16} className="opacity-80" />
                     <span className="iconfont icon-message-default opacity-80 text-[16px]" />
                 </div>
 
-                <div className="flex items-center gap-2 cursor-default">
+                <div className="flex items-center gap-2 cursor-default opacity-90">
                     <span>{time.toLocaleDateString([], { weekday: 'short', month: 'short', day: 'numeric' })}</span>
                     <span>{time.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
                 </div>

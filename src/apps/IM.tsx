@@ -451,12 +451,12 @@ const IMApp: React.FC<{ windowId: string }> = () => {
                                         </div>
                                         <div className="flex-1 min-w-0">
                                             <div className="flex items-center justify-between mb-0.5">
-                                                <span className={`text-[var(--font-sm-size)] font-semibold truncate text-[var(--color-text-2)] transition-colors`}>
+                                                <span className={`text-[var(--font-base-size)] font-semibold truncate text-[var(--color-text-2)] transition-colors`}>
                                                     {chat.name}
                                                 </span>
                                                 <span className="text-[var(--font-xs-size)] text-[var(--color-text-4)]">{chat.time || '刚刚'}</span>
                                             </div>
-                                            <p className="text-[var(--font-xs-size)] text-[var(--color-text-5)] truncate leading-relaxed">
+                                            <p className="text-[var(--font-sm-size)] text-[var(--color-text-5)] truncate leading-relaxed">
                                                 {chat.lastMessage || (chat.isBot ? '长猫 AI 助手' : '点击发起私聊')}
                                             </p>
                                         </div>
@@ -516,11 +516,11 @@ const IMApp: React.FC<{ windowId: string }> = () => {
                                             )}
                                             <div className={`flex flex-col gap-1 max-w-[75%] ${msg.senderId === user.uid ? 'items-end' : 'items-start'}`}>
                                                 <div className={`flex items-baseline gap-2 ${msg.senderId === user.uid ? 'flex-row-reverse' : ''}`}>
-                                                    <span className="text-[0.6875rem] font-medium text-[var(--color-text-5)]">{msg.senderId === user.uid ? '我' : msg.senderName}</span>
+                                                    <span className="text-[var(--font-base-size)] font-semibold text-[var(--color-text-5)]">{msg.senderId === user.uid ? '我' : msg.senderName}</span>
                                                     <span className="text-[var(--font-xs-size)] text-[var(--color-text-5)] opacity-0 group-hover:opacity-100 transition-opacity">{msg.timestamp}</span>
                                                 </div>
 
-                                                <div className={`relative px-4 py-2 rounded-[var(--radius-12)] text-[var(--font-base-size)] leading-relaxed select-text ${msg.senderId === user.uid
+                                                <div className={`relative px-4 py-2 rounded-[var(--radius-12)] text-[var(--font-sm-size)] leading-relaxed select-text ${msg.senderId === user.uid
                                                     ? 'bg-[var(--color-blue)] text-white'
                                                     : 'bg-[var(--color-bg-2)] border border-[var(--divider-color)] text-[var(--color-text-2)]'
                                                     } transition-all`}>
@@ -534,7 +534,7 @@ const IMApp: React.FC<{ windowId: string }> = () => {
                         </ScrollArea>
 
                         {/* Input Area */}
-                        <div className="px-5 pb-5 pt-2 shrink-0 border-t border-[var(--divider-color)]">
+                        <div className="px-5 pb-5 pt-2 shrink-0">
                             <div className="max-w-[77.5rem] mx-auto rounded-[var(--radius-12)] border border-[var(--divider-color)] bg-[var(--color-bg-1)] shadow-[var(--effect-shadow-level-1-box)] p-1.5 focus-within:ring-1 focus-within:ring-[var(--color-blue-active)]/10 transition-all flex flex-col group">
                                 <div className="relative flex items-end">
                                     <Textarea

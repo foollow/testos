@@ -76,6 +76,7 @@ export const translations = {
             files: 'Files',
             chat: 'Chat',
             settings: 'System Settings',
+            about: 'About',
         },
         popup: {
             title: 'Popup Demo',
@@ -162,6 +163,7 @@ export const translations = {
             files: '文件管理',
             chat: '消息',
             settings: '系统设置',
+            about: '关于',
         },
         popup: {
             title: '弹窗演示',
@@ -248,6 +250,7 @@ export const translations = {
             files: '文件管理',
             chat: '消息',
             settings: '系統設置',
+            about: '關於',
         },
         popup: {
             title: '彈窗演示',
