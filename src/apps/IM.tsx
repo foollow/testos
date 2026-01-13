@@ -149,7 +149,9 @@ const IMApp: React.FC<{ windowId: string }> = () => {
     const adjustHeight = () => {
         if (inputRef.current) {
             inputRef.current.style.height = 'auto';
-            inputRef.current.style.height = `${Math.min(inputRef.current.scrollHeight, 200)}px`;
+            // Use rem-based calculation for max height (12.5rem = 200px at 16px base)
+            const maxHeight = 12.5 * parseFloat(getComputedStyle(document.documentElement).fontSize || '16');
+            inputRef.current.style.height = `${Math.min(inputRef.current.scrollHeight, maxHeight)}px`;
         }
     };
 
@@ -370,7 +372,7 @@ const IMApp: React.FC<{ windowId: string }> = () => {
         return (
             <div className="flex flex-col items-center justify-center h-full bg-[var(--color-bg-1)]">
                 <div className="w-12 h-12 border-4 border-[var(--color-border-a1)] border-t-[var(--color-blue)] rounded-full animate-spin mb-4"></div>
-                <p className="text-[var(--color-text-4)] font-black text-[10px] tracking-[0.3em] uppercase">Initializing P2P Node</p>
+                <p className="text-[var(--color-text-4)] font-black text-[var(--font-xs-size)] tracking-[0.3em] uppercase">Initializing P2P Node</p>
             </div>
         );
     }
@@ -410,8 +412,8 @@ const IMApp: React.FC<{ windowId: string }> = () => {
                                     : 'text-[var(--color-text-4)] hover:text-[var(--color-text-2)] hover:bg-[var(--color-fill-a2)]'
                                     }`}
                             >
-                                <span className={`iconfont icon-${item.icon}-${isActive ? 'actived' : 'default'} text-[22px]`} />
-                                <span className="text-[10px] scale-90 origin-top font-medium mt-0.5">{item.label}</span>
+                                <span className={`iconfont icon-${item.icon}-${isActive ? 'actived' : 'default'} text-[1.375rem]`} />
+                                <span className="text-[var(--font-xs-size)] scale-90 origin-top font-medium mt-0.5">{item.label}</span>
                             </Button>
                         );
                     })}
@@ -426,7 +428,7 @@ const IMApp: React.FC<{ windowId: string }> = () => {
                     <div className="w-72 flex flex-col border-r border-[var(--divider-color)] shrink-0 bg-[var(--color-fill-2)] max-w-full overflow-x-hidden">
                         <div className="pt-6 px-4 pb-4 space-y-4">
                             <div className="flex items-center justify-between">
-                                <h2 className="text-[17px] font-bold tracking-tight text-[var(--color-text-1)]">消息</h2>
+                                <h2 className="text-[var(--font-base-size)] font-bold tracking-tight text-[var(--color-text-1)]">消息</h2>
                                 <Button variant="ghost" size="icon" className="h-8 w-8 text-[var(--color-text-4)]"><Plus size={18} /></Button>
                             </div>
 
@@ -454,7 +456,7 @@ const IMApp: React.FC<{ windowId: string }> = () => {
                                                 </span>
                                                 <span className="text-[var(--font-xs-size)] text-[var(--color-text-4)]">{chat.time || '刚刚'}</span>
                                             </div>
-                                            <p className="text-[10px] text-[var(--color-text-5)] truncate leading-relaxed">
+                                            <p className="text-[var(--font-xs-size)] text-[var(--color-text-5)] truncate leading-relaxed">
                                                 {chat.lastMessage || (chat.isBot ? '长猫 AI 助手' : '点击发起私聊')}
                                             </p>
                                         </div>
@@ -465,9 +467,9 @@ const IMApp: React.FC<{ windowId: string }> = () => {
                     </div>
 
                     {/* Right Main Area */}
-                    <div className="flex-1 flex flex-col relative overflow-hidden bg-white">
+                    <div className="flex-1 flex flex-col relative overflow-hidden bg-[var(--color-bg-1)]">
                         {/* Chat Header */}
-                        <header className="h-[64px] flex items-center justify-between px-6 border-b border-[var(--divider-color)] shrink-0 bg-white/80 backdrop-blur-sm z-10">
+                        <header className="h-[4rem] flex items-center justify-between px-6 border-b border-[var(--divider-color)] shrink-0 bg-[var(--color-fill-a4)] backdrop-blur-sm z-10">
                             <div className="flex items-center gap-3">
                                 <Avatar className="h-10 w-10 rounded-[var(--radius-8)] overflow-hidden">
                                     <AvatarImage src={activeChat.avatar} />
@@ -499,8 +501,8 @@ const IMApp: React.FC<{ windowId: string }> = () => {
                                             <Search className="w-8 h-8 opacity-20" />
                                         </div>
                                         <div className="text-center">
-                                            <p className="text-sm font-black uppercase tracking-widest">已开启加密对话</p>
-                                            <p className="text-[10px]">只有你和 {activeChat.name} 能看到此对话内容</p>
+                                            <p className="text-[var(--font-sm-size)] font-black uppercase tracking-widest">已开启加密对话</p>
+                                            <p className="text-[var(--font-xs-size)]">只有你和 {activeChat.name} 能看到此对话内容</p>
                                         </div>
                                     </div>
                                 ) : (
@@ -514,8 +516,8 @@ const IMApp: React.FC<{ windowId: string }> = () => {
                                             )}
                                             <div className={`flex flex-col gap-1 max-w-[75%] ${msg.senderId === user.uid ? 'items-end' : 'items-start'}`}>
                                                 <div className={`flex items-baseline gap-2 ${msg.senderId === user.uid ? 'flex-row-reverse' : ''}`}>
-                                                    <span className="text-[11px] font-medium text-[var(--color-text-5)]">{msg.senderId === user.uid ? '我' : msg.senderName}</span>
-                                                    <span className="text-[10px] text-[var(--color-text-5)] opacity-0 group-hover:opacity-100 transition-opacity">{msg.timestamp}</span>
+                                                    <span className="text-[0.6875rem] font-medium text-[var(--color-text-5)]">{msg.senderId === user.uid ? '我' : msg.senderName}</span>
+                                                    <span className="text-[var(--font-xs-size)] text-[var(--color-text-5)] opacity-0 group-hover:opacity-100 transition-opacity">{msg.timestamp}</span>
                                                 </div>
 
                                                 <div className={`relative px-4 py-2 rounded-[var(--radius-12)] text-[var(--font-base-size)] leading-relaxed select-text ${msg.senderId === user.uid
@@ -533,7 +535,7 @@ const IMApp: React.FC<{ windowId: string }> = () => {
 
                         {/* Input Area */}
                         <div className="px-5 pb-5 pt-2 shrink-0 border-t border-[var(--divider-color)]">
-                            <div className="max-w-[1240px] mx-auto rounded-[var(--radius-12)] border border-[var(--divider-color)] bg-[var(--color-bg-1)] shadow-[var(--effect-shadow-level-1-box)] p-1.5 focus-within:ring-1 focus-within:ring-[var(--color-blue-active)]/10 transition-all flex flex-col group">
+                            <div className="max-w-[77.5rem] mx-auto rounded-[var(--radius-12)] border border-[var(--divider-color)] bg-[var(--color-bg-1)] shadow-[var(--effect-shadow-level-1-box)] p-1.5 focus-within:ring-1 focus-within:ring-[var(--color-blue-active)]/10 transition-all flex flex-col group">
                                 <div className="relative flex items-end">
                                     <Textarea
                                         ref={inputRef}
@@ -549,14 +551,14 @@ const IMApp: React.FC<{ windowId: string }> = () => {
                                 <div className="flex items-center gap-0.5 text-[var(--color-text-4)] px-1 pb-1">
                                     <Button variant="ghost" size="icon" className="h-8 w-8 rounded-[var(--radius-8)] hover:text-[var(--color-blue)] hover:bg-[var(--hover-bg)] transition-colors"><Plus size={18} /></Button>
                                     <Button variant="ghost" size="icon" className="h-8 w-8 rounded-[var(--radius-8)] hover:text-[var(--color-blue)] hover:bg-[var(--hover-bg)] transition-colors"><Smile size={18} /></Button>
-                                    <div className="flex items-center h-8 px-2 rounded-[var(--radius-8)] hover:text-[var(--color-blue)] hover:bg-[var(--hover-bg)] transition-colors cursor-pointer text-[13px] font-medium ml-1">
+                                    <div className="flex items-center h-8 px-2 rounded-[var(--radius-8)] hover:text-[var(--color-blue)] hover:bg-[var(--hover-bg)] transition-colors cursor-pointer text-[0.8125rem] font-medium ml-1">
                                         Aa
                                     </div>
                                     <Button variant="ghost" size="icon" className="h-8 w-8 rounded-[var(--radius-8)] hover:text-[var(--color-blue)] hover:bg-[var(--hover-bg)] transition-colors"><ImageIcon size={18} /></Button>
                                     <Button variant="ghost" size="icon" className="h-8 w-8 rounded-[var(--radius-8)] hover:text-[var(--color-blue)] hover:bg-[var(--hover-bg)] transition-colors"><Paperclip size={18} /></Button>
                                     <Button variant="ghost" size="icon" className="h-8 w-8 rounded-[var(--radius-8)] hover:text-[var(--color-blue)] hover:bg-[var(--hover-bg)] transition-colors"><Scissors size={18} /></Button>
                                     <Button variant="ghost" size="icon" className="h-8 w-8 rounded-[var(--radius-8)] hover:text-[var(--color-blue)] hover:bg-[var(--hover-bg)] transition-colors"><VideoIcon size={18} /></Button>
-                                    <div className="flex items-center h-8 px-2 rounded-[var(--radius-8)] hover:text-[var(--color-blue)] hover:bg-[var(--color-blue-bg-weak)]/50 transition-colors cursor-pointer text-[13px] font-medium">
+                                    <div className="flex items-center h-8 px-2 rounded-[var(--radius-8)] hover:text-[var(--color-blue)] hover:bg-[var(--color-blue-bg-weak)]/50 transition-colors cursor-pointer text-[0.8125rem] font-medium">
                                         ✨
                                     </div>
 
@@ -604,10 +606,10 @@ const IMApp: React.FC<{ windowId: string }> = () => {
                                     <RefreshCw className="w-6 h-6 text-white animate-spin-slow" />
                                 </div>
                             </div>
-                            <p className="text-[10px] font-black uppercase tracking-widest text-[var(--color-text-5)]">头像随昵称自动生成</p>
+                            <p className="text-[var(--font-xs-size)] font-black uppercase tracking-widest text-[var(--color-text-5)]">头像随昵称自动生成</p>
                         </div>
                         <div className="space-y-3">
-                            <label htmlFor="nickname" className="text-xs font-black uppercase tracking-widest text-[var(--color-text-4)] pl-1">新昵称 (菜名推荐)</label>
+                            <label htmlFor="nickname" className="text-[var(--font-xs-size)] font-black uppercase tracking-widest text-[var(--color-text-4)] pl-1">新昵称 (菜名推荐)</label>
                             <Input
                                 id="nickname"
                                 value={tempNickname}

@@ -27,7 +27,7 @@ export const translations = {
             },
             components: {
                 title: 'Component Styling',
-                fontSize: 'Font Size',
+                fontSize: 'Size',
                 radius: 'Border Radius',
                 shadow: 'Shadow Style',
             },
@@ -113,7 +113,7 @@ export const translations = {
             },
             components: {
                 title: '组件样式',
-                fontSize: '字体大小',
+                fontSize: '大小',
                 radius: '圆角半径',
                 shadow: '阴影样式',
             },
@@ -199,7 +199,7 @@ export const translations = {
             },
             components: {
                 title: '組件樣式',
-                fontSize: '字體大小',
+                fontSize: '大小',
                 radius: '圓角半徑',
                 shadow: '陰影樣式',
             },
