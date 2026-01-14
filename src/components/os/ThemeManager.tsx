@@ -40,6 +40,16 @@ export const ThemeManager: React.FC = () => {
             root.style.setProperty('--hover-bg', `hsl(${h} ${s} ${hoverL})`);
             root.style.setProperty('--active-bg', `hsl(${h} ${s} ${activeL})`);
         }
+
+        // Apply shadow config
+        const shadowMap = {
+            none: 'none',
+            sm: 'var(--effect-shadow-level-1-box)',
+            base: 'var(--effect-shadow-level-2-box)',
+            lg: 'var(--effect-shadow-level-3-box)',
+            xl: 'var(--effect-shadow-level-4-box)'
+        };
+        root.style.setProperty('--app-shadow', shadowMap[themeConfig.shadow || 'base']);
     }, [theme, themeConfig]);
 
     return null;

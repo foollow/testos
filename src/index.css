@@ -213,6 +213,7 @@
   --divider-color: var(--color-border-a2);
   --hover-bg: var(--color-blue-bg-weak);
   --active-bg: var(--color-blue-bg-weak);
+  --app-shadow: var(--effect-shadow-level-2-box);
 }
 
 /* 
@@ -332,8 +333,8 @@ body {
     -webkit-backdrop-filter: var(--effect-backdrop-blur);
     background-color: var(--color-fill-a4) !important;
     border: 1px solid var(--divider-color) !important;
-    box-shadow: var(--effect-shadow-level-2-box);
+    box-shadow: var(--app-shadow);
     color: var(--color-text-2) !important;
-    transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+    transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
   }
 }

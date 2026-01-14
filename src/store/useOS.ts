@@ -70,7 +70,7 @@ export const useOS = create<OSState>((set, get) => ({
     themeConfig: {
         primary: "212.1 100% 50%", // Default blue
         secondary: "212.1 100% 95%",
-        radius: 0.5,
+        radius: 2,
         fontSize: 1, // 1rem
         fontFamily: 'Inter',
         shadow: 'base',
