@@ -1,6 +1,6 @@
 import React from 'react';
 import { useTime } from '../../hooks/useTime';
-import { Wifi, Battery, Apple } from 'lucide-react';
+import { Wifi, Battery } from 'lucide-react';
 import { useOS } from '../../store/useOS';
 import { useTranslation } from "@/lib/i18n";
 import {
@@ -34,8 +34,8 @@ export const TopBar: React.FC = () => {
             }}
         >
             <div className="flex items-center gap-1">
-                <button className="hover:bg-white/10 dark:hover:bg-black/10 px-2 py-1 rounded transition-colors">
-                    <Apple size={16} fill="currentColor" />
+                <button className="hover:bg-white/10 dark:hover:bg-black/10 px-2 py-1 rounded transition-colors flex items-center justify-center">
+                    <span className="iconfont icon-apple-logo text-[18px] -mt-[2px]" />
                 </button>
 
                 <DropdownMenu>

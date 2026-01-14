@@ -36,7 +36,7 @@ export const Dock: React.FC = () => {
                             </Button>
 
                             {/* Tooltip */}
-                            <div className="absolute -top-12 left-1/2 -translate-x-1/2 px-3 py-1 bg-popover text-popover-foreground rounded-lg text-xs opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none shadow-xl border">
+                            <div className="absolute -top-12 left-1/2 -translate-x-1/2 px-3 py-1 bg-[color:var(--color-fill-a4)] text-[color:var(--color-text-1)] rounded-[radius:var(--radius-6)] text-[length:var(--font-xs-size)] opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none shadow-[var(--effect-shadow-level-1-box)]">
                                 {app.title}
                             </div>
                         </div>

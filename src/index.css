@@ -5,9 +5,9 @@
 /* Iconfont - Project 1506 (v0.0.5) */
 @font-face {
   font-family: 'iconfont';
-  src: url('https://s3plus.meituan.net/v1/mss_28a77f134e5b4abf876b4ff035f4107f/iconfont/project/1506/0.0.5/workos.woff2') format('woff2'),
-    url('https://s3plus.meituan.net/v1/mss_28a77f134e5b4abf876b4ff035f4107f/iconfont/project/1506/0.0.5/workos.woff') format('woff'),
-    url('https://s3plus.meituan.net/v1/mss_28a77f134e5b4abf876b4ff035f4107f/iconfont/project/1506/0.0.5/workos.ttf') format('truetype');
+  src: url('https://s3plus.meituan.net/v1/mss_28a77f134e5b4abf876b4ff035f4107f/iconfont/project/1506/0.0.6/workos.woff2') format('woff2'),
+    url('https://s3plus.meituan.net/v1/mss_28a77f134e5b4abf876b4ff035f4107f/iconfont/project/1506/0.0.6/workos.woff') format('woff'),
+    url('https://s3plus.meituan.net/v1/mss_28a77f134e5b4abf876b4ff035f4107f/iconfont/project/1506/0.0.6/workos.ttf') format('truetype');
 }
 
 .icon-document-actived:before {
@@ -50,6 +50,18 @@
   content: "\e009";
 }
 
+.icon-add-circle:before {
+  content: "\e00a";
+}
+
+.icon-arrow-down:before {
+  content: "\e00b";
+}
+
+.icon-full-screen:before {
+  content: "\e00c";
+}
+
 .icon-send-plane:before {
   content: "\e00d";
 }
@@ -82,12 +94,28 @@
   content: "\e014";
 }
 
+.icon-add-person:before {
+  content: "\e015";
+}
+
+.icon-group-pesons:before {
+  content: "\e016";
+}
+
 .icon-more-horizontal:before {
   content: "\e017";
 }
 
+.icon-search-area:before {
+  content: "\e018";
+}
+
 .icon-logo-daxiang:before {
   content: "\e019";
+}
+
+.icon-apple-logo:before {
+  content: "\e01a";
 }
 
 @custom-variant dark (&:is(.dark *));
@@ -214,6 +242,9 @@
   --hover-bg: var(--color-blue-bg-weak);
   --active-bg: var(--color-blue-bg-weak);
   --app-shadow: var(--effect-shadow-level-2-box);
+  --bg-header-transparent: rgba(255, 255, 255, 0.4);
+  --bg-dock: rgba(255, 255, 255, 0.35);
+  --border-dock: rgba(255, 255, 255, 0.3);
 }
 
 /* 
@@ -268,6 +299,9 @@
   --divider-color: var(--color-border-a2);
   --hover-bg: rgba(0, 149, 255, 0.15);
   --active-bg: rgba(0, 149, 255, 0.25);
+  --bg-header-transparent: rgba(0, 0, 0, 0.2);
+  --bg-dock: rgba(23, 23, 23, 0.7);
+  --border-dock: rgba(255, 255, 255, 0.1);
 }
 
 @theme inline {

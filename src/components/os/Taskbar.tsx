@@ -58,7 +58,7 @@ export const Taskbar: React.FC = () => {
                                 )}
 
                                 {/* Tooltip */}
-                                <div className="absolute -top-10 left-1/2 -translate-x-1/2 px-2 py-1 bg-black/80 backdrop-blur-md rounded text-xs opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none border border-white/10">
+                                <div className="absolute -top-10 left-1/2 -translate-x-1/2 px-2 py-1 bg-[color:var(--color-fill-a4)] text-[color:var(--color-text-1)] rounded-[radius:var(--radius-6)] text-[length:var(--font-xs-size)] opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none shadow-[var(--effect-shadow-level-1-box)]">
                                     {app.title}
                                 </div>
                             </button>
