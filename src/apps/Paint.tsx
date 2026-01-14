@@ -75,28 +75,20 @@ const Paint: React.FC = () => {
     };
 
     return (
-        <div className="h-full w-full flex flex-col transition-colors duration-300" style={{ backgroundColor: 'var(--bg-content)' }}>
+        <div className="h-full w-full flex flex-col transition-colors duration-300 bg-[var(--color-bg-1)]">
             {/* Toolbar */}
-            <div
-                className="h-12 border-b flex items-center justify-between px-4 transition-colors duration-300"
-                style={{
-                    backgroundColor: 'var(--bg-header)',
-                    borderColor: 'var(--border-primary)'
-                }}
-            >
+            <div className="h-12 border-b flex items-center justify-between px-4 transition-colors duration-300 bg-[var(--color-fill-a4)] border-[var(--divider-color)]">
                 <div className="flex items-center gap-4">
-                    <div className="flex items-center gap-2 p-1 rounded-lg" style={{ backgroundColor: 'var(--bg-input)' }}>
+                    <div className="flex items-center gap-2 p-1 rounded-lg bg-[var(--color-fill-a2)]">
                         <button
                             onClick={() => setTool('pencil')}
-                            className={`p-1.5 rounded transition-colors ${tool === 'pencil' ? 'bg-[var(--color-blue)] text-white shadow-sm' : 'hover:bg-[var(--hover-bg)]'}`}
-                            style={tool !== 'pencil' ? { color: 'var(--text-secondary)' } : {}}
+                            className={`p-1.5 rounded transition-colors ${tool === 'pencil' ? 'bg-[var(--color-blue)] text-white shadow-sm' : 'text-[color:var(--color-text-4)] hover:bg-[var(--hover-bg)] hover:text-[color:var(--color-text-2)]'}`}
                         >
                             <Pencil size={18} />
                         </button>
                         <button
                             onClick={() => setTool('eraser')}
-                            className={`p-1.5 rounded transition-colors ${tool === 'eraser' ? 'bg-[var(--color-blue)] text-white shadow-sm' : 'hover:bg-[var(--hover-bg)]'}`}
-                            style={tool !== 'eraser' ? { color: 'var(--text-secondary)' } : {}}
+                            className={`p-1.5 rounded transition-colors ${tool === 'eraser' ? 'bg-[var(--color-blue)] text-white shadow-sm' : 'text-[color:var(--color-text-4)] hover:bg-[var(--hover-bg)] hover:text-[color:var(--color-text-2)]'}`}
                         >
                             <Eraser size={18} />
                         </button>
@@ -117,15 +109,15 @@ const Paint: React.FC = () => {
                         max="20"
                         value={brushSize}
                         onChange={(e) => setBrushSize(parseInt(e.target.value))}
-                        className="w-24 accent-blue-500"
+                        className="w-24 accent-[var(--color-blue)]"
                     />
                 </div>
 
                 <button
                     onClick={clearCanvas}
-                    className="p-1.5 hover:text-red-400 hover:bg-[var(--hover-bg)] rounded-lg transition-colors"
+                    className="p-1.5 text-[color:var(--color-text-4)] hover:text-[color:var(--color-red)] hover:bg-[var(--color-red-bg-weak)] rounded-lg transition-colors"
                 >
-                    <Trash2 size={18} style={{ color: 'var(--text-secondary)' }} />
+                    <Trash2 size={18} />
                 </button>
             </div>
 

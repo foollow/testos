@@ -358,10 +358,10 @@ const IMApp: React.FC<{ windowId: string }> = () => {
                 <div className="bg-[var(--color-bg-2)] p-10 rounded-[3rem] shadow-2xl max-w-sm text-center border border-[var(--color-border-a1)]">
                     <AlertCircle className="w-12 h-12 text-amber-500 mx-auto mb-4" />
                     <h2 className="text-xl font-black mb-2">连接受限</h2>
-                    <p className="text-[var(--color-text-4)] text-sm mb-6">检测到网络拦截，这通常由于环境安全策略引起。您可以刷新页面或以预览模式进入。</p>
+                    <p className="text-[color:var(--color-text-4)] text-sm mb-6">检测到网络拦截，这通常由于环境安全策略引起。您可以刷新页面或以预览模式进入。</p>
                     <div className="space-y-2">
                         <Button onClick={() => window.location.reload()} className="w-full bg-[var(--color-blue)] text-white font-bold py-6 rounded-2xl shadow-lg">重新连接</Button>
-                        <Button onClick={enterAsGuest} variant="ghost" className="w-full text-[var(--color-text-4)] font-bold py-6 rounded-2xl">本地预览</Button>
+                        <Button onClick={enterAsGuest} variant="ghost" className="w-full text-[color:var(--color-text-4)] font-bold py-6 rounded-2xl">本地预览</Button>
                     </div>
                 </div>
             </div>
@@ -372,13 +372,13 @@ const IMApp: React.FC<{ windowId: string }> = () => {
         return (
             <div className="flex flex-col items-center justify-center h-full bg-[var(--color-bg-1)]">
                 <div className="w-12 h-12 border-4 border-[var(--color-border-a1)] border-t-[var(--color-blue)] rounded-full animate-spin mb-4"></div>
-                <p className="text-[var(--color-text-4)] font-black text-[var(--font-xs-size)] tracking-[0.3em] uppercase">Initializing P2P Node</p>
+                <p className="text-[color:var(--color-text-4)] font-black text-[length:var(--font-xs-size)] tracking-[0.3em] uppercase">Initializing P2P Node</p>
             </div>
         );
     }
 
     return (
-        <div className="flex h-full text-[var(--color-text-2)] overflow-hidden">
+        <div className="flex h-full text-[color:var(--color-text-2)] overflow-hidden">
             {/* Left Rail - Navigation */}
             <div className="w-16 flex flex-col items-center pb-4 shrink-0 pt-11">
                 <TooltipProvider>
@@ -408,12 +408,12 @@ const IMApp: React.FC<{ windowId: string }> = () => {
                                 variant="ghost"
                                 onClick={() => setActiveTab(item.id)}
                                 className={`flex flex-col items-center justify-center h-auto w-14 py-2 rounded-[var(--radius-12)] transition-all gap-1 ${isActive
-                                    ? 'text-[var(--color-blue)] bg-[var(--color-blue-bg-weak)]/50'
-                                    : 'text-[var(--color-text-4)] hover:text-[var(--color-text-2)] hover:bg-[var(--color-fill-a2)]'
+                                    ? 'text-[color:var(--color-blue)] bg-[var(--color-blue-bg-weak)]'
+                                    : 'text-[color:var(--color-text-4)] hover:text-[color:var(--color-text-2)] hover:bg-[var(--color-fill-a2)]'
                                     }`}
                             >
                                 <span className={`iconfont icon-${item.icon}-${isActive ? 'actived' : 'default'} text-[1.375rem]`} />
-                                <span className="text-[var(--font-xs-size)] scale-90 origin-top font-medium mt-0.5">{item.label}</span>
+                                <span className="text-[length:var(--font-xs-size)] scale-90 origin-top font-medium mt-0.5">{item.label}</span>
                             </Button>
                         );
                     })}
@@ -428,8 +428,8 @@ const IMApp: React.FC<{ windowId: string }> = () => {
                     <div className="w-72 flex flex-col border-r border-[var(--divider-color)] shrink-0 bg-[var(--color-fill-2)] max-w-full overflow-x-hidden">
                         <div className="pt-6 px-4 pb-4 space-y-4">
                             <div className="flex items-center justify-between">
-                                <h2 className="text-[var(--font-base-size)] font-bold tracking-tight text-[var(--color-text-1)]">消息</h2>
-                                <Button variant="ghost" size="icon" className="h-8 w-8 text-[var(--color-text-4)]"><Plus size={18} /></Button>
+                                <h2 className="text-[length:var(--font-base-size)] font-bold tracking-tight text-[color:var(--color-text-1)]">消息</h2>
+                                <Button variant="ghost" size="icon" className="h-8 w-8 text-[color:var(--color-text-4)]"><Plus size={18} /></Button>
                             </div>
 
                         </div>
@@ -451,12 +451,12 @@ const IMApp: React.FC<{ windowId: string }> = () => {
                                         </div>
                                         <div className="flex-1 min-w-0">
                                             <div className="flex items-center justify-between mb-0.5">
-                                                <span className={`text-[var(--font-base-size)] font-semibold truncate text-[var(--color-text-2)] transition-colors`}>
+                                                <span className="text-[length:var(--font-base-size)] font-bold truncate text-[color:var(--color-text-1)]">
                                                     {chat.name}
                                                 </span>
-                                                <span className="text-[var(--font-xs-size)] text-[var(--color-text-4)]">{chat.time || '刚刚'}</span>
+                                                <span className="text-[length:var(--font-xs-size)] text-[color:var(--color-text-5)]">{chat.time || '刚刚'}</span>
                                             </div>
-                                            <p className="text-[var(--font-sm-size)] text-[var(--color-text-5)] truncate leading-relaxed">
+                                            <p className="text-[length:var(--font-xs-size)] text-[color:var(--color-text-5)] truncate opacity-80">
                                                 {chat.lastMessage || (chat.isBot ? '长猫 AI 助手' : '点击发起私聊')}
                                             </p>
                                         </div>
@@ -469,26 +469,26 @@ const IMApp: React.FC<{ windowId: string }> = () => {
                     {/* Right Main Area */}
                     <div className="flex-1 flex flex-col relative overflow-hidden bg-[var(--color-bg-1)]">
                         {/* Chat Header */}
-                        <header className="h-[4rem] flex items-center justify-between px-6 border-b border-[var(--divider-color)] shrink-0 bg-[var(--color-fill-a4)] backdrop-blur-sm z-10">
+                        <header className="h-[4rem] flex items-center justify-between px-6 border-b border-[var(--divider-color)] shrink-0 bg-[var(--color-bg-1)]/80 backdrop-blur-md z-10">
                             <div className="flex items-center gap-3">
                                 <Avatar className="h-10 w-10 rounded-[var(--radius-8)] overflow-hidden">
                                     <AvatarImage src={activeChat.avatar} />
                                     <AvatarFallback>{activeChat.name[0]}</AvatarFallback>
                                 </Avatar>
-                                <div className="flex flex-col">
+                                <div className="flex flex-col gap-0.5">
                                     <div className="flex items-center gap-2">
-                                        <h3 className="text-[var(--font-base-size)] font-bold text-[var(--color-text-1)]">{activeChat.name}</h3>
+                                        <h3 className="text-[length:var(--font-base-size)] font-bold text-[color:var(--color-text-1)]">{activeChat.name}</h3>
                                     </div>
-                                    <p className="text-[var(--font-sm-size)] text-[var(--color-text-5)] truncate max-w-[400px]">
+                                    <p className="text-[length:var(--font-xs-size)] text-[color:var(--color-text-5)] opacity-80 truncate max-w-[400px]">
                                         {ai.isTyping ? '正在输入...' : '有什么可以帮您的？'}
                                     </p>
                                 </div>
                             </div>
-                            <div className="flex items-center gap-1 text-[var(--color-text-4)]">
-                                <Button variant="ghost" size="icon" className="h-9 w-9 hover:text-[var(--color-text-2)] transition-colors"><Users size={20} /></Button>
-                                <Button variant="ghost" size="icon" className="h-9 w-9 hover:text-[var(--color-text-2)] transition-colors"><UserPlus size={20} /></Button>
-                                <Button variant="ghost" size="icon" className="h-9 w-9 hover:text-[var(--color-text-2)] transition-colors"><Search size={20} /></Button>
-                                <Button variant="ghost" size="icon" className="h-9 w-9 hover:text-[var(--color-text-2)] transition-colors"><MoreHorizontal size={20} /></Button>
+                            <div className="flex items-center gap-1 text-[color:var(--color-text-4)]">
+                                <Button variant="ghost" size="icon" className="h-9 w-9 hover:text-[color:var(--color-text-2)] transition-colors"><Users size={20} /></Button>
+                                <Button variant="ghost" size="icon" className="h-9 w-9 hover:text-[color:var(--color-text-2)] transition-colors"><UserPlus size={20} /></Button>
+                                <Button variant="ghost" size="icon" className="h-9 w-9 hover:text-[color:var(--color-text-2)] transition-colors"><Search size={20} /></Button>
+                                <Button variant="ghost" size="icon" className="h-9 w-9 hover:text-[color:var(--color-text-2)] transition-colors"><MoreHorizontal size={20} /></Button>
                             </div>
                         </header>
 
@@ -496,13 +496,13 @@ const IMApp: React.FC<{ windowId: string }> = () => {
                         <ScrollArea ref={scrollAreaRef} className="flex-1 p-5">
                             <div className="max-w-4xl mx-auto space-y-8">
                                 {firestoreMessages.length === 0 ? (
-                                    <div className="h-full flex flex-col items-center justify-center text-[var(--color-text-5)] py-20 gap-4 opacity-40">
+                                    <div className="h-full flex flex-col items-center justify-center text-[color:var(--color-text-5)] py-20 gap-4 opacity-40">
                                         <div className="w-20 h-20 bg-[var(--color-fill-3)] rounded-[2.5rem] flex items-center justify-center border border-[var(--color-border-a1)]">
                                             <Search className="w-8 h-8 opacity-20" />
                                         </div>
                                         <div className="text-center">
-                                            <p className="text-[var(--font-sm-size)] font-black uppercase tracking-widest">已开启加密对话</p>
-                                            <p className="text-[var(--font-xs-size)]">只有你和 {activeChat.name} 能看到此对话内容</p>
+                                            <p className="text-[length:var(--font-sm-size)] font-black uppercase tracking-widest">已开启加密对话</p>
+                                            <p className="text-[length:var(--font-xs-size)]">只有你和 {activeChat.name} 能看到此对话内容</p>
                                         </div>
                                     </div>
                                 ) : (
@@ -516,13 +516,13 @@ const IMApp: React.FC<{ windowId: string }> = () => {
                                             )}
                                             <div className={`flex flex-col gap-1 max-w-[75%] ${msg.senderId === user.uid ? 'items-end' : 'items-start'}`}>
                                                 <div className={`flex items-baseline gap-2 ${msg.senderId === user.uid ? 'flex-row-reverse' : ''}`}>
-                                                    <span className="text-[var(--font-base-size)] font-semibold text-[var(--color-text-5)]">{msg.senderId === user.uid ? '我' : msg.senderName}</span>
-                                                    <span className="text-[var(--font-xs-size)] text-[var(--color-text-5)] opacity-0 group-hover:opacity-100 transition-opacity">{msg.timestamp}</span>
+                                                    <span className="text-[length:var(--font-base-size)] font-semibold text-[color:var(--color-text-5)]">{msg.senderId === user.uid ? '我' : msg.senderName}</span>
+                                                    <span className="text-[length:var(--font-xs-size)] text-[color:var(--color-text-5)] opacity-0 group-hover:opacity-100 transition-opacity">{msg.timestamp}</span>
                                                 </div>
 
-                                                <div className={`relative px-4 py-2 rounded-[var(--radius-12)] text-[var(--font-sm-size)] leading-relaxed select-text ${msg.senderId === user.uid
+                                                <div className={`relative px-4 py-2 rounded-[var(--radius-12)] text-[length:var(--font-sm-size)] leading-relaxed select-text ${msg.senderId === user.uid
                                                     ? 'bg-[var(--color-blue)] text-white'
-                                                    : 'bg-[var(--color-bg-2)] border border-[var(--divider-color)] text-[var(--color-text-2)]'
+                                                    : 'bg-[var(--color-bg-2)] border border-[var(--divider-color)] text-[color:var(--color-text-2)]'
                                                     } transition-all`}>
                                                     {msg.text}
                                                 </div>
@@ -543,44 +543,39 @@ const IMApp: React.FC<{ windowId: string }> = () => {
                                         onChange={(e) => setMessage(e.target.value)}
                                         onKeyDown={handleKeyDown}
                                         placeholder="输入“/”，大象AI帮你..."
-                                        className="border-none focus-visible:ring-0 bg-transparent text-[var(--font-base-size)] min-h-[44px] px-3 shadow-none h-auto py-2.5 flex-1 pr-12 resize-none overflow-y-auto text-[var(--color-text-2)] placeholder:text-[var(--color-text-5)]"
+                                        className="border-none focus-visible:ring-0 bg-transparent text-[length:var(--font-base-size)] min-h-[44px] px-3 shadow-none h-auto py-2.5 flex-1 pr-12 resize-none overflow-y-auto text-[color:var(--color-text-2)] placeholder:text-[color:var(--color-text-5)]"
                                         rows={1}
                                     />
                                 </div>
 
-                                <div className="flex items-center gap-0.5 text-[var(--color-text-4)] px-1 pb-1">
-                                    <Button variant="ghost" size="icon" className="h-8 w-8 rounded-[var(--radius-8)] hover:text-[var(--color-blue)] hover:bg-[var(--hover-bg)] transition-colors"><Plus size={18} /></Button>
-                                    <Button variant="ghost" size="icon" className="h-8 w-8 rounded-[var(--radius-8)] hover:text-[var(--color-blue)] hover:bg-[var(--hover-bg)] transition-colors"><Smile size={18} /></Button>
-                                    <div className="flex items-center h-8 px-2 rounded-[var(--radius-8)] hover:text-[var(--color-blue)] hover:bg-[var(--hover-bg)] transition-colors cursor-pointer text-[0.8125rem] font-medium ml-1">
+                                <div className="flex items-center gap-0.5 text-[color:var(--color-text-4)] px-1 pb-1">
+                                    <Button variant="ghost" size="icon" className="h-8 w-8 rounded-[var(--radius-8)] hover:text-[color:var(--color-blue)] hover:bg-[var(--hover-bg)] transition-colors"><Plus size={18} /></Button>
+                                    <Button variant="ghost" size="icon" className="h-8 w-8 rounded-[var(--radius-8)] hover:text-[color:var(--color-blue)] hover:bg-[var(--hover-bg)] transition-colors"><Smile size={18} /></Button>
+                                    <div className="flex items-center h-8 px-2 rounded-[var(--radius-8)] hover:text-[color:var(--color-blue)] hover:bg-[var(--hover-bg)] transition-colors cursor-pointer text-[0.8125rem] font-medium ml-1">
                                         Aa
                                     </div>
-                                    <Button variant="ghost" size="icon" className="h-8 w-8 rounded-[var(--radius-8)] hover:text-[var(--color-blue)] hover:bg-[var(--hover-bg)] transition-colors"><ImageIcon size={18} /></Button>
-                                    <Button variant="ghost" size="icon" className="h-8 w-8 rounded-[var(--radius-8)] hover:text-[var(--color-blue)] hover:bg-[var(--hover-bg)] transition-colors"><Paperclip size={18} /></Button>
-                                    <Button variant="ghost" size="icon" className="h-8 w-8 rounded-[var(--radius-8)] hover:text-[var(--color-blue)] hover:bg-[var(--hover-bg)] transition-colors"><Scissors size={18} /></Button>
-                                    <Button variant="ghost" size="icon" className="h-8 w-8 rounded-[var(--radius-8)] hover:text-[var(--color-blue)] hover:bg-[var(--hover-bg)] transition-colors"><VideoIcon size={18} /></Button>
-                                    <div className="flex items-center h-8 px-2 rounded-[var(--radius-8)] hover:text-[var(--color-blue)] hover:bg-[var(--color-blue-bg-weak)]/50 transition-colors cursor-pointer text-[0.8125rem] font-medium">
+                                    <Button variant="ghost" size="icon" className="h-8 w-8 rounded-[var(--radius-8)] hover:text-[color:var(--color-blue)] hover:bg-[var(--hover-bg)] transition-colors"><ImageIcon size={18} /></Button>
+                                    <Button variant="ghost" size="icon" className="h-8 w-8 rounded-[var(--radius-8)] hover:text-[color:var(--color-blue)] hover:bg-[var(--hover-bg)] transition-colors"><Paperclip size={18} /></Button>
+                                    <Button variant="ghost" size="icon" className="h-8 w-8 rounded-[var(--radius-8)] hover:text-[color:var(--color-blue)] hover:bg-[var(--hover-bg)] transition-colors"><Scissors size={18} /></Button>
+                                    <Button variant="ghost" size="icon" className="h-8 w-8 rounded-[var(--radius-8)] hover:text-[color:var(--color-blue)] hover:bg-[var(--hover-bg)] transition-colors"><VideoIcon size={18} /></Button>
+                                    <div className="flex items-center h-8 px-2 rounded-[var(--radius-8)] hover:text-[color:var(--color-blue)] hover:bg-[var(--color-blue-bg-weak)]/50 transition-colors cursor-pointer text-[0.8125rem] font-medium">
                                         ✨
                                     </div>
 
                                     <div className="ml-auto flex items-center gap-1">
-                                        <Button variant="ghost" size="icon" className="h-8 w-8 rounded-[var(--radius-8)] hover:text-[var(--color-blue)] hover:bg-[var(--color-blue-bg-weak)]/50 transition-colors"><Maximize2 size={16} /></Button>
+                                        <Button variant="ghost" size="icon" className="h-8 w-8 rounded-[var(--radius-8)] hover:text-[color:var(--color-blue)] hover:bg-[var(--hover-bg)] transition-colors"><Maximize2 size={16} /></Button>
                                         <Button
                                             variant="ghost"
                                             size="icon"
                                             onClick={handleSendMessage}
                                             disabled={!message.trim()}
                                             className={`h-8 w-8 flex items-center justify-center rounded-[var(--radius-8)] transition-all ${message.trim()
-                                                ? "text-[var(--color-blue)]"
-                                                : "text-[var(--color-text-assist)]/40"
+                                                ? "text-[color:var(--color-blue)] bg-[var(--color-blue-bg-weak)]"
+                                                : "text-[color:var(--color-text-5)] opacity-30"
                                                 }`}
                                         >
                                             <SendHorizonal size={18} />
                                         </Button>
-                                        <div className="flex items-center px-1 text-[var(--color-text-5)]">
-                                            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                                <path d="M6 9L12 15L18 9" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-                                            </svg>
-                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -606,10 +601,10 @@ const IMApp: React.FC<{ windowId: string }> = () => {
                                     <RefreshCw className="w-6 h-6 text-white animate-spin-slow" />
                                 </div>
                             </div>
-                            <p className="text-[var(--font-xs-size)] font-black uppercase tracking-widest text-[var(--color-text-5)]">头像随昵称自动生成</p>
+                            <p className="text-[length:var(--font-xs-size)] font-black uppercase tracking-widest text-[color:var(--color-text-5)]">头像随昵称自动生成</p>
                         </div>
                         <div className="space-y-3">
-                            <label htmlFor="nickname" className="text-[var(--font-xs-size)] font-black uppercase tracking-widest text-[var(--color-text-4)] pl-1">新昵称 (菜名推荐)</label>
+                            <label htmlFor="nickname" className="text-[length:var(--font-xs-size)] font-black uppercase tracking-widest text-[color:var(--color-text-4)] pl-1">新昵称 (菜名推荐)</label>
                             <Input
                                 id="nickname"
                                 value={tempNickname}

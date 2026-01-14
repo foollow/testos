@@ -298,8 +298,8 @@ body {
   background-position: center;
   overflow: hidden;
 
-  background-color: var(--color-bg-1) !important;
-  color: var(--color-text-2) !important;
+  background-color: var(--color-bg-1);
+  color: var(--color-text-2);
   font-size: var(--font-size);
   transition: background-color 0.3s ease, color 0.3s ease, font-size 0.3s ease;
 }

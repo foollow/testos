@@ -25,5 +25,17 @@ description: 样式开发全局规则
 - **圆角**：根据视觉尺寸匹配 `radius-4` 至 `radius-full`。
 - **边框**：选择 `border-a1` (常用描边) 或 `border-a2` (分割线)。
 
+## 4. CSS 变量作为 Arbitrary Value 的使用规范
+当在 Tailwind 的 Arbitrary Value (`[...]`) 中使用 CSS 变量时，必须显式声明类型以消除歧义并确保 CSS 正常生成。
+- **字体大小**: 使用 `text-[length:var(--font-name)]`
+- **文字颜色**: 使用 `text-[color:var(--color-name)]`
+- **其他属性**: 同样遵循此规则，如 `border-[color:var(...)]` 等（如果 Tailwind 无法自动推断）。
+
+**示例**:
+- ✅ `text-[length:var(--font-xs-size)]`
+- ✅ `text-[color:var(--color-text-5)]`
+- ❌ `text-[var(--font-xs-size)]` (可能失效或 fallback 错误)
+- ❌ `text-[var(--color-text-5)]`
+
 ---
 *本规则已生效并存储为全局 Prompt 指引。*

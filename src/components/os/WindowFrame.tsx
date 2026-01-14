@@ -168,12 +168,12 @@ export const WindowFrame: React.FC<WindowFrameProps> = memo(({ window, zIndex, c
                     {window.appId === 'im' ? (
                         <div className="w-full max-w-[280px] relative group pointer-events-auto" onMouseDown={(e) => e.stopPropagation()}>
                             <div className="absolute inset-y-0 left-3 flex items-center pointer-events-none opacity-50">
-                                <Search size={14} className="text-[var(--color-text-5)]" />
+                                <Search size={14} className="text-[color:var(--color-text-5)]" />
                             </div>
                             <input
                                 type="text"
                                 placeholder={useTranslation(useOS.getState().systemState.language).chat.search}
-                                className="w-full h-7 rounded-lg pl-8 pr-4 text-[12px] transition-all outline-none bg-[var(--color-bg-3)] border-none text-[var(--color-text-2)] hover:bg-[var(--color-fill-3)] focus:bg-[var(--color-bg-2)] focus:ring-1 focus:ring-[var(--color-blue)]/20"
+                                className="w-full h-7 rounded-lg pl-8 pr-4 text-[12px] transition-all outline-none bg-[var(--color-bg-3)] border-none text-[color:var(--color-text-2)] hover:bg-[var(--color-fill-3)] focus:bg-[var(--color-bg-2)] focus:ring-1 focus:ring-[var(--color-blue)]/20"
                                 onClick={(e) => e.stopPropagation()}
                             />
                         </div>
