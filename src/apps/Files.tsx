@@ -1,4 +1,5 @@
-import { Image as ImageIcon, Music, Film, ChevronRight, LayoutGrid, List, X, Play, FileText } from 'lucide-react';
+import React, { useState } from 'react';
+import { Image as ImageIcon, Music, Film, ChevronRight, LayoutGrid, List } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import { useTranslation } from "@/lib/i18n";
 import { useOS } from "@/store/useOS";
@@ -28,17 +29,6 @@ const Files: React.FC = () => {
     const t = useTranslation(systemState.language);
     const [view, setView] = useState<'grid' | 'list'>('grid');
     const [selectedFile, setSelectedFile] = useState<FileItem | null>(null);
-    const [previewFile, setPreviewFile] = useState<FileItem | null>(null);
-
-    const handleKeyDown = (e: React.KeyboardEvent) => {
-        if (e.code === 'Space' && selectedFile) {
-            e.preventDefault();
-            setPreviewFile(previewFile?.id === selectedFile.id ? null : selectedFile);
-        }
-        if (e.code === 'Escape') {
-            setPreviewFile(null);
-        }
-    };
 
     const getIcon = (type: FileItem['type']) => {
         switch (type) {
@@ -52,11 +42,7 @@ const Files: React.FC = () => {
     };
 
     return (
-        <div
-            className="flex h-full bg-background/80 backdrop-blur-md overflow-hidden text-foreground transition-colors duration-300 relative focus:outline-none"
-            tabIndex={0}
-            onKeyDown={handleKeyDown}
-        >
+        <div className="flex h-full bg-background/80 backdrop-blur-md overflow-hidden text-foreground transition-colors duration-300">
             {/* Sidebar */}
             <div className="w-48 border-r border-[var(--divider-color)] bg-muted/20 p-4 space-y-4 hidden md:block">
                 <div className="space-y-1">
@@ -107,7 +93,6 @@ const Files: React.FC = () => {
                             <div
                                 key={file.id}
                                 onClick={() => setSelectedFile(file)}
-                                onDoubleClick={() => setPreviewFile(file)}
                                 className={view === 'grid'
                                     ? `flex flex-col items-center p-4 rounded-xl cursor-default group transition-all duration-300 ${selectedFile?.id === file.id ? 'bg-[var(--active-bg)] ring-1 ring-primary/30' : 'hover:bg-[var(--hover-bg)]'}`
                                     : `flex items-center gap-3 p-2 rounded-lg cursor-default group transition-all duration-300 text-sm ${selectedFile?.id === file.id ? 'bg-[var(--active-bg)]' : 'hover:bg-[var(--hover-bg)]'}`
@@ -135,83 +120,49 @@ const Files: React.FC = () => {
                 </div>
             </div>
 
-        </div>
-    )
-}
-
-{/* Quick Look Overlay */ }
-{
-    previewFile && (
-        <div
-            className="absolute inset-0 z-50 flex items-center justify-center bg-black/20 backdrop-blur-sm animate-in fade-in duration-200"
-            onClick={() => setPreviewFile(null)}
-        >
-            <div
-                className="bg-background/90 backdrop-blur-xl rounded-2xl shadow-2xl border border-[var(--divider-color)] w-[80%] max-w-2xl max-h-[80%] flex flex-col overflow-hidden animate-in zoom-in-95 duration-200"
-                onClick={e => e.stopPropagation()}
-            >
-                <div className="flex items-center justify-between px-4 py-3 border-b border-[var(--divider-color)]">
-                    <div className="flex items-center gap-2">
-                        {getIcon(previewFile.type)}
-                        <span className="text-sm font-semibold">{previewFile.name}</span>
-                    </div>
-                    <button
-                        onClick={() => setPreviewFile(null)}
-                        className="p-1 hover:bg-[var(--hover-bg)] rounded-full transition-colors"
-                    >
-                        <X size={18} />
-                    </button>
-                </div>
-
-                <div className="flex-1 overflow-auto p-6 flex items-center justify-center bg-muted/5">
-                    {previewFile.type === 'image' && (
-                        <img src={previewFile.thumbnail} className="max-w-full max-h-full object-contain rounded-lg shadow-lg" alt="Preview" />
-                    )}
-                    {previewFile.type === 'text' && (
-                        <div className="w-full h-full bg-background rounded-lg border border-[var(--divider-color)] p-6 overflow-auto">
-                            <pre className="text-sm font-mono whitespace-pre-wrap leading-relaxed">
-                                {previewFile.content || 'No content available.'}
-                            </pre>
-                        </div>
-                    )}
-                    {previewFile.type === 'video' && (
-                        <div className="w-full aspect-video bg-black rounded-lg flex flex-col items-center justify-center text-white gap-4">
-                            <Play size={48} className="text-white/50" />
-                            <p className="text-sm">{t.files.preview.noPreview} (Video Player Simulation)</p>
-                        </div>
-                    )}
-                    {previewFile.type === 'music' && (
-                        <div className="w-64 h-64 bg-gradient-to-br from-pink-500/20 to-purple-500/20 rounded-2xl flex flex-col items-center justify-center border border-primary/20 gap-4 shadow-inner">
-                            <div className="w-32 h-32 bg-background rounded-full flex items-center justify-center shadow-lg border border-[var(--divider-color)] animate-spin-slow">
-                                <Music size={48} className="text-primary" />
+            {/* Preview Pane (Inspector) */}
+            {selectedFile && (
+                <div className="w-72 border-l border-[var(--divider-color)] bg-muted/10 p-6 flex flex-col items-center text-center animate-in slide-in-from-right-4 duration-200">
+                    <div className="w-full mb-6">
+                        {selectedFile.type === 'image' && selectedFile.thumbnail ? (
+                            <img src={selectedFile.thumbnail} className="w-full aspect-video object-cover rounded-xl shadow-xl border border-[var(--divider-color)]" alt="Preview" />
+                        ) : (
+                            <div className="w-full aspect-video bg-muted/40 rounded-xl flex items-center justify-center border border-[var(--divider-color)] border-dashed">
+                                {getIcon(selectedFile.type)}
                             </div>
-                            <div className="text-center">
-                                <p className="text-sm font-bold">{previewFile.name}</p>
-                                <p className="text-[10px] text-muted-foreground">Audio Preview Simulation</p>
-                            </div>
-                        </div>
-                    )}
-                    {previewFile.type === 'folder' && (
-                        <div className="flex flex-col items-center gap-4">
-                            <span className="iconfont icon-document-actived text-[80px] text-blue-500" />
-                            <p className="text-sm font-medium">{previewFile.name}</p>
-                        </div>
-                    )}
-                </div>
-
-                <div className="px-6 py-4 bg-muted/20 border-t border-[var(--divider-color)] flex justify-between items-center">
-                    <div className="text-[11px] text-muted-foreground">
-                        <span className="font-semibold">{t.files.preview.modified}:</span> Just now
+                        )}
                     </div>
-                    <Button size="sm" className="rounded-lg h-8 px-4 text-xs" onClick={() => setPreviewFile(null)}>
-                        {t.files.preview.open}
-                    </Button>
+
+                    <h3 className="text-lg font-bold mb-1 truncate w-full">{selectedFile.name}</h3>
+                    <p className="text-xs text-muted-foreground mb-6">{selectedFile.type.toUpperCase()} • {selectedFile.size || 'Folder'}</p>
+
+                    <div className="w-full space-y-4">
+                        <Button className="w-full rounded-xl">{t.files.preview.open}</Button>
+                        {selectedFile.content && (
+                            <div className="text-left bg-muted/40 p-3 rounded-lg border border-[var(--divider-color)] max-h-48 overflow-auto">
+                                <p className="text-[11px] leading-relaxed font-mono whitespace-pre-wrap text-muted-foreground">
+                                    {selectedFile.content}
+                                </p>
+                            </div>
+                        )}
+                        {!selectedFile.content && selectedFile.type !== 'image' && (
+                            <p className="text-[11px] text-muted-foreground italic">{t.files.preview.noPreview}</p>
+                        )}
+                    </div>
+
+                    <div className="mt-auto pt-6 w-full text-left space-y-2">
+                        <div className="flex justify-between text-[10px]">
+                            <span className="text-muted-foreground font-semibold">{t.files.preview.created}</span>
+                            <span>Dec 18, 2025</span>
+                        </div>
+                        <div className="flex justify-between text-[10px]">
+                            <span className="text-muted-foreground font-semibold">{t.files.preview.modified}</span>
+                            <span>Just now</span>
+                        </div>
+                    </div>
                 </div>
-            </div>
+            )}
         </div>
-    )
-}
-        </div >
     );
 };
 
