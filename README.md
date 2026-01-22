@@ -3,7 +3,7 @@
 A high-fidelity Web Desktop Environment built with React 19, Tailwind CSS v4, and Zustand.
 
 ## Tech Stack
-- **Framework**: React 19
+- **Framework**: React 19 
 - **Build Tool**: Vite
 - **Styling**: Tailwind CSS v4
 - **State Management**: Zustand
