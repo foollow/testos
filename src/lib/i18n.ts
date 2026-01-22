@@ -53,6 +53,7 @@ export const translations = {
                 created: 'Created',
                 modified: 'Modified',
                 noPreview: 'No preview available for this file type.',
+                quickLook: 'Quick Look',
             },
         },
         chat: {
@@ -140,6 +141,7 @@ export const translations = {
                 created: '创建时间',
                 modified: '修改时间',
                 noPreview: '此文件类型暂无预览。',
+                quickLook: '快速查看',
             },
         },
         chat: {
@@ -227,6 +229,7 @@ export const translations = {
                 created: '創建時間',
                 modified: '修改時間',
                 noPreview: '此文件類型暫無預覽。',
+                quickLook: '快速查看',
             },
         },
         chat: {

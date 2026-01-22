@@ -24,7 +24,7 @@ const PopupApp: React.FC<{ windowId: string }> = ({ windowId }) => {
     };
 
     const handleConfirm = () => {
-        console.log('Saved content:', inputValue);
+
         // You could also save this to a global state or localStorage here
         setIsOpen(false);
         closeWindow(windowId);

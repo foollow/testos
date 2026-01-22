@@ -17,7 +17,7 @@ function App() {
     document.body.classList.remove('dark', 'light');
     document.body.classList.add(theme);
 
-    console.log('DOM Theme updated:', theme);
+
   }, [theme]);
 
   return (
