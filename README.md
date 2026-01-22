@@ -1,4 +1,4 @@
-# Long OS (DragonOS Web)
+# Work OS
 
 A high-fidelity Web Desktop Environment built with React 19, Tailwind CSS v4, and Zustand.
 
