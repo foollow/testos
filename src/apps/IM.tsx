@@ -30,7 +30,7 @@ import { useAI } from "@/hooks/useAI";
 // Firebase initialization
 import { initializeApp } from 'firebase/app';
 import { getAuth, signInWithCustomToken, signInAnonymously, onAuthStateChanged, setPersistence, browserLocalPersistence, inMemoryPersistence } from 'firebase/auth';
-import { getFirestore, doc, setDoc, getDoc, collection, onSnapshot, addDoc, serverTimestamp } from 'firebase/firestore';
+import { getFirestore, doc, setDoc, getDoc, collection, onSnapshot, addDoc, serverTimestamp, query, where, getDocs, deleteDoc } from 'firebase/firestore';
 
 // Firebase initialization wrapper to prevent crashes
 const getFirebase = () => {
@@ -120,6 +120,7 @@ const IMApp: React.FC<{ windowId: string }> = () => {
     const [activeChat, setActiveChat] = useState<any>(QA_BOT);
     const [onlineUsers, setOnlineUsers] = useState<any[]>([QA_BOT]);
     const [firestoreMessages, setFirestoreMessages] = useState<Message[]>([]);
+    const [optimisticMessages, setOptimisticMessages] = useState<Message[]>([]);
     const [message, setMessage] = useState('');
 
     const [activeTab, setActiveTab] = useState('messages');
@@ -197,12 +198,35 @@ const IMApp: React.FC<{ windowId: string }> = () => {
         performAuth();
 
         if (!auth || !db) return;
+        const cleanupExpiredUsers = async (currentDb: any) => {
+            try {
+                const sevenDaysAgo = new Date();
+                sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+
+                const onlineUsersRef = collection(currentDb, 'artifacts', appId, 'public', 'data', 'online_users');
+                const q = query(onlineUsersRef, where('lastActive', '<', sevenDaysAgo));
+
+                const querySnapshot = await getDocs(q);
+                const deletePromises = querySnapshot.docs.map(doc => deleteDoc(doc.ref));
+                await Promise.all(deletePromises);
+
+                if (querySnapshot.size > 0) {
+                    console.log(`[IM] Cleaned up ${querySnapshot.size} expired temporary sessions.`);
+                }
+            } catch (e) {
+                console.error("[IM] Failed to cleanup expired users:", e);
+            }
+        };
+
         const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
             if (currentUser && isMounted) {
                 setUser(currentUser);
                 setAuthStatus('authenticated');
 
                 if (db) {
+                    // Run cleanup
+                    cleanupExpiredUsers(db);
+
                     const userSettingsRef = doc(db, 'artifacts', appId, 'users', currentUser.uid, 'settings', 'profile');
                     try {
                         const docSnap = await getDoc(userSettingsRef);
@@ -268,6 +292,20 @@ const IMApp: React.FC<{ windowId: string }> = () => {
         };
     }, [user, authStatus, activeChat.uid, activeChat.id, db, appId]);
 
+    // Cleanup optimistic messages that are now in firestore
+    useEffect(() => {
+        if (optimisticMessages.length > 0) {
+            const firestoreTexts = new Set(firestoreMessages.filter(m => m.senderId === user?.uid).map(m => m.text));
+            setOptimisticMessages(prev => prev.filter(m => !firestoreTexts.has(m.text)));
+        }
+    }, [firestoreMessages, user?.uid]);
+
+    const allMessages = React.useMemo(() => {
+        // Find the last firestore message timestamp to know where to insert optimistic ones
+        // In a real app we'd use IDs, but for simplicity we'll just append if not exists
+        return [...firestoreMessages, ...optimisticMessages];
+    }, [firestoreMessages, optimisticMessages]);
+
     const scrollToBottom = () => {
         const viewport = scrollAreaRef.current?.querySelector('[data-radix-scroll-area-viewport]') as HTMLElement;
         if (viewport) {
@@ -277,7 +315,7 @@ const IMApp: React.FC<{ windowId: string }> = () => {
 
     useEffect(() => {
         scrollToBottom();
-    }, [firestoreMessages, activeChat.id]);
+    }, [allMessages, activeChat.id]);
 
     const handleUpdateNickname = async () => {
         if (!tempNickname.trim() || !user) return;
@@ -320,12 +358,23 @@ const IMApp: React.FC<{ windowId: string }> = () => {
 
         const chatRef = collection(db!, 'artifacts', appId, 'public', 'data', `room_${roomId}`);
 
+        // Optimistic UI update
+        const tempId = `temp-${Date.now()}`;
+        const newMessage: Message = {
+            id: tempId,
+            text,
+            senderId: user.uid,
+            senderName: nickname,
+            timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+        };
+        setOptimisticMessages(prev => [...prev, newMessage]);
+
         await addDoc(chatRef, {
             text,
             senderId: user.uid,
             senderName: nickname,
             createdAt: serverTimestamp(),
-            timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+            timestamp: newMessage.timestamp,
         });
 
         if (activeChat.isBot) {
@@ -506,8 +555,8 @@ const IMApp: React.FC<{ windowId: string }> = () => {
                                         </div>
                                     </div>
                                 ) : (
-                                    firestoreMessages.map((msg: Message) => (
-                                        <div key={msg.id} className={`flex gap-3 group ${msg.senderId === user.uid ? 'flex-row-reverse' : ''}`}>
+                                    allMessages.map((msg: Message) => (
+                                        <div key={msg.id} className={`flex gap-3 group ${msg.senderId === user.uid ? 'flex-row-reverse' : ''} ${msg.id.startsWith('temp-') ? 'opacity-70' : ''}`}>
                                             {msg.senderId !== user.uid && (
                                                 <Avatar className="h-9 w-9 shrink-0 rounded-[var(--radius-8)] overflow-hidden">
                                                     <AvatarImage src={msg.avatar || getAvatarUrl(msg.senderName)} />
