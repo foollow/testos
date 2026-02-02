@@ -4,7 +4,7 @@ import { useTranslation } from "@/lib/i18n";
 import { WindowManager } from './WindowManager';
 import { Dock } from './Dock';
 import { TopBar } from './TopBar';
-import { Settings as SettingsIcon, Palette, Globe, MessageSquare, FolderOpen } from 'lucide-react';
+import { Settings as SettingsIcon, Palette, Globe, MessageSquare, FolderOpen, GraduationCap } from 'lucide-react';
 
 // Lazy load apps
 const SettingsApp = lazy(() => import('../../apps/Settings'));
@@ -12,6 +12,7 @@ const PaintApp = lazy(() => import('../../apps/Paint'));
 const SafariApp = lazy(() => import('../../apps/Safari'));
 const IMApp = lazy(() => import('../../apps/IM'));
 const FilesApp = lazy(() => import('../../apps/Files'));
+const StudyCityApp = lazy(() => import('../../apps/StudyCity'));
 
 export const Desktop: React.FC = () => {
     const { registerApp, systemState, theme } = useOS();
@@ -49,6 +50,13 @@ export const Desktop: React.FC = () => {
             component: IMApp,
             minWidth: 860,
             minHeight: 560,
+        });
+
+        registerApp({
+            id: 'study-city',
+            title: t.apps.studyCity,
+            icon: <GraduationCap size={28} className="text-orange-400" />,
+            component: StudyCityApp,
         });
 
         registerApp({

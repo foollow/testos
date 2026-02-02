@@ -78,6 +78,7 @@ export const translations = {
             chat: 'Chat',
             settings: 'System Settings',
             about: 'About',
+            studyCity: 'Study City',
         },
         popup: {
             title: 'Popup Demo',
@@ -166,6 +167,7 @@ export const translations = {
             chat: '消息',
             settings: '系统设置',
             about: '关于',
+            studyCity: '学城',
         },
         popup: {
             title: '弹窗演示',
@@ -254,6 +256,7 @@ export const translations = {
             chat: '消息',
             settings: '系統設置',
             about: '關於',
+            studyCity: '學城',
         },
         popup: {
             title: '彈窗演示',
