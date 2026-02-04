@@ -4,11 +4,9 @@ import { useTranslation } from "@/lib/i18n";
 import { WindowManager } from './WindowManager';
 import { Dock } from './Dock';
 import { TopBar } from './TopBar';
-import { Settings as SettingsIcon, Palette, Globe, MessageSquare, FolderOpen, GraduationCap } from 'lucide-react';
 
 // Lazy load apps
 const SettingsApp = lazy(() => import('../../apps/Settings'));
-const PaintApp = lazy(() => import('../../apps/Paint'));
 const SafariApp = lazy(() => import('../../apps/Safari'));
 const IMApp = lazy(() => import('../../apps/IM'));
 const FilesApp = lazy(() => import('../../apps/Files'));
@@ -25,28 +23,21 @@ export const Desktop: React.FC = () => {
         registerApp({
             id: 'safari',
             title: t.apps.safari,
-            icon: <Globe size={28} className="text-blue-400" />,
+            icon: <img src="https://km.sankuai.com/api/file/cdn/2746924596/221262091308?contentType=1&isNewContent=false" alt="Safari" className="w-full h-full object-contain p-0.5" />,
             component: SafariApp,
-        });
-
-        registerApp({
-            id: 'paint',
-            title: t.apps.paint,
-            icon: <Palette size={28} className="text-purple-400" />,
-            component: PaintApp,
         });
 
         registerApp({
             id: 'files',
             title: t.apps.files,
-            icon: <FolderOpen size={28} className="text-yellow-400" />,
+            icon: <img src="https://km.sankuai.com/api/file/cdn/2746924596/221266056552?contentType=1&isNewContent=false" alt="Files" className="w-full h-full object-contain p-0.5" />,
             component: FilesApp,
         });
 
         registerApp({
             id: 'im',
             title: t.apps.chat,
-            icon: <MessageSquare size={28} className="text-emerald-400" />,
+            icon: <img src="https://km.sankuai.com/api/file/cdn/2746924596/221267898919?contentType=1&isNewContent=false" alt="IM" className="w-full h-full object-contain p-0.5" />,
             component: IMApp,
             minWidth: 860,
             minHeight: 560,
@@ -55,14 +46,14 @@ export const Desktop: React.FC = () => {
         registerApp({
             id: 'study-city',
             title: t.apps.studyCity,
-            icon: <GraduationCap size={28} className="text-orange-400" />,
+            icon: <img src="https://km.sankuai.com/api/file/cdn/2746924596/221270181618?contentType=1&isNewContent=false" alt="StudyCity" className="w-full h-full object-contain p-0.5" />,
             component: StudyCityApp,
         });
 
         registerApp({
             id: 'settings',
             title: t.apps.settings,
-            icon: <SettingsIcon size={28} className="text-gray-400" />,
+            icon: <img src="https://km.sankuai.com/api/file/cdn/2746924596/221262329409?contentType=1&isNewContent=false" alt="Settings" className="w-full h-full object-contain p-0.5" />,
             component: SettingsApp,
         });
     }, [registerApp, t]);

@@ -76,7 +76,7 @@ export const Dock: React.FC = () => {
             <motion.div
                 onMouseMove={(e) => mouseX.set(e.pageX)}
                 onMouseLeave={() => mouseX.set(Infinity)}
-                className="flex items-end px-2 backdrop-blur-3xl rounded-xl"
+                className="flex items-end px-2 backdrop-blur-3xl rounded-[12px]"
                 style={{
                     height: '48px', // 固定高度
                     backgroundColor: 'rgba(255, 255, 255, 0.2)',

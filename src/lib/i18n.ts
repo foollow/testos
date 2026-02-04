@@ -73,7 +73,6 @@ export const translations = {
         },
         apps: {
             safari: 'Safari',
-            paint: 'Paint',
             files: 'Files',
             chat: 'Chat',
             settings: 'System Settings',
@@ -162,7 +161,6 @@ export const translations = {
         },
         apps: {
             safari: '浏览器',
-            paint: '画图',
             files: '文件管理',
             chat: '消息',
             settings: '系统设置',
@@ -251,7 +249,6 @@ export const translations = {
         },
         apps: {
             safari: '瀏覽器',
-            paint: '畫圖',
             files: '文件管理',
             chat: '消息',
             settings: '系統設置',
