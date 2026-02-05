@@ -79,9 +79,9 @@ export const Dock: React.FC = () => {
                 className="flex items-end px-2 backdrop-blur-3xl rounded-[12px]"
                 style={{
                     height: '48px', // 固定高度
-                    backgroundColor: 'rgba(255, 255, 255, 0.2)',
-                    border: '0.5px solid rgba(255, 255, 255, 0.3)',
-                    boxShadow: '0 4px 24px 0 rgba(0, 0, 0, 0.3)',
+                    backgroundColor: 'var(--bg-dock)',
+                    border: '0.5px solid var(--border-dock)',
+                    boxShadow: 'var(--app-shadow)',
                 }}
             >
                 {Object.values(apps).map((app: any) => (

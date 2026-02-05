@@ -13,7 +13,7 @@ import {
 
 export const TopBar: React.FC = () => {
     const time = useTime();
-    const { theme, systemState } = useOS();
+    const { systemState } = useOS();
     const t = useTranslation(systemState.language);
 
     const activeWindowId = useOS((state) => state.windowOrder[state.windowOrder.length - 1]);
@@ -22,15 +22,12 @@ export const TopBar: React.FC = () => {
 
     const activeAppName = activeApp?.title || 'Finder';
 
-    // In light mode, we want dark text for the top bar (macOS style)
-    const textColor = theme === 'light' ? 'rgba(0, 0, 0, 0.8)' : 'rgba(255, 255, 255, 0.9)';
-
     return (
         <div
             className="fixed top-0 left-0 right-0 h-8 backdrop-blur-xl flex items-center justify-between px-4 z-50 text-sm font-medium select-none transition-colors duration-300"
             style={{
                 backgroundColor: 'var(--bg-header-transparent)',
-                color: textColor
+                color: 'var(--color-text-2)'
             }}
         >
             <div className="flex items-center gap-1">
