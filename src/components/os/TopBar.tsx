@@ -24,10 +24,10 @@ export const TopBar: React.FC = () => {
 
     return (
         <div
-            className="fixed top-0 left-0 right-0 h-8 backdrop-blur-xl flex items-center justify-between px-4 z-50 text-sm font-medium select-none transition-colors duration-300"
+            className="fixed top-0 left-0 right-0 h-8 flex items-center justify-between px-4 z-50 text-sm font-medium select-none transition-colors duration-300"
             style={{
-                backgroundColor: 'var(--bg-header-transparent)',
-                color: 'var(--color-text-2)'
+                backgroundColor: 'transparent',
+                color: 'var(--color-text-white)'
             }}
         >
             <div className="flex items-center gap-1">

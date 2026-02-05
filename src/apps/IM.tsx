@@ -472,9 +472,9 @@ const IMApp: React.FC<{ windowId: string }> = () => {
             {/* Main Area Wrapper */}
             <div className="flex-1 flex flex-col min-w-0">
                 {/* Content Container (Layered White Box) */}
-                <div className="flex-1 ml-0 mt-10 mb-4 mr-4 bg-[var(--color-bg-1)] rounded-2xl shadow-[0_4px_24px_rgba(0,0,0,0.06)] border border-[var(--divider-color)] flex overflow-hidden">
+                <div className="flex-1 ml-0 mt-10 mb-4 mr-4 bg-[var(--color-bg-1)] rounded-2xl shadow-[0_4px_24px_rgba(0,0,0,0.06)] border border-[var(--color-border-a1)] flex overflow-hidden">
                     {/* Middle Panel - Chat List */}
-                    <div className="w-72 flex flex-col border-r border-[var(--divider-color)] shrink-0 bg-[var(--color-fill-2)] max-w-full overflow-x-hidden">
+                    <div className="w-72 flex flex-col border-r border-[var(--color-border-a1)] shrink-0 bg-[var(--color-fill-2)] max-w-full overflow-x-hidden">
                         <div className="pt-6 px-4 pb-4 space-y-4">
                             <div className="flex items-center justify-between">
                                 <h2 className="text-[length:var(--font-base-size)] font-bold tracking-tight text-[color:var(--color-text-1)]">消息</h2>
@@ -489,7 +489,7 @@ const IMApp: React.FC<{ windowId: string }> = () => {
                                     <div
                                         key={chat.uid || chat.id}
                                         onClick={() => setActiveChat(chat)}
-                                        className={`flex items-center gap-3 p-3 rounded-[var(--radius-12)] cursor-pointer transition-all hover:bg-[var(--hover-bg)] group mb-1 min-w-0 ${(activeChat.uid || activeChat.id) === (chat.uid || chat.id) ? 'bg-[var(--active-bg)] border border-[var(--divider-color)]' : ''}`}
+                                        className={`flex items-center gap-3 p-3 rounded-[var(--radius-12)] cursor-pointer transition-all hover:bg-[var(--hover-bg)] group mb-1 min-w-0 ${(activeChat.uid || activeChat.id) === (chat.uid || chat.id) ? 'bg-[var(--active-bg)] border border-[var(--color-border-a1)]' : ''}`}
                                     >
                                         <div className="relative">
                                             <Avatar className="h-12 w-12 rounded-[var(--radius-12)] group-hover:scale-105 transition-transform overflow-hidden">
@@ -500,7 +500,7 @@ const IMApp: React.FC<{ windowId: string }> = () => {
                                         </div>
                                         <div className="flex-1 min-w-0">
                                             <div className="flex items-center justify-between mb-0.5">
-                                                <span className="text-[length:var(--font-base-size)] font-bold truncate text-[color:var(--color-text-1)]">
+                                                <span className="text-[length:var(--font-base-size)] font-normal truncate text-[color:var(--color-text-1)]">
                                                     {chat.name}
                                                 </span>
                                                 <span className="text-[length:var(--font-xs-size)] text-[color:var(--color-text-5)]">{chat.time || '刚刚'}</span>
@@ -518,7 +518,7 @@ const IMApp: React.FC<{ windowId: string }> = () => {
                     {/* Right Main Area */}
                     <div className="flex-1 flex flex-col relative overflow-hidden bg-[var(--color-bg-1)]">
                         {/* Chat Header */}
-                        <header className="h-[4rem] flex items-center justify-between px-6 border-b border-[var(--divider-color)] shrink-0 bg-[var(--color-bg-1)]/80 backdrop-blur-md z-10">
+                        <header className="h-[4rem] flex items-center justify-between px-6 border-b border-[var(--color-border-a1)] shrink-0 bg-[var(--color-bg-1)]/80 backdrop-blur-md z-10 rounded-tr-2xl">
                             <div className="flex items-center gap-3">
                                 <Avatar className="h-10 w-10 rounded-[var(--radius-8)] overflow-hidden">
                                     <AvatarImage src={activeChat.avatar} />
@@ -526,7 +526,7 @@ const IMApp: React.FC<{ windowId: string }> = () => {
                                 </Avatar>
                                 <div className="flex flex-col gap-0.5">
                                     <div className="flex items-center gap-2">
-                                        <h3 className="text-[length:var(--font-base-size)] font-bold text-[color:var(--color-text-1)]">{activeChat.name}</h3>
+                                        <h3 className="text-[length:var(--font-base-size)] font-normal text-[color:var(--color-text-1)]">{activeChat.name}</h3>
                                     </div>
                                     <p className="text-[length:var(--font-xs-size)] text-[color:var(--color-text-5)] opacity-80 truncate max-w-[400px]">
                                         {ai.isTyping ? '正在输入...' : '有什么可以帮您的？'}
@@ -571,7 +571,7 @@ const IMApp: React.FC<{ windowId: string }> = () => {
 
                                                 <div className={`relative px-4 py-2 rounded-[var(--radius-12)] text-[length:var(--font-sm-size)] leading-relaxed select-text ${msg.senderId === user.uid
                                                     ? 'bg-[var(--color-blue)] text-white'
-                                                    : 'bg-[var(--color-bg-2)] border border-[var(--divider-color)] text-[color:var(--color-text-2)]'
+                                                    : 'bg-[var(--color-bg-2)] border border-[var(--color-border-a1)] text-[color:var(--color-text-2)]'
                                                     } transition-all`}>
                                                     {msg.text}
                                                 </div>
@@ -584,7 +584,7 @@ const IMApp: React.FC<{ windowId: string }> = () => {
 
                         {/* Input Area */}
                         <div className="px-5 pb-5 pt-2 shrink-0">
-                            <div className="max-w-[77.5rem] mx-auto rounded-[var(--radius-12)] border border-[var(--divider-color)] bg-[var(--color-bg-1)] shadow-[var(--effect-shadow-level-1-box)] p-1.5 focus-within:ring-1 focus-within:ring-[var(--color-blue-active)]/10 transition-all flex flex-col group">
+                            <div className="max-w-[77.5rem] mx-auto rounded-[var(--radius-12)] border border-[var(--color-border-a1)] bg-[var(--color-bg-1)] shadow-[var(--effect-shadow-level-1-box)] p-1.5 focus-within:ring-1 focus-within:ring-[var(--color-blue-active)]/10 transition-all flex flex-col group">
                                 <div className="relative flex items-end">
                                     <Textarea
                                         ref={inputRef}

@@ -57,7 +57,7 @@ export const translations = {
             },
         },
         chat: {
-            search: 'Global Search...',
+            search: 'Search...',
             messages: 'Messages',
             contacts: 'Contacts',
             typeMessage: 'Type a message...',
@@ -145,7 +145,7 @@ export const translations = {
             },
         },
         chat: {
-            search: '企业全局搜索，搜你想搜...',
+            search: '搜索',
             messages: '消息',
             contacts: '通讯录',
             typeMessage: '输入"/"，大象AI帮你...',
@@ -233,7 +233,7 @@ export const translations = {
             },
         },
         chat: {
-            search: '企業全局搜索，搜你想搜...',
+            search: '搜索',
             messages: '消息',
             contacts: '通訊錄',
             typeMessage: '輸入"/"，大象AI幫你...',

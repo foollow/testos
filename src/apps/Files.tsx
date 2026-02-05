@@ -88,7 +88,7 @@ const Files: React.FC = () => {
                 </header>
 
                 <div className="flex-1 overflow-auto p-4 text-[var(--color-text-2)]">
-                    <div className={view === 'grid' ? "grid grid-cols-2 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 gap-4" : "space-y-1"}>
+                    <div className={view === 'grid' ? "grid [grid-template-columns:repeat(auto-fill,minmax(100px,1fr))] gap-4" : "space-y-1"}>
                         {mockFiles.map((file) => (
                             <div
                                 key={file.id}
