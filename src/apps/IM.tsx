@@ -412,13 +412,18 @@ const IMApp: React.FC<{ windowId: string }> = () => {
                         id: response.id || `bot-${Date.now()}`
                     };
 
-                    if (!db) {
-                        setFirestoreMessages(prev => [...prev, botMsg as any]);
-                        setTimeout(scrollToBottom, 50);
-                    } else {
-                        let roomId = `bot_qa_${user.uid}`;
-                        const chatRef = collection(db, 'artifacts', appId, 'public', 'data', `room_${roomId}`);
-                        await addDoc(chatRef, botMsg);
+                    // 核心修复：无论数据库是否成功，先在本地显示
+                    setFirestoreMessages(prev => [...prev, botMsg as any]);
+                    setTimeout(scrollToBottom, 50);
+
+                    if (db) {
+                        try {
+                            let roomId = `bot_qa_${user.uid}`;
+                            const chatRef = collection(db, 'artifacts', appId, 'public', 'data', `room_${roomId}`);
+                            await addDoc(chatRef, botMsg);
+                        } catch (firestoreErr) {
+                            console.warn("Firestore Bot Reply Sync Failed (Permission issue), but message is visible locally:", firestoreErr);
+                        }
                     }
                 } catch (error) {
                     console.error("AI Error:", error);
