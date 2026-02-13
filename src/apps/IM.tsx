@@ -282,7 +282,12 @@ const IMApp: React.FC<{ windowId: string }> = () => {
         const unsubscribeMsgs = onSnapshot(msgsQuery, (snapshot) => {
             const loadedMsgs = snapshot.docs
                 .map(doc => ({ id: doc.id, ...doc.data() } as Message))
-                .sort((a, b) => (a.createdAt?.toMillis() || 0) - (b.createdAt?.toMillis() || 0));
+                .sort((a, b) => {
+                    // Handle pending writes where serverTimestamp is null
+                    const timeA = a.createdAt?.toMillis() || Date.now();
+                    const timeB = b.createdAt?.toMillis() || Date.now();
+                    return timeA - timeB;
+                });
             setFirestoreMessages(loadedMsgs);
         }, (err) => console.warn("Messages sync restricted:", err));
 
@@ -602,6 +607,26 @@ const IMApp: React.FC<{ windowId: string }> = () => {
                                             </div>
                                         </div>
                                     ))
+                                )}
+                                {ai.isTyping && (
+                                    <div className="flex gap-3">
+                                        <Avatar className="h-9 w-9 shrink-0 rounded-[var(--radius-8)] overflow-hidden">
+                                            <AvatarImage src={activeChat.avatar} />
+                                            <AvatarFallback>AI</AvatarFallback>
+                                        </Avatar>
+                                        <div className="flex flex-col gap-1 max-w-[75%] items-start">
+                                            <div className="flex items-baseline gap-2">
+                                                <span className="text-[length:var(--font-size-14)] font-semibold text-[color:var(--color-text-5)]">{activeChat.name}</span>
+                                            </div>
+                                            <div className="relative px-4 py-2 rounded-[var(--radius-12)] bg-[var(--color-bg-2)] border border-[var(--color-border-a1)] text-[color:var(--color-text-2)]">
+                                                <div className="flex gap-1 h-5 items-center">
+                                                    <div className="w-1.5 h-1.5 bg-[var(--color-text-4)] rounded-full animate-bounce [animation-delay:-0.3s]"></div>
+                                                    <div className="w-1.5 h-1.5 bg-[var(--color-text-4)] rounded-full animate-bounce [animation-delay:-0.15s]"></div>
+                                                    <div className="w-1.5 h-1.5 bg-[var(--color-text-4)] rounded-full animate-bounce"></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
                                 )}
                             </div>
                         </ScrollArea>
