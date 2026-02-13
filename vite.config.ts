@@ -8,7 +8,7 @@ const __dirname = path.dirname(__filename)
 
 // https://vite.dev/config/
 export default defineConfig({
-  base: "/testos/",
+  base: "./",
   define: {
     __firebase_config: JSON.stringify(process.env.VITE_FIREBASE_CONFIG || '{}'),
     __app_id: JSON.stringify(process.env.VITE_APP_ID || 'p2p-chat-v1'),
