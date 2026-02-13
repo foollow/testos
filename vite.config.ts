@@ -23,10 +23,7 @@ export default defineConfig({
   build: {
     rollupOptions: {
       output: {
-        manualChunks: {
-          vendor: ['react', 'react-dom', 'framer-motion'],
-          ui: ['@radix-ui/react-dialog', '@radix-ui/react-slot', '@radix-ui/react-tooltip'],
-        },
+        // manualChunks removed to simplify build and avoid HTML injection issues
       },
     },
     chunkSizeWarningLimit: 1000,
