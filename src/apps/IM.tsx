@@ -97,6 +97,7 @@ interface Message {
     timestamp: string;
     createdAt?: any;
     isBot?: boolean;
+    sortTimestamp?: number;
 }
 
 const IMApp: React.FC<{ windowId: string }> = () => {
@@ -307,9 +308,12 @@ const IMApp: React.FC<{ windowId: string }> = () => {
     }, [firestoreMessages, user?.uid]);
 
     const allMessages = React.useMemo(() => {
-        // Find the last firestore message timestamp to know where to insert optimistic ones
-        // In a real app we'd use IDs, but for simplicity we'll just append if not exists
-        return [...firestoreMessages, ...optimisticMessages];
+        const combined = [...firestoreMessages, ...optimisticMessages];
+        return combined.sort((a, b) => {
+            const timeA = a.sortTimestamp || a.createdAt?.toMillis() || 0;
+            const timeB = b.sortTimestamp || b.createdAt?.toMillis() || 0;
+            return timeA - timeB;
+        });
     }, [firestoreMessages, optimisticMessages]);
 
     const scrollToBottom = () => {
@@ -362,6 +366,7 @@ const IMApp: React.FC<{ windowId: string }> = () => {
             senderId: user.uid,
             senderName: nickname,
             timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+            sortTimestamp: Date.now(),
         };
 
         // 如果没有数据库连接（访客模式），直接更新显示列表
@@ -408,6 +413,7 @@ const IMApp: React.FC<{ windowId: string }> = () => {
                         senderName: activeChat.name,
                         createdAt: serverTimestamp(),
                         timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+                        sortTimestamp: Date.now(),
                         avatar: activeChat.avatar,
                         id: response.id || `bot-${Date.now()}`
                     };
