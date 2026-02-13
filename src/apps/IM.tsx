@@ -96,6 +96,7 @@ interface Message {
     text: string;
     timestamp: string;
     createdAt?: any;
+    isBot?: boolean;
 }
 
 const IMApp: React.FC<{ windowId: string }> = () => {
@@ -401,7 +402,8 @@ const IMApp: React.FC<{ windowId: string }> = () => {
                 const response = await ai.sendMessage(text);
                 const botMsg = {
                     text: response.content,
-                    senderId: 'bot',
+                    senderId: user.uid, // Use user.uid to pass Firestore security rules
+                    isBot: true,       // Mark as bot message for UI distinction
                     senderName: activeChat.name,
                     createdAt: serverTimestamp(),
                     timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
@@ -584,29 +586,32 @@ const IMApp: React.FC<{ windowId: string }> = () => {
                                         </div>
                                     </div>
                                 ) : (
-                                    allMessages.map((msg: Message) => (
-                                        <div key={msg.id} className={`flex gap-3 group ${msg.senderId === user.uid ? 'flex-row-reverse' : ''} ${msg.id.startsWith('temp-') ? 'opacity-70' : ''}`}>
-                                            {msg.senderId !== user.uid && (
-                                                <Avatar className="h-9 w-9 shrink-0 rounded-[var(--radius-8)] overflow-hidden">
-                                                    <AvatarImage src={msg.avatar || getAvatarUrl(msg.senderName)} />
-                                                    <AvatarFallback>{msg.senderName?.[0]}</AvatarFallback>
-                                                </Avatar>
-                                            )}
-                                            <div className={`flex flex-col gap-1 max-w-[75%] ${msg.senderId === user.uid ? 'items-end' : 'items-start'}`}>
-                                                <div className={`flex items-baseline gap-2 ${msg.senderId === user.uid ? 'flex-row-reverse' : ''}`}>
-                                                    <span className="text-[length:var(--font-size-14)] font-semibold text-[color:var(--color-text-5)]">{msg.senderId === user.uid ? '我' : msg.senderName}</span>
-                                                    <span className="text-[length:var(--font-size-12)] text-[color:var(--color-text-5)] opacity-0 group-hover:opacity-100 transition-opacity">{msg.timestamp}</span>
-                                                </div>
+                                    allMessages.map((msg: Message) => {
+                                        const isMe = msg.senderId === user.uid && !msg.isBot;
+                                        return (
+                                            <div key={msg.id} className={`flex gap-3 group ${isMe ? 'flex-row-reverse' : ''} ${msg.id.startsWith('temp-') ? 'opacity-70' : ''}`}>
+                                                {!isMe && (
+                                                    <Avatar className="h-9 w-9 shrink-0 rounded-[var(--radius-8)] overflow-hidden">
+                                                        <AvatarImage src={msg.avatar || getAvatarUrl(msg.senderName)} />
+                                                        <AvatarFallback>{msg.senderName?.[0]}</AvatarFallback>
+                                                    </Avatar>
+                                                )}
+                                                <div className={`flex flex-col gap-1 max-w-[75%] ${isMe ? 'items-end' : 'items-start'}`}>
+                                                    <div className={`flex items-baseline gap-2 ${isMe ? 'flex-row-reverse' : ''}`}>
+                                                        <span className="text-[length:var(--font-size-14)] font-semibold text-[color:var(--color-text-5)]">{isMe ? '我' : msg.senderName}</span>
+                                                        <span className="text-[length:var(--font-size-12)] text-[color:var(--color-text-5)] opacity-0 group-hover:opacity-100 transition-opacity">{msg.timestamp}</span>
+                                                    </div>
 
-                                                <div className={`relative px-4 py-2 rounded-[var(--radius-12)] text-[length:var(--font-size-14)] leading-relaxed select-text ${msg.senderId === user.uid
-                                                    ? 'bg-[var(--color-blue)] text-white'
-                                                    : 'bg-[var(--color-bg-2)] border border-[var(--color-border-a1)] text-[color:var(--color-text-2)]'
-                                                    } transition-all`}>
-                                                    {msg.text}
+                                                    <div className={`relative px-4 py-2 rounded-[var(--radius-12)] text-[length:var(--font-size-14)] leading-relaxed select-text ${isMe
+                                                        ? 'bg-[var(--color-blue)] text-white'
+                                                        : 'bg-[var(--color-bg-2)] border border-[var(--color-border-a1)] text-[color:var(--color-text-2)]'
+                                                        } transition-all`}>
+                                                        {msg.text}
+                                                    </div>
                                                 </div>
                                             </div>
-                                        </div>
-                                    ))
+                                        )
+                                    })
                                 )}
                                 {ai.isTyping && (
                                     <div className="flex gap-3">
