@@ -586,8 +586,8 @@ const IMApp: React.FC<{ windowId: string }> = () => {
                         </header>
 
                         {/* Messages List */}
-                        <ScrollArea ref={scrollAreaRef} className="flex-1 p-5">
-                            <div className="max-w-4xl mx-auto space-y-8">
+                        <ScrollArea ref={scrollAreaRef} className="flex-1">
+                            <div className="w-full space-y-8 p-5">
                                 {allMessages.length === 0 ? (
                                     <div className="h-full flex flex-col items-center justify-center text-[color:var(--color-text-5)] py-20 gap-4 opacity-40">
                                         <div className="w-20 h-20 bg-[var(--color-fill-3)] rounded-[2.5rem] flex items-center justify-center border border-[var(--color-border-a1)]">
