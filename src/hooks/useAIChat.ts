@@ -15,11 +15,11 @@ export const useAIChat = () => {
     const { systemState } = useOS();
     const t = useTranslation(systemState.language);
 
-    const [messages, setMessages] = useState<Message[]>([
+    const [messages, setMessages] = useState<Message[]>(() => [
         {
             id: '1',
             sender: 'ai',
-            content: "Hello! I'm your AI assistant. How can I help you today?", // You might want to localize this initial message too if strictly needed, but for now English/generic is fine or use a key
+            content: "Hello! I'm your AI assistant. How can I help you today?",
             timestamp: new Date(Date.now() - 1000 * 60 * 5),
             senderName: t.chat.aiAssistant,
         }

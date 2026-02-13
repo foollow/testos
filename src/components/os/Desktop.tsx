@@ -23,21 +23,21 @@ export const Desktop: React.FC = () => {
         registerApp({
             id: 'safari',
             title: t.apps.safari,
-            icon: <img src="https://km.sankuai.com/api/file/cdn/2746924596/221262091308?contentType=1&isNewContent=false" alt="Safari" className="w-full h-full object-contain p-0.5" />,
+            icon: <img src="https://km.sankuai.com/api/file/cdn/2746924596/221262091308?contentType=1&isNewContent=false" alt="Safari" className="w-full h-full object-contain p-0.5" referrerPolicy="no-referrer" />,
             component: SafariApp,
         });
 
         registerApp({
             id: 'files',
             title: t.apps.files,
-            icon: <img src="https://km.sankuai.com/api/file/cdn/2746924596/221266056552?contentType=1&isNewContent=false" alt="Files" className="w-full h-full object-contain p-0.5" />,
+            icon: <img src="https://km.sankuai.com/api/file/cdn/2746924596/221266056552?contentType=1&isNewContent=false" alt="Files" className="w-full h-full object-contain p-0.5" referrerPolicy="no-referrer" />,
             component: FilesApp,
         });
 
         registerApp({
             id: 'im',
             title: t.apps.chat,
-            icon: <img src="https://km.sankuai.com/api/file/cdn/2746924596/221267898919?contentType=1&isNewContent=false" alt="IM" className="w-full h-full object-contain p-0.5" />,
+            icon: <img src="https://km.sankuai.com/api/file/cdn/2746924596/221267898919?contentType=1&isNewContent=false" alt="IM" className="w-full h-full object-contain p-0.5" referrerPolicy="no-referrer" />,
             component: IMApp,
             minWidth: 860,
             minHeight: 560,
@@ -46,14 +46,14 @@ export const Desktop: React.FC = () => {
         registerApp({
             id: 'study-city',
             title: t.apps.studyCity,
-            icon: <img src="https://km.sankuai.com/api/file/cdn/2746924596/221270181618?contentType=1&isNewContent=false" alt="StudyCity" className="w-full h-full object-contain p-0.5" />,
+            icon: <img src="https://km.sankuai.com/api/file/cdn/2746924596/221270181618?contentType=1&isNewContent=false" alt="StudyCity" className="w-full h-full object-contain p-0.5" referrerPolicy="no-referrer" />,
             component: StudyCityApp,
         });
 
         registerApp({
             id: 'settings',
             title: t.apps.settings,
-            icon: <img src="https://km.sankuai.com/api/file/cdn/2746924596/221262329409?contentType=1&isNewContent=false" alt="Settings" className="w-full h-full object-contain p-0.5" />,
+            icon: <img src="https://km.sankuai.com/api/file/cdn/2746924596/221262329409?contentType=1&isNewContent=false" alt="Settings" className="w-full h-full object-contain p-0.5" referrerPolicy="no-referrer" />,
             component: SettingsApp,
         });
     }, [registerApp, t]);

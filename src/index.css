@@ -178,25 +178,25 @@
 
   /* text-black - 反黑文字（黑色，不受模式影响） */
   --color-text-black: rgba(0, 0, 0, 1);
-  
+
   /* text-1 - 一级标题（最重要文字）纯黑 */
   --color-text-1: rgba(0, 0, 0, 1);
-  
+
   /* text-2 - 主要文字（111925） */
   --color-text-2: rgba(17, 25, 37, 1);
-  
+
   /* text-3 - 次主要文字（85% 透明度） */
   --color-text-3: rgba(17, 25, 37, 0.85);
-  
+
   /* text-4 - 辅助文字（65% 透明度） */
   --color-text-4: rgba(17, 25, 37, 0.65);
-  
+
   /* text-5 - 次辅助文字（45% 透明度） */
   --color-text-5: rgba(17, 25, 37, 0.45);
-  
+
   /* text-6 - 输入提示/禁用文字（30% 透明度） */
   --color-text-6: rgba(17, 25, 37, 0.3);
-  
+
   /* text-white - 反白文字（白色，不受模式影响） */
   --color-text-white: rgba(255, 255, 255, 1);
 
@@ -206,16 +206,16 @@
 
   /* bg-1 - 一级页面背景（纯白） */
   --color-bg-1: rgba(255, 255, 255, 1);
-  
+
   /* bg-2 - 二级页面背景（浅灰） */
   --color-bg-2: rgba(245, 246, 247, 1);
-  
+
   /* bg-3 - 学城首页背景（浅米黄） */
   --color-bg-3: rgba(245, 242, 238, 1);
-  
+
   /* bg-4 - 学城大弹窗背景（特殊场景） */
   --color-bg-4: rgba(245, 242, 238, 1);
-  
+
   /* bg-overlay - 弹窗蒙层背景（30% 透明度黑色） */
   --color-bg-overlay: rgba(0, 0, 0, 0.3);
 
@@ -225,10 +225,10 @@
 
   /* fill-1 - 一级容器填充（纯白） */
   --color-fill-1: rgba(255, 255, 255, 1);
-  
+
   /* fill-2 - 二级容器填充（浅灰，3% 透明度） */
   --color-fill-2: rgba(248, 248, 248, 1);
-  
+
   /* fill-3 - 三级容器填充（浅灰，5% 透明度） */
   --color-fill-3: rgba(243, 243, 244, 1);
 
@@ -238,19 +238,19 @@
 
   /* fill-a1 - 一级容器填充（透明度，纯白） */
   --color-fill-a1: rgba(255, 255, 255, 1);
-  
+
   /* fill-a2 - 二级容器填充（透明度，3% 透明度） */
   --color-fill-a2: rgba(17, 25, 37, 0.03);
-  
+
   /* fill-a3 - 三级容器填充（透明度，5% 透明度） */
   --color-fill-a3: rgba(17, 25, 37, 0.05);
-  
+
   /* fill-a4 - 悬浮容器（下拉菜单、弹窗等悬浮场景） */
   --color-fill-a4: rgba(255, 255, 255, 0.9);
-  
+
   /* fill-a5 - 高透悬浮容器（悬浮操作条/最顶层） */
   --color-fill-a5: rgba(255, 255, 255, 0.6);
-  
+
   /* fill-a6 - chat悬浮操作条（特殊场景） */
   --color-fill-a6: rgba(235, 235, 235, 0.7);
 
@@ -260,7 +260,7 @@
 
   /* border-1 - 描边（主要边框） */
   --color-border-1: rgba(219, 221, 222, 1);
-  
+
   /* border-2 - 弱描边/分割线（次要边框） */
   --color-border-2: rgba(231, 232, 233, 1);
 
@@ -270,10 +270,10 @@
 
   /* border-a1 - 描边（透明度，15% 透明度） */
   --color-border-a1: rgba(17, 25, 37, 0.15);
-  
+
   /* border-a2 - 弱描边/分割线（透明度，10% 透明度） */
   --color-border-a2: rgba(17, 25, 37, 0.1);
-  
+
   /* border-a3 - 高透悬浮容器描边（特殊场景） */
   --color-border-a3: rgba(255, 255, 255, 0.9);
 
@@ -451,6 +451,11 @@
   --color-walnut-bg-disabled: rgba(226, 209, 199, 1);
   /* W1 - 列表选中/弱背景 */
   --color-walnut-bg-weak: rgba(245, 239, 236, 1);
+
+  /* -------- Dock Colors -------- */
+  --bg-dock: rgba(255, 255, 255, 0.4);
+  --border-dock: rgba(255, 255, 255, 0.2);
+  --app-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
 }
 
 
@@ -460,31 +465,34 @@
    使用方法：在根元素添加 data-theme="dark" 属性
 ======================================================= */
 [data-theme="dark"] {
+  /* -------- Dock Colors -------- */
+  --bg-dock: rgba(0, 0, 0, 0.2);
+  --border-dock: rgba(255, 255, 255, 0.1);
 
   /* ========== 文字颜色 ========== */
   /* 文字颜色层级：从最强调到最弱 */
 
   /* text-black - 反黑文字（黑色，不受模式影响） */
   --color-text-black: rgba(0, 0, 0, 1);
-  
+
   /* text-1 - 一级标题（最重要文字，对应纯黑） */
   --color-text-1: rgba(255, 255, 255, 1);
-  
+
   /* text-2 - 主要文字（对应 111925） */
   --color-text-2: rgba(255, 255, 255, 0.9);
-  
+
   /* text-3 - 次主要文字（对应 85% 透明度） */
   --color-text-3: rgba(255, 255, 255, 0.75);
-  
+
   /* text-4 - 辅助文字（对应 65% 透明度） */
   --color-text-4: rgba(255, 255, 255, 0.6);
-  
+
   /* text-5 - 次辅助文字（对应 45% 透明度） */
   --color-text-5: rgba(255, 255, 255, 0.45);
-  
+
   /* text-6 - 输入提示/禁用文字（对应 30% 透明度） */
   --color-text-6: rgba(255, 255, 255, 0.35);
-  
+
   /* text-white - 反白文字（白色，不受模式影响） */
   --color-text-white: rgba(255, 255, 255, 1);
 
@@ -494,16 +502,16 @@
 
   /* bg-1 - 一级页面背景（对应纯白） */
   --color-bg-1: rgba(25, 27, 28, 1);
-  
+
   /* bg-2 - 二级页面背景（对应浅灰） */
   --color-bg-2: rgba(18, 19, 20, 1);
-  
+
   /* bg-3 - 学城首页背景（对应浅米黄） */
   --color-bg-3: rgba(18, 19, 20, 1);
-  
+
   /* bg-4 - 学城大弹窗背景（特殊场景） */
   --color-bg-4: rgba(42, 42, 43, 1);
-  
+
   /* bg-overlay - 弹窗蒙层背景（30% 透明度黑色） */
   --color-bg-overlay: rgba(0, 0, 0, 0.3);
 
@@ -513,10 +521,10 @@
 
   /* fill-1 - 一级容器填充（对应纯白） */
   --color-fill-1: rgba(33, 34, 36, 1);
-  
+
   /* fill-2 - 二级容器填充（对应 3% 透明度） */
   --color-fill-2: rgba(42, 44, 46, 1);
-  
+
   /* fill-3 - 三级容器填充（对应 5% 透明度） */
   --color-fill-3: rgba(52, 54, 56, 1);
 
@@ -526,19 +534,19 @@
 
   /* fill-a1 - 一级容器填充（对应纯白） */
   --color-fill-a1: rgba(255, 255, 255, 0.1);
-  
+
   /* fill-a2 - 二级容器填充（对应 3% 透明度） */
   --color-fill-a2: rgba(255, 255, 255, 0.05);
-  
+
   /* fill-a3 - 三级容器填充（对应 5% 透明度） */
   --color-fill-a3: rgba(255, 255, 255, 0.07);
-  
+
   /* fill-a4 - 悬浮容器（下拉菜单、弹窗等悬浮场景） */
   --color-fill-a4: rgba(44, 45, 46, 0.9);
-  
+
   /* fill-a5 - 高透悬浮容器（悬浮操作条/最顶层） */
   --color-fill-a5: rgba(73, 75, 77, 0.6);
-  
+
   /* fill-a6 - chat悬浮操作条（特殊场景） */
   --color-fill-a6: rgba(99, 99, 99, 0.3);
 
@@ -548,7 +556,7 @@
 
   /* border-1 - 描边（主要边框） */
   --color-border-1: rgb(64, 66, 67);
-  
+
   /* border-2 - 弱描边/分割线（次要边框） */
   --color-border-2: rgba(53, 54, 55, 1);
 
@@ -558,10 +566,10 @@
 
   /* border-a1 - 描边（对应 15% 透明度） */
   --color-border-a1: rgba(255, 255, 255, 0.17);
-  
+
   /* border-a2 - 弱描边/分割线（对应 10% 透明度） */
   --color-border-a2: rgba(255, 255, 255, 0.12);
-  
+
   /* border-a3 - 高透悬浮容器描边（特殊场景） */
   --color-border-a3: rgba(255, 255, 255, 0.05);
 
@@ -749,8 +757,8 @@
 :root {
 
   /* ========== 字号 & 行高 ========== */
-/* 基础字号：1rem = 16px */
-font-size: 16px;
+  /* 基础字号：1rem = 16px */
+  font-size: 16px;
 
   /* 字号层级说明（按使用场景分类，统一使用数字命名）：
      
@@ -771,51 +779,51 @@ font-size: 16px;
      36: 36px - 四级超大文字（展示标题）
      48: 48px - 五级超大文字（大展示标题）
      56: 56px - 六级超大文字（最大展示标题） */
-  
+
   /* 10 - 10px - 极小文字（标签、提示、角标） */
   --font-size-10: 0.625rem;
   --font-line-height-10: 1rem;
-  
+
   /* 12 - 12px - 小号文字（辅助信息、说明文字） */
   --font-size-12: 0.75rem;
   --font-line-height-12: 1.25rem;
-  
+
   /* 14 - 14px - 基础文字（正文，最常用） */
   --font-size-14: 0.875rem;
   --font-line-height-14: 1.5rem;
-  
+
   /* 16 - 16px - 中等文字（小标题 / 正文） */
   --font-size-16: 1rem;
   --font-line-height-16: 1.625rem;
-  
+
   /* 18 - 18px - 中大型文字（四级标题） */
   --font-size-18: 1.125rem;
   --font-line-height-18: 1.75rem;
-  
+
   /* 20 - 20px - 大号文字（三级标题） */
   --font-size-20: 1.25rem;
   --font-line-height-20: 1.75rem;
-  
+
   /* 24 - 24px - 超大文字（二级标题） */
   --font-size-24: 1.5rem;
   --font-line-height-24: 2rem;
-  
+
   /* 28 - 28px - 二级超大文字（一级标题） */
   --font-size-28: 1.75rem;
   --font-line-height-28: 2.25rem;
-  
+
   /* 32 - 32px - 三级超大文字（超大标题） */
   --font-size-32: 2rem;
   --font-line-height-32: 2.5rem;
-  
+
   /* 36 - 36px - 四级超大文字（展示标题） */
   --font-size-36: 2.25rem;
   --font-line-height-36: 2.75rem;
-  
+
   /* 48 - 48px - 五级超大文字（大展示标题） */
   --font-size-48: 3rem;
   --font-line-height-48: 3.5rem;
-  
+
   /* 56 - 56px - 六级超大文字（最大展示标题） */
   --font-size-56: 3.5rem;
   --font-line-height-56: 4rem;
@@ -825,71 +833,72 @@ font-size: 16px;
   /* 圆角值从 4px 到 36px，以及圆形 */
 
   /* 4px 圆角 - 小按钮、小卡片 */
---radius-4: 0.25rem;
-  
+  --radius-4: 0.25rem;
+
   /* 6px 圆角 - 中等按钮 */
---radius-6: 0.375rem;
-  
+  --radius-6: 0.375rem;
+
   /* 8px 圆角 - 标准按钮、卡片（最常用） */
---radius-8: 0.5rem;
-  
+  --radius-8: 0.5rem;
+
   /* 10px 圆角 - 大按钮 */
---radius-10: 0.625rem;
-  
+  --radius-10: 0.625rem;
+
   /* 12px 圆角 - 大卡片 */
---radius-12: 0.75rem;
-  
+  --radius-12: 0.75rem;
+
   /* 16px 圆角 - 超大卡片 */
---radius-16: 1rem;
-  
+  --radius-16: 1rem;
+
   /* 20px 圆角 */
---radius-20: 1.25rem;
-  
+  --radius-20: 1.25rem;
+
   /* 24px 圆角 */
---radius-24: 1.5rem;
-  
+  --radius-24: 1.5rem;
+
   /* 28px 圆角 */
---radius-28: 1.75rem;
-  
+  --radius-28: 1.75rem;
+
   /* 32px 圆角 */
---radius-32: 2rem;
-  
+  --radius-32: 2rem;
+
   /* 36px 圆角 */
---radius-36: 2.25rem;
-  
+  --radius-36: 2.25rem;
+
   /* 圆形 - 头像、圆形按钮 */
---radius-full: 62.5rem;
+  --radius-full: 62.5rem;
 
 
   /* ========== 特效样式 ========== */
   /* 阴影和模糊效果，分为 4 个层级 */
 
   /* 一级特效 - 轻微阴影（卡片悬浮） */
---effect-shadow-level-1-backdrop: blur(30px);
---effect-shadow-level-1-box: 0px 4px 12px 0px rgba(0,0,0,0.06), 0px -1px 2px 0px rgba(0,0,0,0.02);
-  
+  --effect-shadow-level-1-backdrop: blur(30px);
+  --effect-shadow-level-1-box: 0px 4px 12px 0px rgba(0, 0, 0, 0.06), 0px -1px 2px 0px rgba(0, 0, 0, 0.02);
+
   /* 二级特效 - 中等阴影（弹窗、下拉菜单） */
---effect-shadow-level-2-backdrop: blur(30px);
---effect-shadow-level-2-box: 0px 8px 24px 0px rgba(0,0,0,0.08), 0px -1px 10px 0px rgba(0,0,0,0.02);
-  
+  --effect-shadow-level-2-backdrop: blur(30px);
+  --effect-shadow-level-2-box: 0px 8px 24px 0px rgba(0, 0, 0, 0.08), 0px -1px 10px 0px rgba(0, 0, 0, 0.02);
+
   /* 三级特效 - 强阴影（模态框） */
---effect-shadow-level-3-backdrop: blur(30px);
---effect-shadow-level-3-box: 0px 16px 36px 0px rgba(0,0,0,0.16), 0px -1px 10px 0px rgba(0,0,0,0.04);
-  
+  --effect-shadow-level-3-backdrop: blur(30px);
+  --effect-shadow-level-3-box: 0px 16px 36px 0px rgba(0, 0, 0, 0.16), 0px -1px 10px 0px rgba(0, 0, 0, 0.04);
+
   /* 四级特效 - 最强阴影 */
---effect-shadow-level-4-backdrop: blur(30px);
---effect-shadow-level-4-box: 0px 24px 48px 0px rgba(0,0,0,0.32), 0px -1px 10px 0px rgba(0,0,0,0.04);
-  
+  --effect-shadow-level-4-backdrop: blur(30px);
+  --effect-shadow-level-4-box: 0px 24px 48px 0px rgba(0, 0, 0, 0.32), 0px -1px 10px 0px rgba(0, 0, 0, 0.04);
+
   /* 背景模糊 30px - 毛玻璃效果 */
---effect-backdrop-blur-30: blur(30px);
-  
+  --effect-backdrop-blur-30: blur(30px);
+
   /* 背景模糊 8px - 轻微模糊 */
---effect-backdrop-blur-8: blur(8px);
+  --effect-backdrop-blur-8: blur(8px);
 
 
   /* ========== 间距 ========== */
   /* 基础间距单位，用于计算其他间距值 */
-  --spacing-base: 0.25rem; /* 4px */
+  --spacing-base: 0.25rem;
+  /* 4px */
 
 
   /* ========== 边框粗细 ========== */
@@ -899,10 +908,10 @@ font-size: 16px;
   --border-thick: 2px;
 
   /* 中描边 - 标准边框（1px） */
---border-medium: 1px;
-  
+  --border-medium: 1px;
+
   /* 细描边 - 精细边框（0.5px，用于高分辨率屏幕） */
---border-thin: 0.5px;
+  --border-thin: 0.5px;
 }
 
 @theme inline {

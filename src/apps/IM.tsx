@@ -46,7 +46,7 @@ const getFirebase = () => {
         if (configStr.startsWith('"') && configStr.endsWith('"')) {
             try {
                 configStr = JSON.parse(configStr);
-            } catch (e) { }
+            } catch { }
         }
 
         const config = typeof configStr === 'string' ? JSON.parse(configStr) : configStr;
@@ -178,7 +178,7 @@ const IMApp: React.FC<{ windowId: string }> = () => {
                 setAuthStatus('connecting');
                 try {
                     await setPersistence(auth, browserLocalPersistence);
-                } catch (e) {
+                } catch {
                     await setPersistence(auth, inMemoryPersistence);
                 }
 
@@ -230,7 +230,7 @@ const IMApp: React.FC<{ windowId: string }> = () => {
                     const userSettingsRef = doc(db, 'artifacts', appId, 'users', currentUser.uid, 'settings', 'profile');
                     try {
                         const docSnap = await getDoc(userSettingsRef);
-                        let currentName = docSnap.exists() ? docSnap.data().name : getRandomFood();
+                        const currentName = docSnap.exists() ? docSnap.data().name : getRandomFood();
 
                         setNickname(currentName);
                         await setDoc(userSettingsRef, { name: currentName, lastLogin: serverTimestamp() }, { merge: true });

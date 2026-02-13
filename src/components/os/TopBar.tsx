@@ -31,13 +31,19 @@ export const TopBar: React.FC = () => {
             }}
         >
             <div className="flex items-center gap-1">
-                <button className="hover:bg-white/10 dark:hover:bg-black/10 px-2 py-1 rounded transition-colors flex items-center justify-center">
+                <button
+                    className="hover:bg-white/10 dark:hover:bg-black/10 px-2 py-1 rounded transition-colors flex items-center justify-center focus:outline-none focus:ring-2 focus:ring-white/20"
+                    aria-label="Apple Menu"
+                >
                     <span className="iconfont icon-apple-logo text-[18px] -mt-[2px]" />
                 </button>
 
                 <DropdownMenu>
                     <DropdownMenuTrigger asChild>
-                        <button className="hover:bg-white/10 dark:hover:bg-black/10 px-2 py-0.5 rounded transition-colors cursor-default outline-none">
+                        <button
+                            className="hover:bg-white/10 dark:hover:bg-black/10 px-2 py-0.5 rounded transition-colors cursor-default outline-none focus:ring-2 focus:ring-white/20"
+                            aria-label="Application Menu"
+                        >
                             <span className="font-bold">{activeAppName}</span>
                         </button>
                     </DropdownMenuTrigger>

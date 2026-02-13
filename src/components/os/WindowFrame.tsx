@@ -23,6 +23,11 @@ export const WindowFrame: React.FC<WindowFrameProps> = memo(({ window, zIndex, c
     const updateWindowSize = useOS((state) => state.updateWindowSize);
     const isActive = useOS((state) => state.windowOrder[state.windowOrder.length - 1] === window.id);
 
+    // Fix: Move hook calls to top level
+    const language = useOS((state) => state.systemState.language);
+    const t = useTranslation(language);
+    const appTitle = useOS((state) => state.apps[window.appId]?.title);
+
     const { attributes, listeners, setNodeRef, transform, isDragging } = useDraggable({
         id: window.id,
         data: { id: window.id, x: window.x, y: window.y },
@@ -143,21 +148,24 @@ export const WindowFrame: React.FC<WindowFrameProps> = memo(({ window, zIndex, c
                 )} onMouseDown={(e) => e.stopPropagation()}>
                     <button
                         onClick={() => closeWindow(window.id)}
-                        className="w-3 h-3 rounded-full bg-[#ff5f56] border border-[#e0443e] flex items-center justify-center text-transparent hover:text-black/40 transition-colors"
+                        className="w-3 h-3 rounded-full bg-[#ff5f56] border border-[#e0443e] flex items-center justify-center text-transparent hover:text-black/40 transition-colors focus:outline-none focus:ring-1 focus:ring-white/50"
+                        aria-label="Close Window"
                     >
-                        <X size={8} strokeWidth={3} />
+                        <X size={8} strokeWidth={3} aria-hidden="true" />
                     </button>
                     <button
                         onClick={() => minimizeWindow(window.id)}
-                        className="w-3 h-3 rounded-full bg-[#ffbd2e] border border-[#dea123] flex items-center justify-center text-transparent hover:text-black/40 transition-colors"
+                        className="w-3 h-3 rounded-full bg-[#ffbd2e] border border-[#dea123] flex items-center justify-center text-transparent hover:text-black/40 transition-colors focus:outline-none focus:ring-1 focus:ring-white/50"
+                        aria-label="Minimize Window"
                     >
-                        <Minus size={8} strokeWidth={3} />
+                        <Minus size={8} strokeWidth={3} aria-hidden="true" />
                     </button>
                     <button
                         onClick={() => window.isMaximized ? restoreWindow(window.id) : maximizeWindow(window.id)}
-                        className="w-3 h-3 rounded-full bg-[#27c93f] border border-[#1aab29] flex items-center justify-center text-transparent hover:text-black/40 transition-colors"
+                        className="w-3 h-3 rounded-full bg-[#27c93f] border border-[#1aab29] flex items-center justify-center text-transparent hover:text-black/40 transition-colors focus:outline-none focus:ring-1 focus:ring-white/50"
+                        aria-label={window.isMaximized ? "Restore Window" : "Maximize Window"}
                     >
-                        {window.isMaximized ? <Square size={6} strokeWidth={3} /> : <Maximize2 size={6} strokeWidth={3} />}
+                        {window.isMaximized ? <Square size={6} strokeWidth={3} aria-hidden="true" /> : <Maximize2 size={6} strokeWidth={3} aria-hidden="true" />}
                     </button>
                 </div>
 
@@ -172,13 +180,13 @@ export const WindowFrame: React.FC<WindowFrameProps> = memo(({ window, zIndex, c
                             </div>
                             <input
                                 type="text"
-                                placeholder={useTranslation(useOS.getState().systemState.language).chat.search}
+                                placeholder={t.chat.search}
                                 className="w-full h-7 rounded-lg pl-8 pr-4 text-[12px] transition-all outline-none bg-[var(--color-bg-3)] border-none text-[color:var(--color-text-2)] hover:bg-[var(--color-fill-3)] focus:bg-[var(--color-bg-2)] focus:ring-1 focus:ring-[var(--color-blue)]/20"
                                 onClick={(e) => e.stopPropagation()}
                             />
                         </div>
                     ) : (
-                        <span>{useOS(state => state.apps[window.appId]?.title) || window.title}</span>
+                        <span>{appTitle || window.title}</span>
                     )}
                 </div>
             </div>

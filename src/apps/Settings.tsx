@@ -65,10 +65,10 @@ const hslToHex = (hsl: string): string => {
         const s = parseFloat(sStr) / 100;
         const l = parseFloat(lStr) / 100;
 
-        let c = (1 - Math.abs(2 * l - 1)) * s,
+        const c = (1 - Math.abs(2 * l - 1)) * s,
             x = c * (1 - Math.abs(((h / 60) % 2) - 1)),
-            m = l - c / 2,
-            r = 0,
+            m = l - c / 2;
+        let r = 0,
             g = 0,
             b = 0;
 

@@ -37,7 +37,15 @@ const DockIcon = ({ app, isRunning, launchApp, mouseX }: { app: any; isRunning: 
                 ref={ref}
                 style={{ width }}
                 onClick={() => launchApp(app.id)}
-                className="h-[48px] flex items-center justify-center cursor-pointer relative"
+                className="h-[48px] flex items-center justify-center cursor-pointer relative focus:outline-none rounded-lg"
+                role="button"
+                aria-label={app.title}
+                tabIndex={0}
+                onKeyDown={(e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                        launchApp(app.id);
+                    }
+                }}
             >
                 {/* 视觉层：负责图标放大，向上溢出 Dock */}
                 <motion.div
@@ -53,7 +61,7 @@ const DockIcon = ({ app, isRunning, launchApp, mouseX }: { app: any; isRunning: 
                 </motion.div>
 
                 {isRunning && (
-                    <div className="absolute bottom-1 left-1/2 -translate-x-1/2 w-1 h-1 rounded-full bg-white/90 shadow-sm" />
+                    <div className="absolute bottom-1 left-1/2 -translate-x-1/2 w-1 h-1 rounded-full bg-slate-700 dark:bg-white/90 shadow-sm" />
                 )}
             </motion.div>
 
