@@ -18,6 +18,7 @@ export const useAI = () => {
         const API_URL = 'https://api.longcat.chat/openai/v1/chat/completions';
 
         try {
+            console.log("AI Request:", { url: API_URL, model: "LongCat-Flash-Chat", content });
             const response = await fetch(API_URL, {
                 method: 'POST',
                 headers: {
@@ -35,8 +36,10 @@ export const useAI = () => {
             });
 
             const data = await response.json();
+            console.log("AI Raw Response Data:", data);
 
             if (!response.ok) {
+                console.error("AI API HTTP Error:", response.status, data);
                 const errorMsg = data.error?.message || 'API request failed';
                 throw new Error(errorMsg);
             }

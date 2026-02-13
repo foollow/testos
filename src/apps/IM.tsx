@@ -396,32 +396,34 @@ const IMApp: React.FC<{ windowId: string }> = () => {
             }
         }
 
-        // 3. 处理 Bot 回复
+        // 3. 处理 Bot 回复 (异步执行，不阻塞 UI)
         if (activeChat.isBot) {
-            try {
-                const response = await ai.sendMessage(text);
-                const botMsg = {
-                    text: response.content,
-                    senderId: user.uid, // Use user.uid to pass Firestore security rules
-                    isBot: true,       // Mark as bot message for UI distinction
-                    senderName: activeChat.name,
-                    createdAt: serverTimestamp(),
-                    timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-                    avatar: activeChat.avatar,
-                    id: response.id || `bot-${Date.now()}`
-                };
+            (async () => {
+                try {
+                    const response = await ai.sendMessage(text);
+                    const botMsg = {
+                        text: response.content,
+                        senderId: user.uid, // Use user.uid to pass Firestore security rules
+                        isBot: true,       // Mark as bot message for UI distinction
+                        senderName: activeChat.name,
+                        createdAt: serverTimestamp(),
+                        timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+                        avatar: activeChat.avatar,
+                        id: response.id || `bot-${Date.now()}`
+                    };
 
-                if (!db) {
-                    setFirestoreMessages(prev => [...prev, botMsg as any]);
-                    setTimeout(scrollToBottom, 50);
-                } else {
-                    let roomId = `bot_qa_${user.uid}`;
-                    const chatRef = collection(db, 'artifacts', appId, 'public', 'data', `room_${roomId}`);
-                    await addDoc(chatRef, botMsg);
+                    if (!db) {
+                        setFirestoreMessages(prev => [...prev, botMsg as any]);
+                        setTimeout(scrollToBottom, 50);
+                    } else {
+                        let roomId = `bot_qa_${user.uid}`;
+                        const chatRef = collection(db, 'artifacts', appId, 'public', 'data', `room_${roomId}`);
+                        await addDoc(chatRef, botMsg);
+                    }
+                } catch (error) {
+                    console.error("AI Error:", error);
                 }
-            } catch (error) {
-                console.error("AI Error:", error);
-            }
+            })();
         }
     };
 
