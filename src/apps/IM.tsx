@@ -348,17 +348,7 @@ const IMApp: React.FC<{ windowId: string }> = () => {
         const text = message;
         setMessage('');
 
-        let roomId;
-        const targetId = activeChat.uid || activeChat.id;
-        if (activeChat.isBot) {
-            roomId = `bot_qa_${user.uid}`;
-        } else {
-            roomId = [user.uid, targetId].sort().join('_');
-        }
-
-        const chatRef = collection(db!, 'artifacts', appId, 'public', 'data', `room_${roomId}`);
-
-        // Optimistic UI update
+        // 1. 本地乐观更新（无论是否连接数据库）
         const tempId = `temp-${Date.now()}`;
         const newMessage: Message = {
             id: tempId,
@@ -367,27 +357,61 @@ const IMApp: React.FC<{ windowId: string }> = () => {
             senderName: nickname,
             timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
         };
-        setOptimisticMessages(prev => [...prev, newMessage]);
 
-        await addDoc(chatRef, {
-            text,
-            senderId: user.uid,
-            senderName: nickname,
-            createdAt: serverTimestamp(),
-            timestamp: newMessage.timestamp,
-        });
+        // 如果没有数据库连接（访客模式），直接更新显示列表
+        if (!db) {
+            setFirestoreMessages(prev => [...prev, newMessage]);
+            setTimeout(scrollToBottom, 50);
+        } else {
+            setOptimisticMessages(prev => [...prev, newMessage]);
+        }
 
+        // 2. 如果有数据库，尝试写入
+        if (db) {
+            try {
+                let roomId;
+                const targetId = activeChat.uid || activeChat.id;
+                if (activeChat.isBot) {
+                    roomId = `bot_qa_${user.uid}`;
+                } else {
+                    roomId = [user.uid, targetId].sort().join('_');
+                }
+
+                const chatRef = collection(db, 'artifacts', appId, 'public', 'data', `room_${roomId}`);
+                await addDoc(chatRef, {
+                    text,
+                    senderId: user.uid,
+                    senderName: nickname,
+                    createdAt: serverTimestamp(),
+                    timestamp: newMessage.timestamp,
+                });
+            } catch (err) {
+                console.error("Firestore Write Error:", err);
+            }
+        }
+
+        // 3. 处理 Bot 回复
         if (activeChat.isBot) {
             try {
                 const response = await ai.sendMessage(text);
-                await addDoc(chatRef, {
+                const botMsg = {
                     text: response.content,
                     senderId: 'bot',
                     senderName: activeChat.name,
                     createdAt: serverTimestamp(),
                     timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-                    avatar: activeChat.avatar
-                });
+                    avatar: activeChat.avatar,
+                    id: response.id || `bot-${Date.now()}`
+                };
+
+                if (!db) {
+                    setFirestoreMessages(prev => [...prev, botMsg as any]);
+                    setTimeout(scrollToBottom, 50);
+                } else {
+                    let roomId = `bot_qa_${user.uid}`;
+                    const chatRef = collection(db, 'artifacts', appId, 'public', 'data', `room_${roomId}`);
+                    await addDoc(chatRef, botMsg);
+                }
             } catch (error) {
                 console.error("AI Error:", error);
             }
