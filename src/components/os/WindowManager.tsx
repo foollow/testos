@@ -58,7 +58,7 @@ export const WindowManager: React.FC = memo(() => {
                                         <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-white"></div>
                                     </div>
                                 }>
-                                    {App && <App windowId={id} />}
+                                    {App && <App windowId={id} {...window.props} />}
                                 </Suspense>
                             </WindowFrame>
                         </div>

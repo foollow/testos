@@ -20,6 +20,7 @@ export interface WindowState {
     height: number;
     isMinimized: boolean;
     isMaximized: boolean;
+    props?: any;
 }
 
 interface SystemState {
@@ -49,7 +50,7 @@ interface OSState {
     themeConfig: ThemeConfig;
 
     registerApp: (app: App) => void;
-    launchApp: (appId: string) => void;
+    launchApp: (appId: string, props?: any) => void;
     closeWindow: (id: string) => void;
     focusWindow: (id: string) => void;
     minimizeWindow: (id: string) => void;
@@ -96,13 +97,21 @@ export const useOS = create<OSState>((set, get) => ({
         apps: { ...state.apps, [app.id]: app }
     })),
 
-    launchApp: (appId) => {
+    launchApp: (appId, props) => {
         const { apps, windows, windowOrder, focusWindow } = get();
 
         // Check if app is already running
         const existingWindow = Object.values(windows).find(w => w.appId === appId);
         if (existingWindow) {
             focusWindow(existingWindow.id);
+            if (props) {
+                set({
+                    windows: {
+                        ...windows,
+                        [existingWindow.id]: { ...existingWindow, props }
+                    }
+                });
+            }
             return;
         }
 
@@ -129,6 +138,7 @@ export const useOS = create<OSState>((set, get) => ({
             height,
             isMinimized: false,
             isMaximized: false,
+            props
         };
 
         set({

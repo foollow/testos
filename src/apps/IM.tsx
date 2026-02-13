@@ -136,7 +136,21 @@ const MarkdownRenderer: React.FC<{ content: string; isMe: boolean }> = ({ conten
                 h3: ({ children }) => <h3 className="text-base font-bold mb-2 mt-3">{children}</h3>,
                 h4: ({ children }) => <h4 className="text-sm font-bold mb-1 mt-2">{children}</h4>,
                 blockquote: ({ children }) => <blockquote className={`border-l-4 pl-3 py-1 my-2 italic ${isMe ? 'border-white/40 bg-white/10' : 'border-gray-300 bg-gray-50'}`}>{children}</blockquote>,
-                a: ({ href, children }) => <a href={href} target="_blank" rel="noopener noreferrer" className={`underline underline-offset-2 ${isMe ? 'text-white decoration-white/50' : 'text-blue-600 decoration-blue-300'} hover:opacity-80 transition-opacity break-all`}>{children}</a>,
+                a: ({ href, children }) => {
+                    const { launchApp } = useOS();
+                    return (
+                        <a
+                            href={href}
+                            onClick={(e) => {
+                                e.preventDefault();
+                                if (href) launchApp('safari', { url: href });
+                            }}
+                            className={`underline underline-offset-2 cursor-pointer ${isMe ? 'text-white decoration-white/50' : 'text-blue-600 decoration-blue-300'} hover:opacity-80 transition-opacity break-all`}
+                        >
+                            {children}
+                        </a>
+                    );
+                },
                 table: ({ children }) => <div className="overflow-x-auto my-2 rounded-lg border border-gray-200"><table className="min-w-full divide-y divide-gray-200">{children}</table></div>,
                 thead: ({ children }) => <thead className="bg-gray-50">{children}</thead>,
                 th: ({ children }) => <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{children}</th>,

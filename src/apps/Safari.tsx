@@ -1,9 +1,20 @@
 import React, { useState } from 'react';
 import { ArrowLeft, ArrowRight, RotateCw, Lock } from 'lucide-react';
 
-const Safari: React.FC = () => {
-    const [url, setUrl] = useState('https://en.wikipedia.org/wiki/Main_Page');
-    const [inputUrl, setInputUrl] = useState('wikipedia.org');
+interface SafariProps {
+    url?: string;
+}
+
+const Safari: React.FC<SafariProps> = ({ url: propUrl }) => {
+    const [url, setUrl] = useState(propUrl || 'https://en.wikipedia.org/wiki/Main_Page');
+    const [inputUrl, setInputUrl] = useState(propUrl ? propUrl.replace(/^https?:\/\//, '') : 'wikipedia.org');
+
+    React.useEffect(() => {
+        if (propUrl) {
+            setUrl(propUrl);
+            setInputUrl(propUrl.replace(/^https?:\/\//, ''));
+        }
+    }, [propUrl]);
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
