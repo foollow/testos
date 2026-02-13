@@ -1,6 +1,7 @@
 {
   "name": "testos",
   "private": true,
+  "homepage": "https://foollow.github.io/testos/",
   "version": "0.0.0",
   "type": "module",
   "scripts": {
