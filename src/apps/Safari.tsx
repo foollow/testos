@@ -10,7 +10,9 @@ const Safari: React.FC<SafariProps> = ({ url: propUrl }) => {
     const [inputUrl, setInputUrl] = useState(propUrl ? propUrl.replace(/^https?:\/\//, '') : 'wikipedia.org');
 
     React.useEffect(() => {
+        console.log("Safari: useEffect triggered with url prop:", propUrl);
         if (propUrl) {
+            console.log("Safari: Setting internal url state to:", propUrl);
             setUrl(propUrl);
             setInputUrl(propUrl.replace(/^https?:\/\//, ''));
         }

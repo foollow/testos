@@ -98,13 +98,16 @@ export const useOS = create<OSState>((set, get) => ({
     })),
 
     launchApp: (appId, props) => {
+        console.log(`useOS: launchApp called for ${appId} with props:`, props);
         const { apps, windows, windowOrder, focusWindow } = get();
 
         // Check if app is already running
         const existingWindow = Object.values(windows).find(w => w.appId === appId);
         if (existingWindow) {
+            console.log(`useOS: Found existing window ${existingWindow.id}, focusing...`);
             focusWindow(existingWindow.id);
             if (props) {
+                console.log(`useOS: Updating existing window props`);
                 set({
                     windows: {
                         ...windows,

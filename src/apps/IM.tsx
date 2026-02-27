@@ -77,6 +77,11 @@ const FOOD_NAMES = [
     "芝士火锅", "手撕包菜", "地三鲜", "佛跳墙"
 ];
 
+const RANDOM_REPLIES = [
+    "真的吗？", "哈哈哈哈", "🤔 确实", "收到收到", "我也觉得...",
+    "下次一定！", "这就去办", "有点意思", "你说得对", "再看看吧"
+];
+
 const getRandomFood = () => FOOD_NAMES[Math.floor(Math.random() * FOOD_NAMES.length)];
 const getAvatarUrl = (seed: string) => `https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(seed || 'default')}`;
 
@@ -92,6 +97,18 @@ const QA_BOT = {
     isBot: true,
 };
 
+const TEST_CHAT = {
+    id: 'test-user-001',
+    uid: 'test-user-001',
+    name: '测试消息',
+    avatar: getAvatarUrl('random-' + Math.random()),
+    lastMessage: '这是一条测试消息...',
+    time: '刚刚',
+    unread: 1,
+    online: true,
+    isBot: false,
+};
+
 interface Message {
     id: string;
     senderId: string;
@@ -104,7 +121,7 @@ interface Message {
     sortTimestamp?: number;
 }
 
-const MarkdownRenderer: React.FC<{ content: string; isMe: boolean }> = ({ content, isMe }) => {
+const MarkdownRenderer: React.FC<{ content: string; isMe: boolean; onLinkClick: (url: string) => void }> = ({ content, isMe, onLinkClick }) => {
     return (
         <ReactMarkdown
             remarkPlugins={[remarkGfm]}
@@ -137,18 +154,21 @@ const MarkdownRenderer: React.FC<{ content: string; isMe: boolean }> = ({ conten
                 h4: ({ children }) => <h4 className="text-sm font-bold mb-1 mt-2">{children}</h4>,
                 blockquote: ({ children }) => <blockquote className={`border-l-4 pl-3 py-1 my-2 italic ${isMe ? 'border-white/40 bg-white/10' : 'border-gray-300 bg-gray-50'}`}>{children}</blockquote>,
                 a: ({ href, children }) => {
-                    const { launchApp } = useOS();
                     return (
-                        <a
-                            href={href}
+                        <button
+                            type="button"
                             onClick={(e) => {
                                 e.preventDefault();
-                                if (href) launchApp('safari', { url: href });
+                                e.stopPropagation();
+                                if (href) onLinkClick(href);
                             }}
-                            className={`underline underline-offset-2 cursor-pointer ${isMe ? 'text-white decoration-white/50' : 'text-blue-600 decoration-blue-300'} hover:opacity-80 transition-opacity break-all`}
+                            onPointerDown={(e) => e.stopPropagation()}
+                            onMouseDown={(e) => e.stopPropagation()}
+                            className={`inline text-left underline underline-offset-2 cursor-pointer ${isMe ? 'text-white decoration-white/50' : 'text-blue-600 decoration-blue-300'} hover:opacity-80 transition-opacity break-all relative z-50 pointer-events-auto bg-transparent border-none p-0 m-0 font-inherit select-text active:opacity-60 outline-none`}
+                            title={href}
                         >
                             {children}
-                        </a>
+                        </button>
                     );
                 },
                 table: ({ children }) => <div className="overflow-x-auto my-2 rounded-lg border border-gray-200"><table className="min-w-full divide-y divide-gray-200">{children}</table></div>,
@@ -164,7 +184,7 @@ const MarkdownRenderer: React.FC<{ content: string; isMe: boolean }> = ({ conten
 };
 
 const IMApp: React.FC<{ windowId: string }> = () => {
-    const { systemState } = useOS();
+    const { systemState, launchApp } = useOS();
     const t = useTranslation(systemState.language);
     const ai = useAI();
 
@@ -183,10 +203,16 @@ const IMApp: React.FC<{ windowId: string }> = () => {
 
     // Chat State
     const [activeChat, setActiveChat] = useState<any>(QA_BOT);
-    const [onlineUsers, setOnlineUsers] = useState<any[]>([QA_BOT]);
-    const [firestoreMessages, setFirestoreMessages] = useState<Message[]>([]);
-    const [optimisticMessages, setOptimisticMessages] = useState<Message[]>([]);
+    const [onlineUsers, setOnlineUsers] = useState<any[]>([QA_BOT, TEST_CHAT]);
+    const [firestoreMessages, setFirestoreMessages] = useState<Record<string, Message[]>>({});
+    const [optimisticMessages, setOptimisticMessages] = useState<Record<string, Message[]>>({});
     const [message, setMessage] = useState('');
+
+    const getRoomId = React.useCallback((chat: any, usr: any) => {
+        if (!usr) return 'unknown';
+        if (chat.isBot) return `bot_qa_${usr.uid}`;
+        return [usr.uid, chat.uid || chat.id].sort().join('_');
+    }, []);
 
     const [activeTab, setActiveTab] = useState('messages');
     const inputRef = useRef<HTMLTextAreaElement>(null);
@@ -330,17 +356,11 @@ const IMApp: React.FC<{ windowId: string }> = () => {
             const usersList = snapshot.docs
                 .map(doc => doc.data())
                 .filter(u => u.uid !== user.uid);
-            setOnlineUsers([QA_BOT, ...usersList]);
+            setOnlineUsers([QA_BOT, TEST_CHAT, ...usersList]);
         });
 
         // Determine room ID
-        let roomId;
-        const targetId = activeChat.uid || activeChat.id;
-        if (activeChat.isBot) {
-            roomId = `bot_qa_${user.uid}`;
-        } else {
-            roomId = [user.uid, targetId].sort().join('_');
-        }
+        const roomId = getRoomId(activeChat, user);
 
         // Listen for messages
         const msgsQuery = collection(db, 'artifacts', appId, 'public', 'data', `room_${roomId}`);
@@ -353,34 +373,42 @@ const IMApp: React.FC<{ windowId: string }> = () => {
                     const timeB = b.createdAt?.toMillis() || Date.now();
                     return timeA - timeB;
                 });
-            setFirestoreMessages(loadedMsgs);
+            setFirestoreMessages(prev => ({ ...prev, [roomId]: loadedMsgs }));
         }, (err) => console.warn("Messages sync restricted:", err));
 
         return () => {
             unsubscribeUsers();
             unsubscribeMsgs();
         };
-    }, [user, authStatus, activeChat.uid, activeChat.id, db, appId]);
+    }, [user, authStatus, activeChat.uid, activeChat.id, db, appId, getRoomId]);
 
     // Cleanup optimistic messages that are now in firestore
     useEffect(() => {
-        if (optimisticMessages.length > 0) {
-            const firestoreTexts = new Set(firestoreMessages.filter(m => m.senderId === user?.uid).map(m => m.text));
-            setOptimisticMessages(prev => prev.filter(m => !firestoreTexts.has(m.text)));
+        const roomId = getRoomId(activeChat, user);
+        const fbMsgs = firestoreMessages[roomId] || [];
+        const optMsgs = optimisticMessages[roomId] || [];
+
+        if (optMsgs.length > 0) {
+            const firestoreTexts = new Set(fbMsgs.filter(m => m.senderId === user?.uid).map(m => m.text));
+            setOptimisticMessages(prev => ({
+                ...prev,
+                [roomId]: (prev[roomId] || []).filter(m => !firestoreTexts.has(m.text))
+            }));
         }
-    }, [firestoreMessages, user?.uid]);
+    }, [firestoreMessages, user?.uid, activeChat, getRoomId]);
 
     const allMessages = React.useMemo(() => {
-        const combined = [...firestoreMessages, ...optimisticMessages];
+        const roomId = getRoomId(activeChat, user);
+        const combined = [...(firestoreMessages[roomId] || []), ...(optimisticMessages[roomId] || [])];
         return combined.sort((a, b) => {
             const timeA = a.sortTimestamp || a.createdAt?.toMillis() || 0;
             const timeB = b.sortTimestamp || b.createdAt?.toMillis() || 0;
             return timeA - timeB;
         });
-    }, [firestoreMessages, optimisticMessages]);
+    }, [firestoreMessages, optimisticMessages, activeChat, user, getRoomId]);
 
     const scrollToBottom = () => {
-        const viewport = scrollAreaRef.current?.querySelector('[data-radix-scroll-area-viewport]') as HTMLElement;
+        const viewport = scrollAreaRef.current;
         if (viewport) {
             viewport.scrollTop = viewport.scrollHeight;
         }
@@ -432,12 +460,14 @@ const IMApp: React.FC<{ windowId: string }> = () => {
             sortTimestamp: Date.now(),
         };
 
+        const roomId = getRoomId(activeChat, user);
+
         // 如果没有数据库连接（访客模式），直接更新显示列表
         if (!db) {
-            setFirestoreMessages(prev => [...prev, newMessage]);
+            setFirestoreMessages(prev => ({ ...prev, [roomId]: [...(prev[roomId] || []), newMessage] }));
             setTimeout(scrollToBottom, 50);
         } else {
-            setOptimisticMessages(prev => [...prev, newMessage]);
+            setOptimisticMessages(prev => ({ ...prev, [roomId]: [...(prev[roomId] || []), newMessage] }));
         }
 
         // 2. 如果有数据库，尝试写入
@@ -482,7 +512,8 @@ const IMApp: React.FC<{ windowId: string }> = () => {
                     };
 
                     // 核心修复：无论数据库是否成功，先在本地显示
-                    setFirestoreMessages(prev => [...prev, botMsg as any]);
+                    const roomId = getRoomId(activeChat, user);
+                    setFirestoreMessages(prev => ({ ...prev, [roomId]: [...(prev[roomId] || []), botMsg as any] }));
                     setTimeout(scrollToBottom, 50);
 
                     if (db) {
@@ -498,6 +529,24 @@ const IMApp: React.FC<{ windowId: string }> = () => {
                     console.error("AI Error:", error);
                 }
             })();
+        } else if (activeChat.id === TEST_CHAT.id) {
+            // 模拟随机回复
+            setTimeout(() => {
+                const randomReply = RANDOM_REPLIES[Math.floor(Math.random() * RANDOM_REPLIES.length)];
+                const replyMsg = {
+                    text: randomReply,
+                    senderId: TEST_CHAT.id,
+                    senderName: TEST_CHAT.name,
+                    isBot: false,
+                    timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+                    sortTimestamp: Date.now(),
+                    avatar: activeChat.avatar,
+                    id: `test-reply-${Date.now()}`
+                };
+                const roomId = getRoomId(activeChat, user);
+                setOptimisticMessages(prev => ({ ...prev, [roomId]: [...(prev[roomId] || []), replyMsg as any] }));
+                setTimeout(scrollToBottom, 50);
+            }, 1000 + Math.random() * 2000);
         }
     };
 
@@ -649,68 +698,73 @@ const IMApp: React.FC<{ windowId: string }> = () => {
                         </header>
 
                         {/* Messages List */}
-                        <ScrollArea ref={scrollAreaRef} className="flex-1">
-                            <div className="w-full space-y-8 p-5">
-                                {allMessages.length === 0 ? (
-                                    <div className="h-full flex flex-col items-center justify-center text-[color:var(--color-text-5)] py-20 gap-4 opacity-40">
-                                        <div className="w-20 h-20 bg-[var(--color-fill-3)] rounded-[2.5rem] flex items-center justify-center border border-[var(--color-border-a1)]">
-                                            <Search className="w-8 h-8 opacity-20" />
-                                        </div>
-                                        <div className="text-center">
-                                            <p className="text-[length:var(--font-size-14)] font-black uppercase tracking-widest">已开启加密对话</p>
-                                            <p className="text-[length:var(--font-size-12)]">只有你和 {activeChat.name} 能看到此对话内容</p>
-                                        </div>
+                        <div ref={scrollAreaRef} className="flex-1 overflow-y-auto w-full space-y-8 p-5 pointer-events-auto">
+                            {allMessages.length === 0 ? (
+                                <div className="h-full flex flex-col items-center justify-center text-[color:var(--color-text-5)] py-20 gap-4 opacity-40">
+                                    <div className="w-20 h-20 bg-[var(--color-fill-3)] rounded-[2.5rem] flex items-center justify-center border border-[var(--color-border-a1)]">
+                                        <Search className="w-8 h-8 opacity-20" />
                                     </div>
-                                ) : (
-                                    allMessages.map((msg: Message) => {
-                                        const isMe = msg.senderId === user.uid && !msg.isBot;
-                                        return (
-                                            <div key={msg.id} className={`flex gap-3 group ${isMe ? 'flex-row-reverse' : ''} ${msg.id.startsWith('temp-') ? 'opacity-70' : ''}`}>
-                                                {!isMe && (
-                                                    <Avatar className="h-9 w-9 shrink-0 rounded-[var(--radius-8)] overflow-hidden">
-                                                        <AvatarImage src={msg.avatar || getAvatarUrl(msg.senderName)} />
-                                                        <AvatarFallback>{msg.senderName?.[0]}</AvatarFallback>
-                                                    </Avatar>
-                                                )}
-                                                <div className={`flex flex-col gap-1 max-w-[75%] ${isMe ? 'items-end' : 'items-start'}`}>
-                                                    <div className={`flex items-baseline gap-2 ${isMe ? 'flex-row-reverse' : ''}`}>
-                                                        <span className="text-[length:var(--font-size-14)] font-semibold text-[color:var(--color-text-5)]">{isMe ? '我' : msg.senderName}</span>
-                                                        <span className="text-[length:var(--font-size-12)] text-[color:var(--color-text-5)] opacity-0 group-hover:opacity-100 transition-opacity">{msg.timestamp}</span>
-                                                    </div>
+                                    <div className="text-center">
+                                        <p className="text-[length:var(--font-size-14)] font-black uppercase tracking-widest">已开启加密对话</p>
+                                        <p className="text-[length:var(--font-size-12)]">只有你和 {activeChat.name} 能看到此对话内容</p>
+                                    </div>
+                                </div>
+                            ) : (
+                                allMessages.map((msg: Message) => {
+                                    const isMe = msg.senderId === user.uid && !msg.isBot;
+                                    return (
+                                        <div key={msg.id} className={`flex gap-3 group ${isMe ? 'flex-row-reverse' : ''} ${msg.id.startsWith('temp-') ? 'opacity-70' : ''}`}>
+                                            {!isMe && (
+                                                <Avatar className="h-9 w-9 shrink-0 rounded-[var(--radius-8)] overflow-hidden">
+                                                    <AvatarImage src={msg.avatar || getAvatarUrl(msg.senderName)} />
+                                                    <AvatarFallback>{msg.senderName?.[0]}</AvatarFallback>
+                                                </Avatar>
+                                            )}
+                                            <div className={`flex flex-col gap-1 max-w-[75%] ${isMe ? 'items-end' : 'items-start'}`}>
+                                                <div className={`flex items-baseline gap-2 ${isMe ? 'flex-row-reverse' : ''}`}>
+                                                    <span className="text-[length:var(--font-size-14)] font-semibold text-[color:var(--color-text-5)]">{isMe ? '我' : msg.senderName}</span>
+                                                    <span className="text-[length:var(--font-size-12)] text-[color:var(--color-text-5)] opacity-0 group-hover:opacity-100 transition-opacity">{msg.timestamp}</span>
+                                                </div>
 
-                                                    <div className={`relative px-4 py-2 rounded-[var(--radius-12)] text-[length:var(--font-size-14)] leading-relaxed select-text ${isMe
-                                                        ? 'bg-[var(--color-blue)] text-white'
-                                                        : 'bg-[var(--color-bg-2)] border border-[var(--color-border-a1)] text-[color:var(--color-text-2)]'
-                                                        } transition-all`}>
-                                                        <MarkdownRenderer content={msg.text} isMe={isMe} />
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        )
-                                    })
-                                )}
-                                {ai.isTyping && (
-                                    <div className="flex gap-3">
-                                        <Avatar className="h-9 w-9 shrink-0 rounded-[var(--radius-8)] overflow-hidden">
-                                            <AvatarImage src={activeChat.avatar} />
-                                            <AvatarFallback>AI</AvatarFallback>
-                                        </Avatar>
-                                        <div className="flex flex-col gap-1 max-w-[75%] items-start">
-                                            <div className="flex items-baseline gap-2">
-                                                <span className="text-[length:var(--font-size-14)] font-semibold text-[color:var(--color-text-5)]">{activeChat.name}</span>
-                                            </div>
-                                            <div className="relative px-4 py-2 rounded-[var(--radius-12)] bg-[var(--color-bg-2)] border border-[var(--color-border-a1)] text-[color:var(--color-text-2)]">
-                                                <div className="flex gap-1 h-5 items-center">
-                                                    <div className="w-1.5 h-1.5 bg-[var(--color-text-4)] rounded-full animate-bounce [animation-delay:-0.3s]"></div>
-                                                    <div className="w-1.5 h-1.5 bg-[var(--color-text-4)] rounded-full animate-bounce [animation-delay:-0.15s]"></div>
-                                                    <div className="w-1.5 h-1.5 bg-[var(--color-text-4)] rounded-full animate-bounce"></div>
+                                                <div className={`relative px-4 py-2 rounded-[var(--radius-12)] text-[length:var(--font-size-14)] leading-relaxed select-text ${isMe
+                                                    ? 'bg-[var(--color-blue)] text-white'
+                                                    : 'bg-[var(--color-bg-2)] border border-[var(--color-border-a1)] text-[color:var(--color-text-2)]'
+                                                    } transition-all`}>
+                                                    <MarkdownRenderer
+                                                        content={msg.text}
+                                                        isMe={isMe}
+                                                        onLinkClick={(url) => {
+                                                            console.log("IMApp: onLinkClick handler triggered for:", url);
+                                                            launchApp('safari', { url });
+                                                        }}
+                                                    />
                                                 </div>
                                             </div>
                                         </div>
+                                    )
+                                })
+                            )}
+                            {ai.isTyping && (
+                                <div className="flex gap-3">
+                                    <Avatar className="h-9 w-9 shrink-0 rounded-[var(--radius-8)] overflow-hidden">
+                                        <AvatarImage src={activeChat.avatar} />
+                                        <AvatarFallback>AI</AvatarFallback>
+                                    </Avatar>
+                                    <div className="flex flex-col gap-1 max-w-[75%] items-start">
+                                        <div className="flex items-baseline gap-2">
+                                            <span className="text-[length:var(--font-size-14)] font-semibold text-[color:var(--color-text-5)]">{activeChat.name}</span>
+                                        </div>
+                                        <div className="relative px-4 py-2 rounded-[var(--radius-12)] bg-[var(--color-bg-2)] border border-[var(--color-border-a1)] text-[color:var(--color-text-2)]">
+                                            <div className="flex gap-1 h-5 items-center">
+                                                <div className="w-1.5 h-1.5 bg-[var(--color-text-4)] rounded-full animate-bounce [animation-delay:-0.3s]"></div>
+                                                <div className="w-1.5 h-1.5 bg-[var(--color-text-4)] rounded-full animate-bounce [animation-delay:-0.15s]"></div>
+                                                <div className="w-1.5 h-1.5 bg-[var(--color-text-4)] rounded-full animate-bounce"></div>
+                                            </div>
+                                        </div>
                                     </div>
-                                )}
-                            </div>
-                        </ScrollArea>
+                                </div>
+                            )}
+                        </div>
 
                         {/* Input Area */}
                         <div className="px-5 pb-5 pt-2 shrink-0">
@@ -800,7 +854,7 @@ const IMApp: React.FC<{ windowId: string }> = () => {
                     </DialogFooter>
                 </DialogContent>
             </Dialog>
-        </div>
+        </div >
     );
 };
 

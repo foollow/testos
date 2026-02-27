@@ -192,7 +192,11 @@ export const WindowFrame: React.FC<WindowFrameProps> = memo(({ window, zIndex, c
             </div>
 
             {/* Content */}
-            <div className="flex-1 relative overflow-hidden transition-colors duration-300 h-full" style={window.appId !== 'im' ? { backgroundColor: 'var(--bg-content)', backdropFilter: 'blur(30px)' } : {}}>
+            <div
+                className="flex-1 relative overflow-hidden transition-colors duration-300 h-full"
+                style={window.appId !== 'im' ? { backgroundColor: 'var(--bg-content)', backdropFilter: 'blur(30px)' } : {}}
+                onPointerDown={(e) => e.stopPropagation()}
+            >
                 {/* Iframe Fix Overlay */}
                 {(isDragging || isResizing) && (
                     <div className="absolute inset-0 z-50 bg-transparent" />
