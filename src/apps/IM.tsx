@@ -10,6 +10,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import {
     Tooltip,
     TooltipContent,
@@ -34,7 +35,7 @@ import { oneDark } from 'react-syntax-highlighter/dist/esm/styles/prism';
 // Firebase initialization
 import { initializeApp } from 'firebase/app';
 import { getAuth, signInWithCustomToken, signInAnonymously, onAuthStateChanged, setPersistence, browserLocalPersistence, inMemoryPersistence } from 'firebase/auth';
-import { getFirestore, doc, setDoc, getDoc, collection, onSnapshot, addDoc, serverTimestamp, query, where, getDocs, deleteDoc } from 'firebase/firestore';
+import { getFirestore, doc, setDoc, getDoc, collection, onSnapshot, addDoc, serverTimestamp, query, where, getDocs, deleteDoc, updateDoc } from 'firebase/firestore';
 
 // Firebase initialization wrapper to prevent crashes
 const getFirebase = () => {
@@ -119,7 +120,14 @@ interface Message {
     createdAt?: any;
     isBot?: boolean;
     sortTimestamp?: number;
+    reactions?: Record<string, string[]>; // emoji -> [userId1, userId2, ...]
 }
+
+const REACTION_EMOJIS = [
+    "👍", "❤️", "😂", "😮", "😢", "🙏",
+    "✅", "🔥", "👏", "💯", "🙌", "＋1",
+    "－1", "👀", "🚀", "💡", "🤔", "🎉"
+];
 
 const MarkdownRenderer: React.FC<{ content: string; isMe: boolean; onLinkClick: (url: string) => void }> = ({ content, isMe, onLinkClick }) => {
     return (
@@ -207,6 +215,8 @@ const IMApp: React.FC<{ windowId: string }> = () => {
     const [firestoreMessages, setFirestoreMessages] = useState<Record<string, Message[]>>({});
     const [optimisticMessages, setOptimisticMessages] = useState<Record<string, Message[]>>({});
     const [message, setMessage] = useState('');
+    const [hoveredMessageId, setHoveredMessageId] = useState<string | null>(null);
+    const [showEmojiPanelId, setShowEmojiPanelId] = useState<string | null>(null);
 
     const getRoomId = React.useCallback((chat: any, usr: any) => {
         if (!usr) return 'unknown';
@@ -442,6 +452,12 @@ const IMApp: React.FC<{ windowId: string }> = () => {
         setAuthStatus('guest');
     };
 
+    const getUserName = (uid: string) => {
+        if (uid === user?.uid) return '我';
+        const found = onlineUsers.find(u => (u.uid || u.id) === uid);
+        return found ? found.name : `用户(${uid.slice(0, 4)})`;
+    };
+
     const handleSendMessage = async (e?: React.FormEvent) => {
         if (e) e.preventDefault();
         if (!message.trim() || !user) return;
@@ -547,6 +563,74 @@ const IMApp: React.FC<{ windowId: string }> = () => {
                 setOptimisticMessages(prev => ({ ...prev, [roomId]: [...(prev[roomId] || []), replyMsg as any] }));
                 setTimeout(scrollToBottom, 50);
             }, 1000 + Math.random() * 2000);
+        }
+    };
+
+    const handleToggleReaction = async (messageId: string, emoji: string) => {
+        if (!user || !activeChat) return;
+
+        const roomId = getRoomId(activeChat, user);
+
+        // Optimistic / Local Update
+        const updateMsgs = (prev: any) => {
+            const msgs = prev[roomId] || [];
+            return {
+                ...prev,
+                [roomId]: msgs.map((m: Message) => {
+                    if (m.id === messageId) {
+                        const reactions = { ...(m.reactions || {}) };
+                        const users = [...(reactions[emoji] || [])];
+                        const userIdx = users.indexOf(user.uid);
+
+                        if (userIdx > -1) {
+                            users.splice(userIdx, 1);
+                        } else {
+                            users.push(user.uid);
+                        }
+
+                        if (users.length === 0) {
+                            delete reactions[emoji];
+                        } else {
+                            reactions[emoji] = users;
+                        }
+                        return { ...m, reactions };
+                    }
+                    return m;
+                })
+            };
+        };
+
+        setFirestoreMessages(updateMsgs);
+        setOptimisticMessages(updateMsgs);
+
+        if (!db) return;
+
+        const messageRef = doc(db, 'artifacts', appId, 'public', 'data', `room_${roomId}`, messageId);
+
+        try {
+            const docSnap = await getDoc(messageRef);
+            if (!docSnap.exists()) return;
+
+            const currentData = docSnap.data();
+            const reactions = { ...(currentData.reactions || {}) };
+            const users = [...(reactions[emoji] || [])];
+
+            const userIdx = users.indexOf(user.uid);
+            if (userIdx > -1) {
+                users.splice(userIdx, 1);
+            } else {
+                users.push(user.uid);
+            }
+
+            if (users.length === 0) {
+                delete reactions[emoji];
+            } else {
+                reactions[emoji] = users;
+            }
+
+            await updateDoc(messageRef, { reactions });
+        } catch (err) {
+            console.error("Update Reaction Error:", err);
         }
     };
 
@@ -712,8 +796,20 @@ const IMApp: React.FC<{ windowId: string }> = () => {
                             ) : (
                                 allMessages.map((msg: Message) => {
                                     const isMe = msg.senderId === user.uid && !msg.isBot;
+                                    const reactions = msg.reactions || {};
+                                    const emojiList = Object.entries(reactions);
+                                    const showTooltip = hoveredMessageId === msg.id || showEmojiPanelId === msg.id;
+
                                     return (
-                                        <div key={msg.id} className={`flex gap-3 group ${isMe ? 'flex-row-reverse' : ''} ${msg.id.startsWith('temp-') ? 'opacity-70' : ''}`}>
+                                        <div
+                                            key={msg.id}
+                                            className={`flex gap-3 relative w-full group/row ${isMe ? 'flex-row-reverse' : ''} ${msg.id.startsWith('temp-') ? 'opacity-70' : ''} hover:bg-[var(--color-fill-a1)]/30 -mx-5 px-5 py-2 transition-colors`}
+                                            onMouseEnter={() => setHoveredMessageId(msg.id)}
+                                            onMouseLeave={() => {
+                                                setHoveredMessageId(null);
+                                                setShowEmojiPanelId(null);
+                                            }}
+                                        >
                                             {!isMe && (
                                                 <Avatar className="h-9 w-9 shrink-0 rounded-[var(--radius-8)] overflow-hidden">
                                                     <AvatarImage src={msg.avatar || getAvatarUrl(msg.senderName)} />
@@ -726,19 +822,112 @@ const IMApp: React.FC<{ windowId: string }> = () => {
                                                     <span className="text-[length:var(--font-size-12)] text-[color:var(--color-text-5)] opacity-0 group-hover:opacity-100 transition-opacity">{msg.timestamp}</span>
                                                 </div>
 
-                                                <div className={`relative px-4 py-2 rounded-[var(--radius-12)] text-[length:var(--font-size-14)] leading-relaxed select-text ${isMe
-                                                    ? 'bg-[var(--color-blue)] text-white'
-                                                    : 'bg-[var(--color-bg-2)] border border-[var(--color-border-a1)] text-[color:var(--color-text-2)]'
-                                                    } transition-all`}>
-                                                    <MarkdownRenderer
-                                                        content={msg.text}
-                                                        isMe={isMe}
-                                                        onLinkClick={(url) => {
-                                                            console.log("IMApp: onLinkClick handler triggered for:", url);
-                                                            launchApp('safari', { url });
-                                                        }}
-                                                    />
+                                                <div className="relative group/bubble w-fit">
+                                                    <div className={`px-4 py-2 rounded-[var(--radius-12)] text-[length:var(--font-size-14)] leading-relaxed select-text ${isMe
+                                                        ? 'bg-[var(--color-blue)] text-white'
+                                                        : 'bg-[var(--color-bg-2)] border border-[var(--color-border-a1)] text-[color:var(--color-text-2)]'
+                                                        } transition-all`}>
+                                                        <MarkdownRenderer
+                                                            content={msg.text}
+                                                            isMe={isMe}
+                                                            onLinkClick={(url) => {
+                                                                console.log("IMApp: onLinkClick handler triggered for:", url);
+                                                                launchApp('safari', { url });
+                                                            }}
+                                                        />
+                                                    </div>
+
+                                                    {/* Hover floating menu */}
+                                                    {showTooltip && (
+                                                        <div
+                                                            className={`absolute bottom-0 ${isMe ? 'right-full mr-2' : 'left-full ml-2'} flex items-center gap-1 z-20`}
+                                                            onMouseEnter={() => setHoveredMessageId(msg.id)}
+                                                            onMouseLeave={() => setHoveredMessageId(null)}
+                                                        >
+                                                            <div className="flex bg-[var(--color-bg-1)] border border-[var(--color-border-a1)] rounded-full shadow-lg p-0.5">
+                                                                <Popover open={showEmojiPanelId === msg.id}>
+                                                                    <PopoverTrigger asChild>
+                                                                        <div
+                                                                            className="p-1 hover:bg-[var(--color-fill-a2)] rounded-full cursor-pointer relative"
+                                                                            onMouseEnter={() => setShowEmojiPanelId(msg.id)}
+                                                                        >
+                                                                            <Smile size={16} className="text-[color:var(--color-text-4)] transition-colors hover:text-[color:var(--color-blue)]" />
+                                                                        </div>
+                                                                    </PopoverTrigger>
+                                                                    <PopoverContent
+                                                                        side="top"
+                                                                        align={isMe ? "end" : "start"}
+                                                                        alignOffset={-10}
+                                                                        sideOffset={8}
+                                                                        className="w-[260px] p-2 bg-[var(--color-bg-1)] border-[var(--color-border-a1)] rounded-xl shadow-[var(--effect-shadow-level-2-box)] z-50 pointer-events-auto"
+                                                                        onMouseEnter={() => setShowEmojiPanelId(msg.id)}
+                                                                    >
+                                                                        <div className="grid grid-cols-6 gap-2">
+                                                                            {REACTION_EMOJIS.map(emoji => (
+                                                                                <div
+                                                                                    key={emoji}
+                                                                                    className="w-8 h-8 flex items-center justify-center hover:bg-[var(--color-fill-a2)] rounded-lg cursor-pointer text-lg transition-transform hover:scale-125 select-none"
+                                                                                    onClick={(e) => {
+                                                                                        e.preventDefault();
+                                                                                        e.stopPropagation();
+                                                                                        handleToggleReaction(msg.id, emoji);
+                                                                                        setShowEmojiPanelId(null);
+                                                                                    }}
+                                                                                >
+                                                                                    {emoji}
+                                                                                </div>
+                                                                            ))}
+                                                                        </div>
+                                                                    </PopoverContent>
+                                                                </Popover>
+                                                                {/* More icons can be added here */}
+                                                            </div>
+                                                        </div>
+                                                    )}
                                                 </div>
+
+                                                {/* Reaction Tags */}
+                                                {emojiList.length > 0 && (
+                                                    <div className={`flex flex-wrap gap-1 mt-1 ${isMe ? 'flex-row-reverse' : ''}`}>
+                                                        {emojiList.slice(0, 10).map(([emoji, users]) => (
+                                                            <TooltipProvider key={emoji}>
+                                                                <Tooltip delayDuration={0}>
+                                                                    <TooltipTrigger asChild>
+                                                                        <div
+                                                                            className={`flex items-center gap-1 px-1.5 py-0.5 rounded-full border text-xs cursor-pointer transition-all ${users.includes(user.uid)
+                                                                                ? 'bg-[var(--color-blue-bg-weak)] border-[var(--color-blue)] text-[var(--color-blue)] font-medium'
+                                                                                : 'bg-[var(--color-fill-1)] border-[var(--color-border-a1)] text-[color:var(--color-text-4)] hover:border-[var(--color-border-a2)]'
+                                                                                }`}
+                                                                            onClick={() => handleToggleReaction(msg.id, emoji)}
+                                                                        >
+                                                                            <span>{emoji}</span>
+                                                                            <span className="min-w-[10px] text-center">{users.length}</span>
+                                                                        </div>
+                                                                    </TooltipTrigger>
+                                                                    <TooltipContent side="top" className="max-w-[150px]">
+                                                                        <div className="flex flex-col gap-0.5">
+                                                                            <p className="font-bold border-b border-[var(--color-border-a1)] pb-1 mb-1">{emoji} 表态用户:</p>
+                                                                            {users.map(uid => (
+                                                                                <div key={uid} className="truncate">{getUserName(uid)}</div>
+                                                                            ))}
+                                                                        </div>
+                                                                    </TooltipContent>
+                                                                </Tooltip>
+                                                            </TooltipProvider>
+                                                        ))}
+                                                        {emojiList.length > 10 && (
+                                                            <div className="flex items-center px-1.5 py-0.5 rounded-full border border-[var(--color-border-a1)] bg-[var(--color-fill-1)] text-xs text-[color:var(--color-text-4)] cursor-pointer">
+                                                                ...
+                                                            </div>
+                                                        )}
+                                                        <div
+                                                            className="flex items-center px-1.5 py-0.5 rounded-full border border-dashed border-[var(--color-border-a1)] text-[color:var(--color-text-4)] hover:border-[var(--color-blue)] hover:text-[var(--color-blue)] cursor-pointer"
+                                                            onClick={() => setShowEmojiPanelId(msg.id)}
+                                                        >
+                                                            <Smile size={12} />
+                                                        </div>
+                                                    </div>
+                                                )}
                                             </div>
                                         </div>
                                     )
