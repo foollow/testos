@@ -782,7 +782,7 @@ const IMApp: React.FC<{ windowId: string }> = () => {
                         </header>
 
                         {/* Messages List */}
-                        <div ref={scrollAreaRef} className="flex-1 overflow-y-auto w-full space-y-8 p-5 pointer-events-auto">
+                        <div ref={scrollAreaRef} className="flex-1 overflow-y-auto w-full space-y-8 px-5 pt-5 pb-0 pointer-events-auto">
                             {allMessages.length === 0 ? (
                                 <div className="h-full flex flex-col items-center justify-center text-[color:var(--color-text-5)] py-20 gap-4 opacity-40">
                                     <div className="w-20 h-20 bg-[var(--color-fill-3)] rounded-[2.5rem] flex items-center justify-center border border-[var(--color-border-a1)]">
@@ -803,19 +803,17 @@ const IMApp: React.FC<{ windowId: string }> = () => {
                                     return (
                                         <div
                                             key={msg.id}
-                                            className={`flex gap-3 relative w-full group/row ${isMe ? 'flex-row-reverse' : ''} ${msg.id.startsWith('temp-') ? 'opacity-70' : ''} hover:bg-[var(--color-fill-a1)]/30 -mx-5 px-5 py-2 transition-colors`}
+                                            className={`flex gap-3 relative group/row ${isMe ? 'flex-row-reverse' : ''} ${msg.id.startsWith('temp-') ? 'opacity-70' : ''} hover:bg-[var(--color-fill-a1)]/30 -mx-5 px-5 py-2 transition-colors`}
                                             onMouseEnter={() => setHoveredMessageId(msg.id)}
                                             onMouseLeave={() => {
                                                 setHoveredMessageId(null);
                                                 setShowEmojiPanelId(null);
                                             }}
                                         >
-                                            {!isMe && (
-                                                <Avatar className="h-9 w-9 shrink-0 rounded-[var(--radius-8)] overflow-hidden">
-                                                    <AvatarImage src={msg.avatar || getAvatarUrl(msg.senderName)} />
-                                                    <AvatarFallback>{msg.senderName?.[0]}</AvatarFallback>
-                                                </Avatar>
-                                            )}
+                                            <Avatar className="h-9 w-9 shrink-0 rounded-[var(--radius-8)] overflow-hidden">
+                                                <AvatarImage src={isMe ? getAvatarUrl(nickname) : (msg.avatar || getAvatarUrl(msg.senderName))} />
+                                                <AvatarFallback>{isMe ? nickname[0] : msg.senderName?.[0]}</AvatarFallback>
+                                            </Avatar>
                                             <div className={`flex flex-col gap-1 max-w-[75%] ${isMe ? 'items-end' : 'items-start'}`}>
                                                 <div className={`flex items-baseline gap-2 ${isMe ? 'flex-row-reverse' : ''}`}>
                                                     <span className="text-[length:var(--font-size-14)] font-semibold text-[color:var(--color-text-5)]">{isMe ? '我' : msg.senderName}</span>
@@ -956,7 +954,7 @@ const IMApp: React.FC<{ windowId: string }> = () => {
                         </div>
 
                         {/* Input Area */}
-                        <div className="px-5 pb-5 pt-2 shrink-0">
+                        <div className="px-5 pb-5 shrink-0">
                             <div className="max-w-[77.5rem] mx-auto rounded-[var(--radius-12)] border border-[var(--color-border-a1)] bg-[var(--color-bg-1)] shadow-[var(--effect-shadow-level-1-box)] p-1.5 focus-within:ring-1 focus-within:ring-[var(--color-blue-active)]/10 transition-all flex flex-col group">
                                 <div className="relative flex items-end">
                                     <Textarea
