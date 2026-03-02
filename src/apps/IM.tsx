@@ -131,63 +131,65 @@ const REACTION_EMOJIS = [
 
 const MarkdownRenderer: React.FC<{ content: string; isMe: boolean; onLinkClick: (url: string) => void }> = ({ content, isMe, onLinkClick }) => {
     return (
-        <ReactMarkdown
-            remarkPlugins={[remarkGfm]}
-            components={{
-                code({ node, inline, className, children, ...props }: any) {
-                    const match = /language-(\w+)/.exec(className || '');
-                    return !inline && match ? (
-                        <SyntaxHighlighter
-                            style={oneDark}
-                            language={match[1]}
-                            PreTag="div"
-                            className="rounded-md my-2 !bg-[#282c34] text-sm overflow-x-auto"
-                            {...props}
-                        >
-                            {String(children).replace(/\n$/, '')}
-                        </SyntaxHighlighter>
-                    ) : (
-                        <code className={`${isMe ? 'bg-white/20 text-white' : 'bg-gray-100 text-pink-500'} px-1.5 py-0.5 rounded text-[0.9em] font-mono border ${isMe ? 'border-transparent' : 'border-gray-200'}`} {...props}>
-                            {children}
-                        </code>
-                    );
-                },
-                p: ({ children }) => <p className={`mb-2 last:mb-0 leading-7 ${isMe ? 'text-white' : 'text-gray-800'}`}>{children}</p>,
-                ul: ({ children }) => <ul className="list-disc pl-5 mb-2 space-y-1">{children}</ul>,
-                ol: ({ children }) => <ol className="list-decimal pl-5 mb-2 space-y-1">{children}</ol>,
-                li: ({ children }) => <li className="pl-1">{children}</li>,
-                h1: ({ children }) => <h1 className="text-xl font-bold mb-3 mt-4 border-b pb-1">{children}</h1>,
-                h2: ({ children }) => <h2 className="text-lg font-bold mb-2 mt-4">{children}</h2>,
-                h3: ({ children }) => <h3 className="text-base font-bold mb-2 mt-3">{children}</h3>,
-                h4: ({ children }) => <h4 className="text-sm font-bold mb-1 mt-2">{children}</h4>,
-                blockquote: ({ children }) => <blockquote className={`border-l-4 pl-3 py-1 my-2 italic ${isMe ? 'border-white/40 bg-white/10' : 'border-gray-300 bg-gray-50'}`}>{children}</blockquote>,
-                a: ({ href, children }) => {
-                    return (
-                        <button
-                            type="button"
-                            onClick={(e) => {
-                                e.preventDefault();
-                                e.stopPropagation();
-                                if (href) onLinkClick(href);
-                            }}
-                            onPointerDown={(e) => e.stopPropagation()}
-                            onMouseDown={(e) => e.stopPropagation()}
-                            className={`inline text-left underline underline-offset-2 cursor-pointer ${isMe ? 'text-white decoration-white/50' : 'text-blue-600 decoration-blue-300'} hover:opacity-80 transition-opacity break-all relative z-50 pointer-events-auto bg-transparent border-none p-0 m-0 font-inherit select-text active:opacity-60 outline-none`}
-                            title={href}
-                        >
-                            {children}
-                        </button>
-                    );
-                },
-                table: ({ children }) => <div className="overflow-x-auto my-2 rounded-lg border border-gray-200"><table className="min-w-full divide-y divide-gray-200">{children}</table></div>,
-                thead: ({ children }) => <thead className="bg-gray-50">{children}</thead>,
-                th: ({ children }) => <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{children}</th>,
-                td: ({ children }) => <td className="px-3 py-2 whitespace-nowrap text-sm text-gray-500 border-t border-gray-100">{children}</td>,
-                hr: () => <hr className={`my-4 border-t ${isMe ? 'border-white/20' : 'border-gray-200'}`} />,
-            }}
-        >
-            {content}
-        </ReactMarkdown>
+        <div className="max-w-full break-all overflow-x-hidden">
+            <ReactMarkdown
+                remarkPlugins={[remarkGfm]}
+                components={{
+                    code({ node, inline, className, children, ...props }: any) {
+                        const match = /language-(\w+)/.exec(className || '');
+                        return !inline && match ? (
+                            <SyntaxHighlighter
+                                style={oneDark}
+                                language={match[1]}
+                                PreTag="div"
+                                className="rounded-md my-2 !bg-[#282c34] text-sm overflow-x-auto"
+                                {...props}
+                            >
+                                {String(children).replace(/\n$/, '')}
+                            </SyntaxHighlighter>
+                        ) : (
+                            <code className={`${isMe ? 'bg-white/20 text-white' : 'bg-gray-100 text-pink-500'} px-1.5 py-0.5 rounded text-[0.9em] font-mono border ${isMe ? 'border-transparent' : 'border-gray-200'}`} {...props}>
+                                {children}
+                            </code>
+                        );
+                    },
+                    p: ({ children }) => <p className={`mb-2 last:mb-0 leading-7 ${isMe ? 'text-white' : 'text-gray-800'} break-all whitespace-pre-wrap`}>{children}</p>,
+                    ul: ({ children }) => <ul className="list-disc pl-5 mb-2 space-y-1">{children}</ul>,
+                    ol: ({ children }) => <ol className="list-decimal pl-5 mb-2 space-y-1">{children}</ol>,
+                    li: ({ children }) => <li className="pl-1 break-all">{children}</li>,
+                    h1: ({ children }) => <h1 className="text-xl font-bold mb-3 mt-4 border-b pb-1 break-all">{children}</h1>,
+                    h2: ({ children }) => <h2 className="text-lg font-bold mb-2 mt-4 break-all">{children}</h2>,
+                    h3: ({ children }) => <h3 className="text-base font-bold mb-2 mt-3 break-all">{children}</h3>,
+                    h4: ({ children }) => <h4 className="text-sm font-bold mb-1 mt-2 break-all">{children}</h4>,
+                    blockquote: ({ children }) => <blockquote className={`border-l-4 pl-3 py-1 my-2 italic ${isMe ? 'border-white/40 bg-white/10' : 'border-gray-300 bg-gray-50'} break-all`}>{children}</blockquote>,
+                    a: ({ href, children }) => {
+                        return (
+                            <button
+                                type="button"
+                                onClick={(e) => {
+                                    e.preventDefault();
+                                    e.stopPropagation();
+                                    if (href) onLinkClick(href);
+                                }}
+                                onPointerDown={(e) => e.stopPropagation()}
+                                onMouseDown={(e) => e.stopPropagation()}
+                                className={`inline text-left underline underline-offset-2 cursor-pointer ${isMe ? 'text-white decoration-white/50' : 'text-blue-600 decoration-blue-300'} hover:opacity-80 transition-opacity break-all relative z-50 pointer-events-auto bg-transparent border-none p-0 m-0 font-inherit select-text active:opacity-60 outline-none`}
+                                title={href}
+                            >
+                                {children}
+                            </button>
+                        );
+                    },
+                    table: ({ children }) => <div className="overflow-x-auto my-2 rounded-lg border border-gray-200"><table className="min-w-full divide-y divide-gray-200">{children}</table></div>,
+                    thead: ({ children }) => <thead className="bg-gray-50">{children}</thead>,
+                    th: ({ children }) => <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{children}</th>,
+                    td: ({ children }) => <td className="px-3 py-2 whitespace-nowrap text-sm text-gray-500 border-t border-gray-100">{children}</td>,
+                    hr: () => <hr className={`my-4 border-t ${isMe ? 'border-white/20' : 'border-gray-200'}`} />,
+                }}
+            >
+                {content}
+            </ReactMarkdown>
+        </div>
     );
 };
 
@@ -424,9 +426,20 @@ const IMApp: React.FC<{ windowId: string }> = () => {
         }
     };
 
+    const lastMessageCount = useRef<number>(0);
+    const lastChatId = useRef<string>("");
+
     useEffect(() => {
-        scrollToBottom();
-    }, [allMessages, activeChat.id]);
+        const isNewMessage = allMessages.length > lastMessageCount.current;
+        const isChatChanged = activeChat.id !== lastChatId.current;
+
+        if (isNewMessage || isChatChanged) {
+            scrollToBottom();
+        }
+
+        lastMessageCount.current = allMessages.length;
+        lastChatId.current = activeChat.id;
+    }, [allMessages.length, activeChat.id]);
 
     const handleUpdateNickname = async () => {
         if (!tempNickname.trim() || !user) return;
@@ -712,7 +725,7 @@ const IMApp: React.FC<{ windowId: string }> = () => {
             {/* Main Area Wrapper */}
             <div className="flex-1 flex flex-col min-w-0">
                 {/* Content Container (Layered White Box) */}
-                <div className="flex-1 ml-0 mt-10 mb-4 mr-4 bg-[var(--color-bg-1)] rounded-2xl shadow-[0_4px_24px_rgba(0,0,0,0.06)] border border-[var(--color-border-a1)] flex overflow-hidden">
+                <div className="flex-1 ml-0 mt-10 mb-2 mr-2 bg-[var(--color-bg-1)] rounded-2xl shadow-[0_4px_24px_rgba(0,0,0,0.06)] border border-[var(--color-border-a1)] flex overflow-hidden">
                     {/* Middle Panel - Chat List */}
                     <div className="w-72 flex flex-col border-r border-[var(--color-border-a1)] shrink-0 bg-[var(--color-fill-2)] max-w-full overflow-x-hidden">
                         <div className="pt-6 px-4 pb-4 space-y-4">
@@ -782,7 +795,7 @@ const IMApp: React.FC<{ windowId: string }> = () => {
                         </header>
 
                         {/* Messages List */}
-                        <div ref={scrollAreaRef} className="flex-1 overflow-y-auto w-full space-y-8 px-5 pt-5 pb-0 pointer-events-auto">
+                        <div ref={scrollAreaRef} className="flex-1 overflow-y-auto w-full space-y-8 px-3 pt-5 pb-0 pointer-events-auto">
                             {allMessages.length === 0 ? (
                                 <div className="h-full flex flex-col items-center justify-center text-[color:var(--color-text-5)] py-20 gap-4 opacity-40">
                                     <div className="w-20 h-20 bg-[var(--color-fill-3)] rounded-[2.5rem] flex items-center justify-center border border-[var(--color-border-a1)]">
@@ -814,13 +827,13 @@ const IMApp: React.FC<{ windowId: string }> = () => {
                                                 <AvatarImage src={isMe ? getAvatarUrl(nickname) : (msg.avatar || getAvatarUrl(msg.senderName))} />
                                                 <AvatarFallback>{isMe ? nickname[0] : msg.senderName?.[0]}</AvatarFallback>
                                             </Avatar>
-                                            <div className={`flex flex-col gap-1 max-w-[75%] ${isMe ? 'items-end' : 'items-start'}`}>
+                                            <div className={`flex flex-col gap-1 max-w-[calc(100%-80px)] ${isMe ? 'items-end' : 'items-start'}`}>
                                                 <div className={`flex items-baseline gap-2 ${isMe ? 'flex-row-reverse' : ''}`}>
                                                     <span className="text-[length:var(--font-size-14)] font-semibold text-[color:var(--color-text-5)]">{isMe ? '我' : msg.senderName}</span>
                                                     <span className="text-[length:var(--font-size-12)] text-[color:var(--color-text-5)] opacity-0 group-hover:opacity-100 transition-opacity">{msg.timestamp}</span>
                                                 </div>
 
-                                                <div className="relative group/bubble w-fit">
+                                                <div className="relative group/bubble w-fit max-w-full">
                                                     <div className={`px-4 py-2 rounded-[var(--radius-12)] text-[length:var(--font-size-14)] leading-relaxed select-text ${isMe
                                                         ? 'bg-[var(--color-blue)] text-white'
                                                         : 'bg-[var(--color-bg-2)] border border-[var(--color-border-a1)] text-[color:var(--color-text-2)]'
@@ -954,7 +967,7 @@ const IMApp: React.FC<{ windowId: string }> = () => {
                         </div>
 
                         {/* Input Area */}
-                        <div className="px-5 pb-5 shrink-0">
+                        <div className="px-3 pb-3 shrink-0">
                             <div className="max-w-[77.5rem] mx-auto rounded-[var(--radius-12)] border border-[var(--color-border-a1)] bg-[var(--color-bg-1)] shadow-[var(--effect-shadow-level-1-box)] p-1.5 focus-within:ring-1 focus-within:ring-[var(--color-blue-active)]/10 transition-all flex flex-col group">
                                 <div className="relative flex items-end">
                                     <Textarea
