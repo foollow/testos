@@ -1,13 +1,16 @@
 import React, { useState } from 'react';
-import { ArrowLeft, ArrowRight, RotateCw, Lock } from 'lucide-react';
+import { ArrowLeft, ArrowRight, RotateCw, Lock, Shield, ShieldOff } from 'lucide-react';
+import { useOS } from '../store/useOS';
 
 interface SafariProps {
     url?: string;
 }
 
 const Safari: React.FC<SafariProps> = ({ url: propUrl }) => {
+    const { systemState } = useOS();
     const [url, setUrl] = useState(propUrl || 'https://en.wikipedia.org/wiki/Main_Page');
     const [inputUrl, setInputUrl] = useState(propUrl ? propUrl.replace(/^https?:\/\//, '') : 'wikipedia.org');
+    const [useProxy, setUseProxy] = useState(true);
 
     React.useEffect(() => {
         console.log("Safari: useEffect triggered with url prop:", propUrl);
@@ -20,11 +23,20 @@ const Safari: React.FC<SafariProps> = ({ url: propUrl }) => {
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        let target = inputUrl;
-        if (!target.startsWith('http')) {
+        let target = inputUrl.trim();
+        if (!target) return;
+
+        // Handle common shortcuts like 'google.com'
+        if (!target.includes('.') && !target.startsWith('http')) {
+            target = `https://www.bing.com/search?q=${encodeURIComponent(target)}`;
+        } else if (!target.startsWith('http')) {
             target = 'https://' + target;
         }
+
         setUrl(target);
+        if (target.startsWith('https://') || target.startsWith('http://')) {
+            setInputUrl(target.replace(/^https?:\/\//, ''));
+        }
     };
 
     return (
@@ -41,6 +53,13 @@ const Safari: React.FC<SafariProps> = ({ url: propUrl }) => {
                     <button className="p-1 hover:bg-[var(--hover-bg)] rounded transition-colors"><ArrowLeft size={16} /></button>
                     <button className="p-1 hover:bg-[var(--hover-bg)] rounded transition-colors"><ArrowRight size={16} /></button>
                     <button className="p-1 hover:bg-[var(--hover-bg)] rounded transition-colors"><RotateCw size={14} /></button>
+                    <button
+                        onClick={() => setUseProxy(!useProxy)}
+                        className={`p-1 rounded transition-colors ${useProxy ? 'text-primary' : 'opacity-40'}`}
+                        title={useProxy ? "Proxy Enabled" : "Proxy Disabled"}
+                    >
+                        {useProxy ? <Shield size={16} /> : <ShieldOff size={16} />}
+                    </button>
                 </div>
 
                 <form onSubmit={handleSubmit} className="flex-1 max-w-2xl mx-auto">
@@ -67,8 +86,8 @@ const Safari: React.FC<SafariProps> = ({ url: propUrl }) => {
             {/* Content */}
             <div className="flex-1 relative bg-white">
                 <iframe
-                    src={url}
-                    className="w-full h-full border-0 block"
+                    src={useProxy && url.startsWith('http') ? `${systemState.proxyUrl}${encodeURIComponent(url)}` : url}
+                    className="w-full h-full border-0 block bg-white"
                     title="Browser View"
                     sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-modals allow-presentation"
                     referrerPolicy="no-referrer"

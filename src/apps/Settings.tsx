@@ -2,6 +2,7 @@ import React from 'react';
 import { useOS, type ThemeConfig } from '../store/useOS';
 import { Label } from "@/components/ui/label";
 import { Slider } from "@/components/ui/slider";
+import { Input } from "@/components/ui/input";
 import {
     Select,
     SelectContent,
@@ -100,7 +101,7 @@ const hslToHex = (hsl: string): string => {
 };
 
 const Settings: React.FC = () => {
-    const { theme, setTheme, themeConfig, updateThemeConfig, systemState, setLanguage } = useOS();
+    const { theme, setTheme, themeConfig, updateThemeConfig, systemState, setLanguage, setProxyUrl } = useOS();
     const t = useTranslation(systemState.language);
 
     const handleConfigChange = (key: keyof ThemeConfig, value: any) => {
@@ -291,6 +292,24 @@ const Settings: React.FC = () => {
                                 <SelectItem value="en">English</SelectItem>
                             </SelectContent>
                         </Select>
+                    </div>
+                </section>
+
+                {/* Proxy Settings */}
+                <section className="glass-panel p-6 rounded-2xl space-y-6">
+                    <h2 className="text-xl font-semibold">
+                        {t.settings.system.proxyUrl}
+                    </h2>
+                    <div className="space-y-4">
+                        <Label className="text-sm font-medium opacity-70">
+                            {t.settings.system.proxyDesc}
+                        </Label>
+                        <Input
+                            value={systemState.proxyUrl}
+                            onChange={(e) => setProxyUrl(e.target.value)}
+                            placeholder="https://your-proxy.com/?url="
+                            className="h-12 rounded-xl bg-black/5 dark:bg-white/5 border-transparent transition-all duration-300 focus:bg-white/10 dark:focus:bg-black/10"
+                        />
                     </div>
                 </section>
             </div>

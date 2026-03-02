@@ -29,6 +29,7 @@ interface SystemState {
     volume: number;
     wifi: boolean;
     language: 'zh-CN' | 'zh-TW' | 'en';
+    proxyUrl: string;
 }
 
 export interface ThemeConfig {
@@ -60,6 +61,7 @@ interface OSState {
     updateWindowSize: (id: string, width: number, height: number) => void;
     setTheme: (theme: 'dark' | 'light') => void;
     setLanguage: (language: 'zh-CN' | 'zh-TW' | 'en') => void;
+    setProxyUrl: (url: string) => void;
     updateThemeConfig: (config: Partial<ThemeConfig>) => void;
 }
 
@@ -83,11 +85,15 @@ export const useOS = create<OSState>((set, get) => ({
         volume: 80,
         wifi: true,
         language: 'zh-CN',
+        proxyUrl: 'https://api.codetabs.com/v1/proxy?quest=',
     },
 
     setTheme: (theme) => set({ theme }),
     setLanguage: (language) => set((state) => ({
         systemState: { ...state.systemState, language }
+    })),
+    setProxyUrl: (proxyUrl) => set((state) => ({
+        systemState: { ...state.systemState, proxyUrl }
     })),
     updateThemeConfig: (newConfig) => set((state) => ({
         themeConfig: { ...state.themeConfig, ...newConfig }
