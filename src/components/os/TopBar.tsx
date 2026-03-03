@@ -1,6 +1,6 @@
 import React from 'react';
 import { useTime } from '../../hooks/useTime';
-import { Wifi, Battery } from 'lucide-react';
+import { Wifi } from 'lucide-react';
 import { useOS } from '../../store/useOS';
 import { useTranslation } from "@/lib/i18n";
 import {
@@ -10,6 +10,7 @@ import {
     DropdownMenuSeparator,
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { BatteryStatus } from './BatteryStatus';
 
 export const TopBar: React.FC = () => {
     const time = useTime();
@@ -61,7 +62,7 @@ export const TopBar: React.FC = () => {
 
             <div className="flex items-center gap-4">
                 <div className="flex items-center gap-3">
-                    <Battery size={18} className="opacity-80" />
+                    <BatteryStatus />
                     <Wifi size={16} className="opacity-80" />
                     <span className="iconfont icon-message-default opacity-80 text-[16px]" />
                 </div>
