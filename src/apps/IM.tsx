@@ -219,6 +219,8 @@ const IMApp: React.FC<{ windowId: string }> = () => {
     const [message, setMessage] = useState('');
     const [hoveredMessageId, setHoveredMessageId] = useState<string | null>(null);
     const [showEmojiPanelId, setShowEmojiPanelId] = useState<string | null>(null);
+    const [drafts, setDrafts] = useState<Record<string, string>>({});
+    const [isEmojiMenuOpen, setIsEmojiMenuOpen] = useState(false);
 
     const getRoomId = React.useCallback((chat: any, usr: any) => {
         if (!usr) return 'unknown';
@@ -477,6 +479,13 @@ const IMApp: React.FC<{ windowId: string }> = () => {
 
         const text = message;
         setMessage('');
+        // Clear draft for this chat
+        const currentChatId = activeChat.uid || activeChat.id;
+        setDrafts(prev => {
+            const newDrafts = { ...prev };
+            delete newDrafts[currentChatId];
+            return newDrafts;
+        });
 
         // 1. 本地乐观更新（无论是否连接数据库）
         const tempId = `temp-${Date.now()}`;
@@ -647,6 +656,30 @@ const IMApp: React.FC<{ windowId: string }> = () => {
         }
     };
 
+    const handleEmojiSelect = (emoji: string) => {
+        const textarea = inputRef.current;
+        if (!textarea) {
+            setMessage(prev => prev + emoji);
+            setIsEmojiMenuOpen(false);
+            return;
+        }
+
+        const start = textarea.selectionStart;
+        const end = textarea.selectionEnd;
+        const currentText = message;
+
+        const newText = currentText.substring(0, start) + emoji + currentText.substring(end);
+        setMessage(newText);
+        setIsEmojiMenuOpen(false);
+
+        // Put focus back and move cursor
+        setTimeout(() => {
+            textarea.focus();
+            const newPos = start + emoji.length;
+            textarea.setSelectionRange(newPos, newPos);
+        }, 0);
+    };
+
     const handleKeyDown = (e: React.KeyboardEvent) => {
         if (e.key === 'Enter' && !e.shiftKey) {
             e.preventDefault();
@@ -741,7 +774,19 @@ const IMApp: React.FC<{ windowId: string }> = () => {
                                 {onlineUsers.map(chat => (
                                     <div
                                         key={chat.uid || chat.id}
-                                        onClick={() => setActiveChat(chat)}
+                                        onClick={() => {
+                                            const currentChatId = activeChat.uid || activeChat.id;
+                                            const targetChatId = chat.uid || chat.id;
+
+                                            if (currentChatId !== targetChatId) {
+                                                // Save current draft before switching
+                                                setDrafts(prev => ({ ...prev, [currentChatId]: message }));
+                                                // Update active chat
+                                                setActiveChat(chat);
+                                                // Load target draft
+                                                setMessage(drafts[targetChatId] || '');
+                                            }
+                                        }}
                                         className={`flex items-center gap-3 p-3 rounded-[var(--radius-12)] cursor-pointer transition-all hover:bg-[var(--color-fill-a2)] group mb-1 min-w-0 ${(activeChat.uid || activeChat.id) === (chat.uid || chat.id) ? 'bg-[var(--color-blue-bg-weak)] border border-[var(--color-border-a1)]' : ''}`}
                                     >
                                         <div className="relative">
@@ -759,7 +804,11 @@ const IMApp: React.FC<{ windowId: string }> = () => {
                                                 <span className="text-[length:var(--font-size-12)] text-[color:var(--color-text-5)]">{chat.time || '刚刚'}</span>
                                             </div>
                                             <p className="text-[length:var(--font-size-12)] text-[color:var(--color-text-5)] truncate opacity-80">
-                                                {chat.lastMessage || (chat.isBot ? '长猫 AI 助手' : '点击发起私聊')}
+                                                {drafts[chat.uid || chat.id] ? (
+                                                    <span className="text-red-500 font-medium">[草稿]</span>
+                                                ) : (
+                                                    chat.lastMessage || (chat.isBot ? '长猫 AI 助手' : '点击发起私聊')
+                                                )}
                                             </p>
                                         </div>
                                     </div>
@@ -982,8 +1031,44 @@ const IMApp: React.FC<{ windowId: string }> = () => {
                                 </div>
 
                                 <div className="flex items-center gap-0.5 text-[color:var(--color-text-4)] px-1 pb-1">
-                                    <Button variant="ghost" size="icon" className="h-8 w-8 rounded-[var(--radius-8)] hover:text-[color:var(--color-blue)] hover:bg-[var(--color-fill-a2)] transition-colors"><Plus size={18} /></Button>
-                                    <Button variant="ghost" size="icon" className="h-8 w-8 rounded-[var(--radius-8)] hover:text-[color:var(--color-blue)] hover:bg-[var(--color-fill-a2)] transition-colors"><Smile size={18} /></Button>
+                                    <Button variant="ghost" size="icon" className="h-8 w-8 rounded-[var(--radius-8)] hover:text-[color:var(--color-text-2)] hover:bg-[var(--color-fill-a2)] transition-colors"><Plus size={18} /></Button>
+
+                                    {/* 增加一个覆盖全屏区域的透明遮罩层，用于拦截所有外部点击事件并关闭表情面板 */}
+                                    {isEmojiMenuOpen && (
+                                        <div
+                                            className="fixed inset-0 z-40"
+                                            onClick={(e) => {
+                                                e.preventDefault();
+                                                e.stopPropagation();
+                                                setIsEmojiMenuOpen(false);
+                                            }}
+                                        />
+                                    )}
+                                    <Popover open={isEmojiMenuOpen} onOpenChange={setIsEmojiMenuOpen}>
+                                        <PopoverTrigger asChild>
+                                            <Button variant="ghost" size="icon" className={`h-8 w-8 rounded-[var(--radius-8)] transition-colors ${isEmojiMenuOpen ? 'text-[color:var(--color-blue)] bg-[var(--color-blue-bg-weak)] relative z-50' : 'hover:text-[color:var(--color-blue)] hover:bg-[var(--color-fill-a2)]'}`}>
+                                                <Smile size={18} />
+                                            </Button>
+                                        </PopoverTrigger>
+                                        <PopoverContent
+                                            side="top"
+                                            align="start"
+                                            className="w-[260px] p-2 bg-[var(--color-bg-1)] border-[var(--color-border-a1)] rounded-xl shadow-[var(--effect-shadow-level-2-box)] z-50 pointer-events-auto"
+                                        >
+                                            <div className="grid grid-cols-6 gap-2">
+                                                {REACTION_EMOJIS.map(emoji => (
+                                                    <div
+                                                        key={emoji}
+                                                        className="w-8 h-8 flex items-center justify-center hover:bg-[var(--color-fill-a2)] rounded-lg cursor-pointer text-lg transition-transform hover:scale-125 select-none"
+                                                        onClick={() => handleEmojiSelect(emoji)}
+                                                    >
+                                                        {emoji}
+                                                    </div>
+                                                ))}
+                                            </div>
+                                        </PopoverContent>
+                                    </Popover>
+
                                     <div className="flex items-center h-8 px-2 rounded-[var(--radius-8)] hover:text-[color:var(--color-blue)] hover:bg-[var(--color-fill-a2)] transition-colors cursor-pointer text-[0.8125rem] font-medium ml-1">
                                         Aa
                                     </div>
